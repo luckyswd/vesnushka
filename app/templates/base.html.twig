@@ -7,19 +7,21 @@
     {% block stylesheets %}
         {{ vite_entry_link_tags('app') }}
     {% endblock %}
+    {% block javascripts %}
+        {{ vite_entry_script_tags('app') }}
+    {% endblock %}
 </head>
 <body>
 <header></header>
+
 <main class="main">
     {% block body %}{% endblock %}
 </main>
-{% block javascripts %}
-    {{ vite_entry_script_tags('app') }}
-{% endblock %}
-</body>
 
 <footer>
-
-
+    {% include 'components/notification.html.twig' %}
 </footer>
+
+
+</body>
 </html>

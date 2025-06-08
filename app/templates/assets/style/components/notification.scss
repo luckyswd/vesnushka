@@ -1,5 +1,4 @@
-@include _680 {
-  .notification {
+.notification {
     position: absolute;
     top: 16px;
     width: max-content;
@@ -17,17 +16,16 @@
     transition: $transition;
 
     &.active {
-      display: block;
-      z-index: 50;
-      opacity: 1;
+        display: block;
+        z-index: 50;
+        opacity: 1;
     }
 
     &.success {
-      background: $c-green;
+        background: $c-green;
     }
 
     &.error {
-      background: $c-red;
+        background: $c-red;
     }
-  }
 }
