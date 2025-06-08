@@ -1,0 +1,5 @@
+@import "style/global/fonts.scss";
+@import "style/global/reset.scss";
+@import "style/global/global.scss";
+
+@import "style/components/notification.scss";
