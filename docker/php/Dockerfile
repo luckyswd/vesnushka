@@ -8,22 +8,29 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/bin --fil
 # Устанавливаем нужные пакеты и PHP расширения
 RUN apk add --no-cache --virtual .build-deps $PHPIZE_DEPS \
         g++ \
-        git \
-        unzip \
-        libzip-dev \
-        freetype-dev \
-        libpng-dev \
-        libjpeg-turbo-dev \
-        icu-dev \
-        oniguruma-dev \
-        libxslt-dev \
-        acl-dev \
-        postgresql-dev \
+        make \
+        autoconf \
+        libtool \
     && apk add --no-cache \
+        libpng \
+        libpng-dev \
+        freetype-dev \
+        libjpeg-turbo-dev \
+        icu \
+        icu-dev \
+        libzip \
+        libzip-dev \
+        libxslt \
+        libxslt-dev \
+        libpq \
+        postgresql-dev \
+        oniguruma-dev \
         acl \
         procps \
         openssl \
         gnupg \
+        unzip \
+        git \
     && docker-php-ext-configure gd --with-jpeg --with-freetype \
     && docker-php-ext-install \
         pdo \
@@ -38,3 +45,4 @@ RUN apk add --no-cache --virtual .build-deps $PHPIZE_DEPS \
         mbstring \
         xml \
     && apk del .build-deps
+
