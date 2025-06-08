@@ -1,8 +1,8 @@
-version: "3"
+version: '3.3'
 services:
     nginx:
         image: nginx:stable-alpine
-        container_name: nails-pro-nginx
+        container_name: vesnushka-nginx
         restart: unless-stopped
         ports:
             - 80:80
@@ -14,7 +14,7 @@ services:
 
     postgres:
         image: postgres:15
-        container_name: nails-pro-postgres
+        container_name: vesnushka-postgres
         restart: unless-stopped
         ports:
             - 5432:5432
@@ -26,7 +26,7 @@ services:
             - ./docker/postgres:/var/lib/postgresql/data
 
     php:
-        container_name: nails-pro-php
+        container_name: vesnushka-php
         restart: unless-stopped
         build: docker/php
         volumes:
