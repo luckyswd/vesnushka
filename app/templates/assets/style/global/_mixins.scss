@@ -15,3 +15,15 @@
         @content;
     }
 }
+
+@mixin body-16() {
+    font-family: "Roboto Regular", serif;
+    font-weight: 400;
+    font-display: swap;
+    font-size: 16px;
+    line-height: normal;
+
+    @include tablet() {
+        font-size: 14px;
+    }
+}

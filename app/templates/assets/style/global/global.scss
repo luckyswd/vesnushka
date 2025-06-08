@@ -1,3 +1,5 @@
 body {
-
+    @include body-16();
+    position: relative;
+    background-color: color('white', 400)
 }

@@ -1,10 +1,19 @@
 import { defineConfig } from "vite";
 import symfonyPlugin from "vite-plugin-symfony";
+import { viteStaticCopy } from 'vite-plugin-static-copy'
 import path from 'path';
 
 export default defineConfig({
     plugins: [
         symfonyPlugin(),
+        viteStaticCopy({
+            targets: [
+                {
+                    src: "./templates/assets/fonts/**/*",
+                    dest: "assets/fonts",
+                }
+            ],
+        }),
     ],
     resolve: {
         alias: {

@@ -1,16 +1,26 @@
-$c-black: #0e0e0e;
-$c-black-light: rgba(37, 36, 36, 1);
-$c-gray-light: rgb(227, 229, 229);
-$c-gray-border: #333333;
-$c-gray: rgb(131, 132, 135);
-$c-white: #ececec;
-$c-blue: rgb(51, 102, 255);
-$c-red: #e32c2c;
-$c-green: #059669;
-$c-pending: #ffc107;
+$colors: (
+        'white': (
+                400: #ffffff,
+        ),
+        'black': (
+                400: #231f20,
+        ),
+        'gray': (
+                400: #00000099,
+        ),
+        'orange': (
+                400: #ffc107,
+        ),
+        'green': (
+                400: #059669,
+        ),
+        'red': (
+                400: #e32c2c
+        ),
+);
 
-$c-focus-border: rgb(235, 240, 255) 0 0 0 2px;
-
-$font: 'Roboto Regular', sans-serif;
+@function color($color, $shade) {
+        @return map-get(map-get($colors, $color), $shade);
+}
 
 $transition: all .3s ease-in-out;
