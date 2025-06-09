@@ -15,13 +15,13 @@ use Doctrine\ORM\Mapping as ORM;
     indexes: [
         new ORM\Index(name: 'idx_category_publish_state', columns: ['publish_state']),
         new ORM\Index(name: 'idx_category_parent_id', columns: ['parent_id']),
-        new ORM\Index(name: 'idx_category_name', columns: ['name'])
+        new ORM\Index(name: 'idx_category_name', columns: ['name']),
     ]
 )]
 class Category extends BaseEntity
 {
     #[ORM\Id]
-    #[ORM\GeneratedValue(strategy: "CUSTOM")]
+    #[ORM\GeneratedValue(strategy: 'CUSTOM')]
     #[ORM\CustomIdGenerator('doctrine.uuid_generator')]
     #[ORM\Column(type: Types::GUID, nullable: false)]
     private string $guid;

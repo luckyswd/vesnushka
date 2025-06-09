@@ -12,6 +12,7 @@ RUN apk add --no-cache --virtual .build-deps $PHPIZE_DEPS \
         autoconf \
         libtool \
     && apk add --no-cache \
+        make \
         libpng \
         libpng-dev \
         freetype-dev \

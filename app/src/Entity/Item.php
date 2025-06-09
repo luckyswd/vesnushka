@@ -13,13 +13,13 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Table(
     name: 'item',
     indexes: [
-        new ORM\Index(name: 'idx_item_publish_state', columns: ['publish_state'])
+        new ORM\Index(name: 'idx_item_publish_state', columns: ['publish_state']),
     ]
 )]
 class Item extends BaseEntity
 {
     #[ORM\Id]
-    #[ORM\GeneratedValue(strategy: "CUSTOM")]
+    #[ORM\GeneratedValue(strategy: 'CUSTOM')]
     #[ORM\CustomIdGenerator('doctrine.uuid_generator')]
     #[ORM\Column(type: Types::GUID, nullable: false)]
     private string $guid;
