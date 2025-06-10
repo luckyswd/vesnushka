@@ -4,11 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
     <title>Vesnushka</title>
+
     {% block stylesheets %}
-        {{ vite_entry_link_tags('app') }}
+        {{ vite_entry_link_tags('frontStyle') }}
     {% endblock %}
+
     {% block javascripts %}
-        {{ vite_entry_script_tags('app') }}
+        {{ vite_entry_script_tags('frontApp') }}
     {% endblock %}
 </head>
 <body>
@@ -19,7 +21,7 @@
 </main>
 
 <footer>
-    {% include 'components/notification.html.twig' %}
+    {% include 'common/template/components/notification.html.twig' %}
 </footer>
 
 

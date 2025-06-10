@@ -1,6 +1,6 @@
 import { defineConfig } from "vite";
 import symfonyPlugin from "vite-plugin-symfony";
-import { viteStaticCopy } from 'vite-plugin-static-copy'
+import { viteStaticCopy } from 'vite-plugin-static-copy';
 import path from 'path';
 
 export default defineConfig({
@@ -9,31 +9,38 @@ export default defineConfig({
         viteStaticCopy({
             targets: [
                 {
-                    src: "./templates/assets/fonts/**/*",
+                    src: "./templates/common/fonts/**/*",
                     dest: "assets/fonts",
-                }
+                },
             ],
         }),
     ],
     resolve: {
         alias: {
-            '@': path.resolve(__dirname, 'templates/assets'),
+            '@admin': path.resolve(__dirname, 'templates/admin/assets'),
+            '@common': path.resolve(__dirname, 'templates/common'),
+            '@front': path.resolve(__dirname, 'templates/front/assets'),
         },
     },
     build: {
         rollupOptions: {
             input: {
-                app: "./templates/assets/app.js",
-                css: "./templates/assets/app.css",
+                // FRONT
+                frontApp: "./templates/front/assets/app.js",
+                frontStyle: "./templates/front/assets/app.css",
+
+                // ADMIN
+                adminApp: "./templates/admin/assets/app-admin.js",
+                adminStyle: "./templates/admin/assets/app-admin.css",
             },
-        }
+        },
     },
     css: {
         preprocessorOptions: {
             scss: {
                 additionalData: `
-                    @import "@/style/global/_variables.scss";
-                    @import "@/style/global/_mixins.scss";
+                @import "@common/style/global/_variables.scss";
+                @import "@common/style/global/_mixins.scss";
                 `,
             },
         },
