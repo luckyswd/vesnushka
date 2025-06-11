@@ -23,4 +23,17 @@ enum ItemPublishStateEnum: string
      * Отображается в магазине, но кнопка "купить" заблокирована или заменена на "Оповестить о поступлении".
      */
     case OUT_OF_STOCK = 'out_of_stock';
+
+    /**
+     * Возвращает массив состояний, которые можно показывать на витрине.
+     *
+     * @return ItemPublishStateEnum[]
+     */
+    public static function getVisibleStates(): array
+    {
+        return [
+            self::ACTIVE,
+            self::OUT_OF_STOCK,
+        ];
+    }
 }

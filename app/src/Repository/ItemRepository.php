@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\Item;
+use App\Enum\ItemPublishStateEnum;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -14,5 +15,17 @@ class ItemRepository extends ServiceEntityRepository
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Item::class);
+    }
+
+    public function findVisibleItemByUrl(string $url): ?Item
+    {
+        return $this->createQueryBuilder('i')
+            ->andWhere('i.url = :url')
+            ->andWhere('i.publishState IN (:publishStates)')
+            ->setParameter('url', $url)
+            ->setParameter('publishStates', array_map(fn ($e) => $e->value, ItemPublishStateEnum::getVisibleStates()))
+            ->setMaxResults(1)
+            ->getQuery()
+            ->getOneOrNullResult();
     }
 }

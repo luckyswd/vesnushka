@@ -20,6 +20,8 @@ use Doctrine\ORM\Mapping as ORM;
 )]
 class Category extends BaseEntity
 {
+    public const string URL_CATALOG = '/catalog/';
+
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'CUSTOM')]
     #[ORM\CustomIdGenerator('doctrine.uuid_generator')]
