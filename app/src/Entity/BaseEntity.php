@@ -14,6 +14,14 @@ abstract class BaseEntity
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     protected \DateTimeInterface $updatedAt;
 
+    public function __construct()
+    {
+        $now = new \DateTimeImmutable();
+
+        $this->createdAt = $now;
+        $this->updatedAt = $now;
+    }
+
     public function getCreatedAt(): \DateTimeInterface
     {
         return $this->createdAt;

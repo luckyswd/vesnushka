@@ -3,12 +3,14 @@
 namespace App\Entity;
 
 use App\Enum\CategoryPublishStateEnum;
+use App\EventListener\Doctrine\UrlAndBreadcrumbsListener;
 use App\Repository\CategoryRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
+#[ORM\EntityListeners([UrlAndBreadcrumbsListener::class])]
 #[ORM\Entity(repositoryClass: CategoryRepository::class)]
 #[ORM\Table(
     name: 'category',
@@ -20,7 +22,7 @@ use Doctrine\ORM\Mapping as ORM;
 )]
 class Category extends BaseEntity
 {
-    public const string URL_CATALOG = '/catalog/';
+    public const string URL_CATALOG = '/catalog';
 
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'CUSTOM')]
@@ -37,6 +39,9 @@ class Category extends BaseEntity
     #[ORM\Column(type: Types::STRING, length: 255)]
     private string $name;
 
+    #[ORM\Column(type: Types::STRING, length: 1024)]
+    private string $breadcrumbs;
+
     #[ORM\ManyToOne(targetEntity: Category::class, inversedBy: 'children')]
     #[ORM\JoinColumn(name: 'parent_id', referencedColumnName: 'guid', nullable: true, onDelete: 'SET NULL')]
     private ?Category $parent = null;
@@ -49,6 +54,8 @@ class Category extends BaseEntity
 
     public function __construct()
     {
+        parent::__construct();
+
         $this->items = new ArrayCollection();
     }
 
@@ -127,5 +134,17 @@ class Category extends BaseEntity
     public function getItems(): Collection
     {
         return $this->items;
+    }
+
+    public function getBreadcrumbs(): string
+    {
+        return $this->breadcrumbs;
+    }
+
+    public function setBreadcrumbs(string $breadcrumbs): static
+    {
+        $this->breadcrumbs = $breadcrumbs;
+
+        return $this;
     }
 }

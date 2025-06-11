@@ -24,5 +24,8 @@ services:
         tags:
             - { name: kernel.event_listener, event: kernel.request, priority: 100 }
 
+    App\EventListener\Doctrine\UrlAndBreadcrumbsListener:
+        tags: [ doctrine.orm.entity_listener ]
+
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones

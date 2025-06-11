@@ -3,12 +3,14 @@
 namespace App\Entity;
 
 use App\Enum\ItemPublishStateEnum;
+use App\EventListener\Doctrine\UrlAndBreadcrumbsListener;
 use App\Repository\ItemRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
+#[ORM\EntityListeners([UrlAndBreadcrumbsListener::class])]
 #[ORM\Entity(repositoryClass: ItemRepository::class)]
 #[ORM\Table(
     name: 'item',
@@ -36,6 +38,9 @@ class Item extends BaseEntity
     #[ORM\Column(type: Types::STRING, length: 255)]
     private string $name;
 
+    #[ORM\Column(type: Types::STRING, length: 1024)]
+    private string $breadcrumbs;
+
     #[ORM\ManyToMany(targetEntity: Category::class)]
     #[ORM\JoinTable(
         name: 'item_category',
@@ -46,6 +51,8 @@ class Item extends BaseEntity
 
     public function __construct()
     {
+        parent::__construct();
+
         $this->categories = new ArrayCollection();
     }
 
@@ -126,6 +133,18 @@ class Item extends BaseEntity
     public function removeCategory(Category $category): static
     {
         $this->categories->removeElement($category);
+
+        return $this;
+    }
+
+    public function getBreadcrumbs(): string
+    {
+        return $this->breadcrumbs;
+    }
+
+    public function setBreadcrumbs(string $breadcrumbs): static
+    {
+        $this->breadcrumbs = $breadcrumbs;
 
         return $this;
     }

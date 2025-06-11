@@ -6,6 +6,7 @@ use App\Entity\Category;
 use App\Entity\Item;
 use App\Repository\CategoryRepository;
 use App\Repository\ItemRepository;
+use App\Service\CatalogService;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Twig\Environment;
 
@@ -20,7 +21,15 @@ readonly class CatalogHandler
 
     public function __invoke(string $path): string
     {
-        $url = Category::URL_CATALOG.$path;
+        if (empty($path)) {
+            $category = $this->categoryRepository->findOneBy(['url' => Category::URL_CATALOG]);
+
+            if ($category) {
+                return $this->renderCategory(category: $category);
+            }
+        }
+
+        $url = CatalogService::getCatalogUrl(path: $path);
 
         $item = $this->itemRepository->findVisibleItemByUrl($url);
 
