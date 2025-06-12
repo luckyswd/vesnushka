@@ -1,6 +1,0 @@
-@import "../../common/style/global/fonts.scss";
-@import "../../common/style/global/reset.scss";
-@import "../../common/style/global/global.scss";
-
-@import "../../common/style/components/notification.scss";
-@import "./style/catalog/catalog.scss";

@@ -1,0 +1,29 @@
+//-----------------------------------------------------------
+// Lib
+//-----------------------------------------------------------
+@import "000-lib/swiper-bundle.min.css";
+
+//-----------------------------------------------------------
+// Kickstart
+//-----------------------------------------------------------
+@import "001-kickstart/fonts";                     // @font-face declarations
+@import "001-kickstart/_helpers.scss";              // reset + standard helper classes
+@import "001-kickstart/_mixins.scss";               // common mixins
+
+//-----------------------------------------------------------
+// BASE
+//-----------------------------------------------------------
+@import "002-base/_variables.scss";                 // color, font, breakpoint variables, etc
+@import "002-base/_base.scss";                      // base styles for project
+@import "002-base/_typography.scss";                // type styles for project
+
+//-----------------------------------------------------------
+// Components
+//-----------------------------------------------------------
+
+@import "003-components/common/notification";
+
+//-----------------------------------------------------------
+// SECTIONS
+//-----------------------------------------------------------
+

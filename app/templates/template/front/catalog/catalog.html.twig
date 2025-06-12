@@ -1,0 +1,29 @@
+{% extends 'template/front/base.html.twig' %}
+
+{% block body %}
+    <section class="catalog">
+        <div class="container">
+            <div class="catalog__breadcrumbs">
+                {{ category.breadcrumbs }}
+            </div>
+            <div class="catalog__wrap">
+                <div class="catalog__left">
+                    SELECT
+                </div>
+
+                <div class="catalog__right">
+                    <h1>
+                        {{ category.name }}
+                    </h1>
+                    <div class="catalog__sort">
+
+                    </div>
+
+                    <div class="catalog__items">
+                        items
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}

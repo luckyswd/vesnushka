@@ -1,0 +1,27 @@
+$colors: (
+        'white': (
+                400: #ffffff,
+        ),
+        'black': (
+                400: #231f20,
+        ),
+        'gray': (
+                400: #f3f3f3,
+                500: #868695,
+        ),
+        'orange': (
+                400: #ffc107,
+        ),
+        'green': (
+                400: #059669,
+        ),
+        'red': (
+                400: #e32c2c
+        ),
+);
+
+@function color($color, $shade) {
+    @return map-get(map-get($colors, $color), $shade);
+}
+
+$transition: all .3s ease-in-out;

@@ -16,7 +16,7 @@ final class HomeController extends BaseController
     #[Route('/', name: 'app_home')]
     public function index(): Response
     {
-        return $this->render('front/home/index.html.twig');
+        return $this->render('template/front/home/index.html.twig');
     }
 
     #[Route('/mock', name: 'mock')]

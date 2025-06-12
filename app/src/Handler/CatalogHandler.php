@@ -48,14 +48,14 @@ readonly class CatalogHandler
 
     private function renderItem(Item $item): string
     {
-        return $this->twig->render('front/catalog/item.html.twig', [
+        return $this->twig->render('template/front/catalog/item.html.twig', [
             'item' => $item,
         ]);
     }
 
     private function renderCategory(Category $category): string
     {
-        return $this->twig->render('front/catalog/catalog.html.twig', [
+        return $this->twig->render('template/front/catalog/catalog.html.twig', [
             'category' => $category,
         ]);
     }
