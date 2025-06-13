@@ -93,10 +93,24 @@ readonly class CatalogHandler
             fn (Category $child) => CategoryPublishStateEnum::ACTIVE === $child->getPublishState()
         );
 
+        $items = $this->itemRepository->findByCategoryAndSubCategoriesWithBrands($category, $subCategories);
+
+        $brands = [];
+
+        /** @var Item $item */
+        foreach ($items as $item) {
+            $brand = $item->getBrand();
+            if (!in_array($brand, $brands, true)) {
+                $brands[] = $brand;
+            }
+        }
+
         return $this->twig->render('template/front/catalog/catalog.html.twig', [
             'category' => $category,
             'breadcrumbs' => $category->getBreadcrumbs(),
             'subCategories' => $subCategories,
+            'items' => $items,
+            'brands' => $brands,
         ]);
     }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Repository;
 
+use App\Entity\Category;
 use App\Entity\Item;
 use App\Enum\ItemPublishStateEnum;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
@@ -27,5 +28,20 @@ class ItemRepository extends ServiceEntityRepository
             ->setMaxResults(1)
             ->getQuery()
             ->getOneOrNullResult();
+    }
+
+    public function findByCategoryAndSubCategoriesWithBrands(
+        Category $category,
+        iterable $subCategories,
+    ): array {
+        $qb = $this->createQueryBuilder('i')
+            ->leftJoin('i.categories', 'c')
+            ->leftJoin('i.brand', 'b')
+            ->addSelect('b')
+            ->where('c = :category OR c IN (:subCategories)')
+            ->setParameter('category', $category)
+            ->setParameter('subCategories', $subCategories);
+
+        return $qb->getQuery()->getResult();
     }
 }

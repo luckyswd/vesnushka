@@ -33,21 +33,13 @@
                     <div class="filter__wrap">
                         <p class="filter-title">Бренды</p>
                         <div class="filter-inputs">
-                            {% include 'template/common/input/_checkbox.html.twig' with {
-                                id: 'checkbox-1',
-                                label: 'Apple',
-                                checked: true
-                            } %}
-                            {% include 'template/common/input/_checkbox.html.twig' with {
-                                id: 'checkbox-2',
-                                label: 'Apple',
-                                checked: false
-                            } %}
-                            {% include 'template/common/input/_checkbox.html.twig' with {
-                                id: 'checkbox-3',
-                                label: 'Apple',
-                                checked: false
-                            } %}
+                            {% for brand in brands %}
+                                {% include 'template/common/input/_checkbox.html.twig' with {
+                                    id: 'checkbox-' ~ loop.index,
+                                    label: brand.name,
+                                    checked: false
+                                } %}
+                            {% endfor %}
                         </div>
                     </div>
                 </div>
@@ -61,7 +53,12 @@
                     </div>
 
                     <div class="catalog__items">
-                        items
+                        {% for item in items %}
+                            <div class="catalog__item">
+                                <h2>{{ item.name }}</h2>
+                                <!-- Add more item details here if needed -->
+                            </div>
+                        {% endfor %}
                     </div>
                 </div>
             </div>
