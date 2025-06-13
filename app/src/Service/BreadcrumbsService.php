@@ -45,7 +45,7 @@ class BreadcrumbsService
 
         $current = $category;
 
-        while ($current !== null) {
+        while (null !== $current) {
             array_unshift($breadcrumbs, [
                 'link' => $current->getUrl(),
                 'text' => $current->getName(),

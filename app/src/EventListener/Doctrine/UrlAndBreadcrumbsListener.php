@@ -37,7 +37,7 @@ readonly class UrlAndBreadcrumbsListener
             $parent = $entity->getParent();
 
             if ($parent) {
-                $url = $parent->getUrl() . '/' . TextService::transliterate($entity->getName());
+                $url = $parent->getUrl().'/'.TextService::transliterate($entity->getName());
             } else {
                 $url = Category::URL_CATALOG;
             }
@@ -57,7 +57,7 @@ readonly class UrlAndBreadcrumbsListener
             $categoryUrl = $category->getUrl();
             $slug = TextService::transliterate($entity->getName());
 
-            $url = rtrim($categoryUrl, '/') . '/' . $slug;
+            $url = rtrim($categoryUrl, '/').'/'.$slug;
 
             $entity->setUrl($url);
 
@@ -88,8 +88,8 @@ readonly class UrlAndBreadcrumbsListener
     {
         $depth = 0;
 
-        while ($category->getParent() !== null) {
-            $depth++;
+        while (null !== $category->getParent()) {
+            ++$depth;
             $category = $category->getParent();
         }
 

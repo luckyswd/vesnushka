@@ -9,8 +9,8 @@ use App\Repository\CategoryRepository;
 use App\Repository\ItemRepository;
 use App\Service\CatalogService;
 use Symfony\Component\HttpFoundation\RedirectResponse;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Twig\Environment;
 
 readonly class CatalogHandler
@@ -51,7 +51,7 @@ readonly class CatalogHandler
         // 3. Пытаемся найти ближайшую категорию, постепенно убирая сегменты пути справа
         $redirectUrl = $this->findNearestCategoryRedirectUrl($path);
 
-        if ($redirectUrl !== null) {
+        if (null !== $redirectUrl) {
             return new RedirectResponse($redirectUrl, 301);
         }
 
@@ -63,7 +63,7 @@ readonly class CatalogHandler
         $pathParts = explode('/', trim($path, '/'));
         $pathsToTry = [];
 
-        for ($i = count($pathParts); $i >= 0; $i--) {
+        for ($i = count($pathParts); $i >= 0; --$i) {
             $reducedPath = implode('/', array_slice($pathParts, 0, $i));
 
             $pathsToTry[] = empty($reducedPath) ? Category::URL_CATALOG : CatalogService::getCatalogUrl(path: $reducedPath);
@@ -90,7 +90,7 @@ readonly class CatalogHandler
     private function renderCategory(Category $category): string
     {
         $subCategories = $category->getChildren()->filter(
-            fn(Category $child) => $child->getPublishState() === CategoryPublishStateEnum::ACTIVE
+            fn (Category $child) => CategoryPublishStateEnum::ACTIVE === $child->getPublishState()
         );
 
         return $this->twig->render('template/front/catalog/catalog.html.twig', [

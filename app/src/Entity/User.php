@@ -22,6 +22,11 @@ class User extends BaseEntity
     #[ORM\Column(length: 255)]
     private string $password;
 
+    public function setGuid(string $guid): void
+    {
+        $this->guid = $guid;
+    }
+
     public function getGuid(): string
     {
         return $this->guid;
@@ -35,6 +40,7 @@ class User extends BaseEntity
     public function setUsername(string $username): static
     {
         $this->username = $username;
+
         return $this;
     }
 
@@ -46,6 +52,7 @@ class User extends BaseEntity
     public function setEmail(string $email): static
     {
         $this->email = $email;
+
         return $this;
     }
 
@@ -57,6 +64,7 @@ class User extends BaseEntity
     public function setPassword(string $password): static
     {
         $this->password = $password;
+
         return $this;
     }
 }

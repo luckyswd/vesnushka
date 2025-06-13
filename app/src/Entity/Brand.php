@@ -22,7 +22,6 @@ class Brand extends BaseEntity
     #[ORM\Column(length: 255, unique: true)]
     private string $url;
 
-    #[ORM\Column(type: 'string')]
     #[ORM\OneToMany(targetEntity: Item::class, mappedBy: 'brand')]
     private Collection $items;
 
@@ -53,6 +52,7 @@ class Brand extends BaseEntity
     public function setName(string $name): static
     {
         $this->name = $name;
+
         return $this;
     }
 
@@ -64,6 +64,7 @@ class Brand extends BaseEntity
     public function setUrl(string $url): static
     {
         $this->url = $url;
+
         return $this;
     }
 

@@ -6,7 +6,7 @@ class TextService
 {
     public const int MODE_RU_EN = 1;
     public const int MODE_EN_RU = 2;
-    public const int MODE_BOTH  = 3;
+    public const int MODE_BOTH = 3;
     public const string DEFAULT_PATTERN = '/[^0-9A-Za-zА-Яа-яЁё-]/u';
 
     protected static array $baseReplaceTable = [
@@ -16,20 +16,20 @@ class TextService
         'О' => 'O', 'П' => 'P', 'Р' => 'R', 'С' => 'S', 'Т' => 'T',
         'У' => 'U', 'Ф' => 'F', 'Х' => 'KH', 'Ц' => 'TS', 'Ч' => 'CH',
         'Ш' => 'SH', 'Щ' => 'SHCH', 'Ъ' => '', 'Ы' => 'Y', 'Ь' => '',
-        'Э' => 'E', 'Ю' => 'YU', 'Я' => 'YA'
+        'Э' => 'E', 'Ю' => 'YU', 'Я' => 'YA',
     ];
 
     protected static array $replaceOverrides = [
         self::MODE_EN_RU => [
             'Y' => 'И', 'E' => 'Е', 'C' => 'К', 'H' => 'Х', 'J' => 'Ж',
-            'Q' => 'К', 'W' => 'В', 'X' => 'Кс', 'cisco' => 'циско'
-        ]
+            'Q' => 'К', 'W' => 'В', 'X' => 'Кс', 'cisco' => 'циско',
+        ],
     ];
 
     protected static array $replaceTable = [];
 
     /**
-     * Подготовить таблицу транслитерации (если ещё не готова)
+     * Подготовить таблицу транслитерации (если ещё не готова).
      */
     protected static function prepareReplaceTable(): void
     {
@@ -66,7 +66,7 @@ class TextService
     }
 
     /**
-     * Основной метод транслитерации (универсальный)
+     * Основной метод транслитерации (универсальный).
      */
     public static function transliterate(
         string $string,
