@@ -29,6 +29,7 @@ final class HomeController extends BaseController
         $entityManager->createQuery('DELETE FROM App\Entity\Item')->execute();
         $entityManager->createQuery('DELETE FROM App\Entity\Category')->execute();
 
+        dd(1);
         // 2️⃣ Категории
 
         // Каталог

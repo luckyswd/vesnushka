@@ -44,10 +44,14 @@ class Item extends BaseEntity
     #[ORM\ManyToMany(targetEntity: Category::class, inversedBy: 'items')]
     #[ORM\JoinTable(
         name: 'item_category',
-        joinColumns: [new ORM\JoinColumn(name: 'item_id', referencedColumnName: 'guid')],
-        inverseJoinColumns: [new ORM\JoinColumn(name: 'category_id', referencedColumnName: 'guid')]
+        joinColumns: [new ORM\JoinColumn(name: 'item_guid', referencedColumnName: 'guid')],
+        inverseJoinColumns: [new ORM\JoinColumn(name: 'category_guid', referencedColumnName: 'guid')]
     )]
     private Collection $categories;
+
+    #[ORM\ManyToOne(targetEntity: Brand::class, inversedBy: 'items')]
+    #[ORM\JoinColumn(name: 'brand_guid', referencedColumnName: 'guid', nullable: false)]
+    private Brand $brand;
 
     public function __construct()
     {
@@ -145,6 +149,18 @@ class Item extends BaseEntity
     public function setBreadcrumbs(array $breadcrumbs): static
     {
         $this->breadcrumbs = $breadcrumbs;
+
+        return $this;
+    }
+
+    public function getBrand(): Brand
+    {
+        return $this->brand;
+    }
+
+    public function setBrand(Brand $brand): self
+    {
+        $this->brand = $brand;
 
         return $this;
     }
