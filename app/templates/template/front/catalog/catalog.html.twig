@@ -3,12 +3,53 @@
 {% block body %}
     <section class="catalog">
         <div class="container">
-            <div class="catalog__breadcrumbs">
-                {{ category.breadcrumbs }}
-            </div>
+            <ul class="catalog__breadcrumbs">
+                {% for breadcrumb in breadcrumbs %}
+                    <li class="catalog__breadcrumbs-item">
+                        {% if not loop.last %}
+                            <a href="{{ breadcrumb.link }}">{{ breadcrumb.text }}</a>
+                        {% else %}
+                            {{ breadcrumb.text }}
+                        {% endif %}
+                    </li>
+                {% endfor %}
+            </ul>
+
             <div class="catalog__wrap">
                 <div class="catalog__left">
-                    SELECT
+                    {% if subCategories is not empty %}
+                        <div class="filter__wrap">
+                            <p class="filter-title">Подкатегории</p>
+                            <ul class="subcategories__list">
+                                {% for subCategory in subCategories %}
+                                    <li>
+                                        <a href="{{ subCategory.url }}">{{ subCategory.name }}</a>
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    {% endif %}
+
+                    <div class="filter__wrap">
+                        <p class="filter-title">Бренды</p>
+                        <div class="filter-inputs">
+                            {% include 'template/common/input/_checkbox.html.twig' with {
+                                id: 'checkbox-1',
+                                label: 'Apple',
+                                checked: true
+                            } %}
+                            {% include 'template/common/input/_checkbox.html.twig' with {
+                                id: 'checkbox-2',
+                                label: 'Apple',
+                                checked: false
+                            } %}
+                            {% include 'template/common/input/_checkbox.html.twig' with {
+                                id: 'checkbox-3',
+                                label: 'Apple',
+                                checked: false
+                            } %}
+                        </div>
+                    </div>
                 </div>
 
                 <div class="catalog__right">

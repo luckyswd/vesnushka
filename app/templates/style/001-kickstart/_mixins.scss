@@ -16,11 +16,22 @@
 	}
 }
 
-@mixin body-18() {
+@mixin body-16() {
 	font-family: "Roboto Regular", serif;
-	font-weight: 400;
-	font-size: 18px;
+	font-size: 16px;
 	line-height: normal;
+	color: color('black', 400);
+
+	@include tablet() {
+		font-size: 14px;
+	}
+}
+
+@mixin body-16-bold() {
+	font-family: "Roboto Bold", serif;
+	font-size: 16px;
+	line-height: normal;
+	color: color('black', 400);
 
 	@include tablet() {
 		font-size: 14px;

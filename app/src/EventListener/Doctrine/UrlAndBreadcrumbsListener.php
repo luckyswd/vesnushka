@@ -5,7 +5,6 @@ namespace App\EventListener\Doctrine;
 use App\Entity\Category;
 use App\Entity\Item;
 use App\Service\BreadcrumbsService;
-use App\Service\CatalogService;
 use App\Service\TextService;
 use Doctrine\ORM\Event\PreUpdateEventArgs;
 use Doctrine\Persistence\Event\LifecycleEventArgs;
@@ -19,7 +18,17 @@ readonly class UrlAndBreadcrumbsListener
 
     public function preUpdate(object $entity, PreUpdateEventArgs $event): void
     {
-        $this->updateUrlAndBreadcrumbsIfNeeded($entity);
+        if ($entity instanceof Category) {
+            if ($event->hasChangedField('name') || $event->hasChangedField('url')) {
+                $this->updateUrlAndBreadcrumbsIfNeeded($entity);
+            }
+        }
+
+        if ($entity instanceof Item) {
+            if ($event->hasChangedField('name') || $event->hasChangedField('url')) {
+                $this->updateUrlAndBreadcrumbsIfNeeded($entity);
+            }
+        }
     }
 
     private function updateUrlAndBreadcrumbsIfNeeded(object $entity): void
@@ -30,13 +39,13 @@ readonly class UrlAndBreadcrumbsListener
             if ($parent) {
                 $url = $parent->getUrl() . '/' . TextService::transliterate($entity->getName());
             } else {
-                $url = TextService::transliterate($entity->getName());
-                $url = CatalogService::getCatalogUrl(path: $url);
+                $url = Category::URL_CATALOG;
             }
 
-            $breadcrumbs = BreadcrumbsService::generateBreadcrumbsString($entity);
-
             $entity->setUrl($url);
+
+            $breadcrumbs = BreadcrumbsService::generateBreadcrumbs($entity);
+
             $entity->setBreadcrumbs($breadcrumbs);
         }
 
@@ -50,9 +59,10 @@ readonly class UrlAndBreadcrumbsListener
 
             $url = rtrim($categoryUrl, '/') . '/' . $slug;
 
-            $breadcrumbs = BreadcrumbsService::generateBreadcrumbsString($entity);
-
             $entity->setUrl($url);
+
+            $breadcrumbs = BreadcrumbsService::generateBreadcrumbs($entity);
+
             $entity->setBreadcrumbs($breadcrumbs);
         }
     }

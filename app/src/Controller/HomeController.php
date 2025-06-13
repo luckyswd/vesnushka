@@ -22,20 +22,21 @@ final class HomeController extends BaseController
     #[Route('/mock', name: 'mock')]
     public function generateKoreanCosmeticsCategoriesAndItems(EntityManagerInterface $entityManager, CategoryRepository $categoryRepository): Response
     {
-        // 1️⃣ Очищаем БД
-//        $entityManager->createQuery('DELETE FROM App\Entity\Item')->execute();
-//        $entityManager->createQuery('DELETE FROM App\Entity\Category')->execute();
+// 1️⃣ Очищаем БД
+        $entityManager->getConnection()->executeStatement('TRUNCATE TABLE public.item_category');
+
+// Удаляем сущности (через DQL можно DELETE)
+        $entityManager->createQuery('DELETE FROM App\Entity\Item')->execute();
+        $entityManager->createQuery('DELETE FROM App\Entity\Category')->execute();
 
         // 2️⃣ Категории
 
         // Каталог
         $rootCategory = new Category();
         $rootCategory->setName('Каталог')
-            ->setPublishState(CategoryPublishStateEnum::ACTIVE)
-            ->setUrl('/catalog');
+            ->setPublishState(CategoryPublishStateEnum::ACTIVE);
         $entityManager->persist($rootCategory);
         $entityManager->flush();
-        dd(1);
 
         $rootCategory = $categoryRepository->findOneBy(['url' => '/catalog']);
         // Подготовим массив для удобства генерации товаров

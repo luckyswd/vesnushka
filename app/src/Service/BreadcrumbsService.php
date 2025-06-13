@@ -7,9 +7,14 @@ use App\Entity\Item;
 
 class BreadcrumbsService
 {
-    public static function generateBreadcrumbsString(Item|Category $entity): string
+    public static function generateBreadcrumbs(Item|Category $entity): array
     {
-        $breadcrumbs = ['Главная'];
+        $breadcrumbs = [
+            [
+                'link' => '/',
+                'text' => 'Главная',
+            ],
+        ];
 
         if ($entity instanceof Category) {
             $breadcrumbs = array_merge($breadcrumbs, self::getCategoryBreadcrumbs($entity));
@@ -21,13 +26,17 @@ class BreadcrumbsService
             if (!$categories->isEmpty()) {
                 /** @var Category $category */
                 $category = $categories->first();
+
                 $breadcrumbs = array_merge($breadcrumbs, self::getCategoryBreadcrumbs($category));
             }
 
-            $breadcrumbs[] = $entity->getName();
+            $breadcrumbs[] = [
+                'link' => null,
+                'text' => $entity->getName(),
+            ];
         }
 
-        return implode(' / ', $breadcrumbs);
+        return $breadcrumbs;
     }
 
     private static function getCategoryBreadcrumbs(Category $category): array
@@ -37,7 +46,10 @@ class BreadcrumbsService
         $current = $category;
 
         while ($current !== null) {
-            array_unshift($breadcrumbs, $current->getName());
+            array_unshift($breadcrumbs, [
+                'link' => $current->getUrl(),
+                'text' => $current->getName(),
+            ]);
             $current = $current->getParent();
         }
 

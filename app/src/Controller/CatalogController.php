@@ -12,9 +12,7 @@ class CatalogController extends BaseController
     public function show(string $path, CatalogHandler $catalogHandler): Response
     {
         try {
-            $result = $catalogHandler($path);
-
-            return new Response($result);
+            return $catalogHandler($path);
         } catch (\Throwable $e) {
             throw $e;
         }

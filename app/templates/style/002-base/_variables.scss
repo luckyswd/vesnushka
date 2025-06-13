@@ -3,14 +3,16 @@ $colors: (
                 400: #ffffff,
         ),
         'black': (
-                400: #231f20,
+                400: #1E1E1E,
         ),
         'gray': (
-                400: #f3f3f3,
+                400: #ffffff00,
                 500: #868695,
+                600: #c8c8d1,
+                700: rgb(238, 238, 238),
         ),
         'orange': (
-                400: #ffc107,
+                400: #ff893e,
         ),
         'green': (
                 400: #059669,
@@ -24,4 +26,4 @@ $colors: (
     @return map-get(map-get($colors, $color), $shade);
 }
 
-$transition: all .3s ease-in-out;
+$transition: all .2s ease-in-out;

@@ -39,8 +39,8 @@ class Category extends BaseEntity
     #[ORM\Column(type: Types::STRING, length: 255)]
     private string $name;
 
-    #[ORM\Column(type: Types::STRING, length: 1024)]
-    private string $breadcrumbs;
+    #[ORM\Column(type: Types::JSON, nullable: false)]
+    private array $breadcrumbs = [];
 
     #[ORM\ManyToOne(targetEntity: Category::class, inversedBy: 'children')]
     #[ORM\JoinColumn(name: 'parent_id', referencedColumnName: 'guid', nullable: true, onDelete: 'SET NULL')]
@@ -136,12 +136,12 @@ class Category extends BaseEntity
         return $this->items;
     }
 
-    public function getBreadcrumbs(): string
+    public function getBreadcrumbs(): array
     {
         return $this->breadcrumbs;
     }
 
-    public function setBreadcrumbs(string $breadcrumbs): static
+    public function setBreadcrumbs(array $breadcrumbs): static
     {
         $this->breadcrumbs = $breadcrumbs;
 

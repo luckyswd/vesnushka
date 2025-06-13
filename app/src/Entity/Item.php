@@ -38,10 +38,10 @@ class Item extends BaseEntity
     #[ORM\Column(type: Types::STRING, length: 255)]
     private string $name;
 
-    #[ORM\Column(type: Types::STRING, length: 1024)]
-    private string $breadcrumbs;
+    #[ORM\Column(type: Types::JSON, nullable: false)]
+    private array $breadcrumbs = [];
 
-    #[ORM\ManyToMany(targetEntity: Category::class)]
+    #[ORM\ManyToMany(targetEntity: Category::class, inversedBy: 'items')]
     #[ORM\JoinTable(
         name: 'item_category',
         joinColumns: [new ORM\JoinColumn(name: 'item_id', referencedColumnName: 'guid')],
@@ -137,12 +137,12 @@ class Item extends BaseEntity
         return $this;
     }
 
-    public function getBreadcrumbs(): string
+    public function getBreadcrumbs(): array
     {
         return $this->breadcrumbs;
     }
 
-    public function setBreadcrumbs(string $breadcrumbs): static
+    public function setBreadcrumbs(array $breadcrumbs): static
     {
         $this->breadcrumbs = $breadcrumbs;
 

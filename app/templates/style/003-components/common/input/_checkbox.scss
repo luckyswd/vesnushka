@@ -1,0 +1,51 @@
+.input-checkbox {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    user-select: none;
+
+    .input-checkbox__box {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 18px;
+        height: 18px;
+        border: 1px solid color('gray', 600);
+        border-radius: 4px;
+    }
+
+    .icon {
+        display: none;
+
+        path {
+            fill: color('white', 400);
+        }
+    }
+
+    &.active {
+        .input-checkbox__box {
+            background-color: color('black', 400);
+            display: block;
+        }
+
+        .icon {
+            display: block;
+        }
+    }
+}
+
+.input-checkbox__input {
+    clip: rect(0 0 0 0);
+    border: 0;
+    height: 1px;
+    margin: -1px;
+    overflow: hidden;
+    padding: 0;
+    position: absolute;
+    width: 1px;
+}
+
+.input-checkbox__label {
+    cursor: pointer;
+}

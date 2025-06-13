@@ -1,0 +1,17 @@
+<div class="input-checkbox {% if checked %}active{% endif %}">
+    <input
+            type="checkbox"
+            id="{{ id }}"
+            {% if checked %}checked{% endif %}
+            class="input-checkbox__input"
+    />
+    <div class="input-checkbox__box">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" class="icon">
+            <path fill="currentColor"
+                  d="M12.707 5.293a1 1 0 0 1 0 1.414l-5 5a1 1 0 0 1-1.414 0l-3-3a1 1 0 0 1 1.414-1.414L7 9.586l4.293-4.293a1 1 0 0 1 1.414 0"></path>
+        </svg>
+    </div>
+    <label for="{{ id }}" class="input-checkbox__label">
+        {{ label }}
+    </label>
+</div>

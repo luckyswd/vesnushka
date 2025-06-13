@@ -2,7 +2,7 @@
 // BASE
 //-----------------------------------------------------------
 body {
-  @include body-18();
+  @include body-16();
   position: relative;
   background-color: color('gray', 400);
   height: 100%;
@@ -23,5 +23,14 @@ main {
   @include tablet() {
     padding-right: 20px;
     padding-left: 20px;
+  }
+}
+
+a {
+  text-decoration: none;
+  transition: $transition;
+
+  &:hover {
+    color: color('orange', 400);
   }
 }
