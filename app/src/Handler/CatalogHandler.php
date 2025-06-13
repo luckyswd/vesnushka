@@ -9,6 +9,7 @@ use App\Repository\CategoryRepository;
 use App\Repository\ItemRepository;
 use App\Service\CatalogService;
 use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Twig\Environment;
@@ -19,6 +20,7 @@ readonly class CatalogHandler
         private CategoryRepository $categoryRepository,
         private ItemRepository $itemRepository,
         private Environment $twig,
+        private RequestStack $requestStack,
     ) {
     }
 
@@ -90,18 +92,45 @@ readonly class CatalogHandler
     private function renderCategory(Category $category): string
     {
         $subCategories = $category->getChildren()->filter(
-            fn (Category $child) => CategoryPublishStateEnum::ACTIVE === $child->getPublishState()
+            fn (Category $child) =>
+                CategoryPublishStateEnum::ACTIVE === $child->getPublishState()
+                && $child->getItems()->count() > 0
         );
 
-        $items = $this->itemRepository->findByCategoryAndSubCategoriesWithBrands($category, $subCategories);
+        $resultItems = $this->itemRepository->findItemsByCategory($category);
+        $items = $resultItems['items'];
 
         $brands = [];
+        $attributes = [];
 
         /** @var Item $item */
         foreach ($items as $item) {
             $brand = $item->getBrand();
-            if (!in_array($brand, $brands, true)) {
-                $brands[] = $brand;
+            $brandGuid = $brand->getGuid();
+
+            if (!isset($brands[$brandGuid])) {
+                $brands[$brandGuid] = [
+                    'name' => $brand->getName(),
+                    'count' => 0,
+                ];
+            }
+
+            ++$brands[$brandGuid]['count'];
+
+            foreach ($item->getItemAttributes() as $itemAttribute) {
+                $attribute = $itemAttribute->getAttribute();
+                $attributeName = $attribute->getName();
+                $attributeValue = $itemAttribute->getValue();
+
+                if (!isset($attributes[$attributeName])) {
+                    $attributes[$attributeName] = [];
+                }
+
+                if (!isset($attributes[$attributeName][$attributeValue])) {
+                    $attributes[$attributeName][$attributeValue] = 0;
+                }
+
+                ++$attributes[$attributeName][$attributeValue];
             }
         }
 
@@ -111,6 +140,8 @@ readonly class CatalogHandler
             'subCategories' => $subCategories,
             'items' => $items,
             'brands' => $brands,
+            'attributes' => $attributes,
+            'itemsCount' => count($items),
         ]);
     }
 }

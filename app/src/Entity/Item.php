@@ -29,7 +29,7 @@ class Item extends BaseEntity
     #[ORM\Column(type: 'string', length: 50, enumType: ItemPublishStateEnum::class)]
     private ItemPublishStateEnum $publishState;
 
-    #[ORM\Column(type: 'string', length: 50, unique: true, options: ['comment' => 'Артикул товара'])]
+    #[ORM\Column(type: Types::STRING, length: 50, unique: true, options: ['comment' => 'Артикул товара'])]
     private string $sku;
 
     #[ORM\Column(type: Types::STRING, length: 255, unique: true)]
@@ -53,11 +53,15 @@ class Item extends BaseEntity
     #[ORM\JoinColumn(name: 'brand_guid', referencedColumnName: 'guid', nullable: false)]
     private Brand $brand;
 
+    #[ORM\OneToMany(targetEntity: ItemAttribute::class, mappedBy: 'item', cascade: ['persist', 'remove'])]
+    private Collection $itemAttributes;
+
     public function __construct()
     {
         parent::__construct();
 
         $this->categories = new ArrayCollection();
+        $this->itemAttributes = new ArrayCollection();
     }
 
     public function getGuid(): string
@@ -161,6 +165,24 @@ class Item extends BaseEntity
     public function setBrand(Brand $brand): self
     {
         $this->brand = $brand;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, ItemAttribute>
+     */
+    public function getItemAttributes(): Collection
+    {
+        return $this->itemAttributes;
+    }
+
+    public function addItemAttribute(ItemAttribute $itemAttribute): static
+    {
+        if (!$this->itemAttributes->contains($itemAttribute)) {
+            $this->itemAttributes->add($itemAttribute);
+            $itemAttribute->setItem($this);
+        }
 
         return $this;
     }

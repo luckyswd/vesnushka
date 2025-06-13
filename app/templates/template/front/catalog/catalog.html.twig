@@ -35,13 +35,28 @@
                         <div class="filter-inputs">
                             {% for brand in brands %}
                                 {% include 'template/common/input/_checkbox.html.twig' with {
-                                    id: 'checkbox-' ~ loop.index,
-                                    label: brand.name,
+                                    id: 'checkbox-brand-' ~ loop.index,
+                                    label: brand.name ~ ' (' ~ brand.count ~ ')',
                                     checked: false
                                 } %}
                             {% endfor %}
                         </div>
                     </div>
+
+                    {% for attributeName, attributeValues in attributes %}
+                        <div class="filter__wrap">
+                            <p class="filter-title">{{ attributeName }}</p>
+                            <div class="filter-inputs">
+                                {% for attributeValue, count in attributeValues %}
+                                    {% include 'template/common/input/_checkbox.html.twig' with {
+                                        id: 'checkbox-attribute-' ~ loop.index,
+                                        label: attributeValue ~ ' (' ~ count ~ ')',
+                                        checked: false
+                                    } %}
+                                {% endfor %}
+                            </div>
+                        </div>
+                    {% endfor %}
                 </div>
 
                 <div class="catalog__right">
@@ -53,6 +68,7 @@
                     </div>
 
                     <div class="catalog__items">
+                        <div>({{ itemsCount }})</div>
                         {% for item in items %}
                             <div class="catalog__item">
                                 <h2>{{ item.name }}</h2>

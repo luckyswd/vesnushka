@@ -9,8 +9,10 @@ use Symfony\Component\Routing\Attribute\Route;
 class CatalogController extends BaseController
 {
     #[Route('/catalog/{path}', name: 'app_catalog', requirements: ['path' => '.+'], defaults: ['path' => ''])]
-    public function show(string $path, CatalogHandler $catalogHandler): Response
-    {
+    public function show(
+        string $path,
+        CatalogHandler $catalogHandler,
+    ): Response {
         try {
             return $catalogHandler($path);
         } catch (\Throwable $e) {
