@@ -4,8 +4,9 @@ namespace App\Handler;
 
 use App\Entity\Category;
 use App\Entity\Item;
-use App\Enum\CategoryPublishStateEnum;
+use App\Repository\BrandRepository;
 use App\Repository\CategoryRepository;
+use App\Repository\ItemAttributeRepository;
 use App\Repository\ItemRepository;
 use App\Service\CatalogService;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -21,11 +22,14 @@ readonly class CatalogHandler
         private ItemRepository $itemRepository,
         private Environment $twig,
         private RequestStack $requestStack,
+        private BrandRepository $brandRepository,
+        private ItemAttributeRepository $itemAttributeRepository,
     ) {
     }
 
     public function __invoke(string $path): Response
     {
+        // 0. Если url catalog,
         if (empty($path)) {
             $category = $this->categoryRepository->findOneBy(['url' => Category::URL_CATALOG]);
 
@@ -91,36 +95,37 @@ readonly class CatalogHandler
 
     private function renderCategory(Category $category): string
     {
-        $subCategories = $category->getChildren()->filter(
-            fn (Category $child) =>
-                CategoryPublishStateEnum::ACTIVE === $child->getPublishState()
-                && $child->getItems()->count() > 0
-        );
+        $request = $this->requestStack->getCurrentRequest();
+        $page = max(1, (int) $request->get('page', 1));
 
-        $resultItems = $this->itemRepository->findItemsByCategory($category);
-        $items = $resultItems['items'];
+        $subCategories = $this->itemRepository->getSubCategoriesByCategory($category, 2);
+        $brands = $this->brandRepository->findBrands();
+        $itemsAttributes = $this->itemAttributeRepository->findItemAttributes();
 
-        $brands = [];
+        $items = $this->itemRepository->findItemsByCategory(category: $category);
+
         $attributes = [];
 
         /** @var Item $item */
         foreach ($items as $item) {
-            $brand = $item->getBrand();
-            $brandGuid = $brand->getGuid();
+            $brandGuid = $item['brand_guid'];
+            $itemGuid = $item['guid'];
+            $brand = $brands[$brandGuid];
 
             if (!isset($brands[$brandGuid])) {
                 $brands[$brandGuid] = [
-                    'name' => $brand->getName(),
+                    'name' => $brand['name'],
                     'count' => 0,
                 ];
             }
 
             ++$brands[$brandGuid]['count'];
 
-            foreach ($item->getItemAttributes() as $itemAttribute) {
-                $attribute = $itemAttribute->getAttribute();
-                $attributeName = $attribute->getName();
-                $attributeValue = $itemAttribute->getValue();
+            $itemAttrs = $itemsAttributes[$itemGuid];
+
+            foreach ($itemAttrs as $attr) {
+                $attributeName = $attr['name'];
+                $attributeValue = $attr['value'];
 
                 if (!isset($attributes[$attributeName])) {
                     $attributes[$attributeName] = [];

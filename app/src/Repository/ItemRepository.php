@@ -7,8 +7,6 @@ use App\Entity\Item;
 use App\Enum\CategoryPublishStateEnum;
 use App\Enum\ItemPublishStateEnum;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Doctrine\Common\Collections\Collection;
-use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -40,148 +38,113 @@ class ItemRepository extends ServiceEntityRepository
 
     public function findItemsByCategory(
         Category $category,
-        int $page = 1,
-        int $limit = 20,
-        ?float $minPrice = null,
-        ?float $maxPrice = null,
-        ?array $attributeGuids = [],
-        ?string $sortField = null,
-        ?string $sortDirection = null
     ): array {
+        $conn = $this->getEntityManager()->getConnection();
         $subCategories = $this->getSubCategoriesByCategory($category);
 
-        // === Base QB
-        $baseQb = $this->createBaseItemsQueryBuilder(
-            $subCategories,
-            $minPrice,
-            $maxPrice,
-            $attributeGuids
-        );
-
-        // === Count
-        $countQb = clone $baseQb;
-        $countQb->select('COUNT(DISTINCT i.guid)');
-        $totalCount = (int) $countQb->getQuery()->getSingleScalarResult();
-
-        // === Guids (for pagination)
-        $guidsQb = clone $baseQb;
-        $guidsQb
-            ->select('DISTINCT i.guid');
-
-        // Apply sorting
-//        if (in_array($sortField, ['price', 'name', 'createdAt']) && in_array(strtoupper($sortDirection), ['ASC', 'DESC'])) {
-//            $guidsQb->orderBy("i.$sortField", $sortDirection);
-//        } else {
-//            // Fallback sort
-//            $guidsQb->orderBy('i.createdAt', 'DESC');
-//        }
-
-        $guidsQb
-            ->setFirstResult(($page - 1) * $limit)
-            ->setMaxResults($limit);
-
-        $itemGuids = $guidsQb->getQuery()->getResult();
-        $itemGuids = array_column($itemGuids, 'guid');
-
-        if (empty($itemGuids)) {
-            // Нет подходящих товаров
-            return [
-                'totalCount' => $totalCount,
-                'items' => [],
-                'page' => $page,
-                'limit' => $limit,
-                'pagesCount' => (int) ceil($totalCount / $limit),
-            ];
-        }
-
-        // === Items loading
-        $itemsQb = $this->createQueryBuilder('i')
-            ->leftJoin('i.categories', 'c')
-            ->leftJoin('i.brand', 'b')
-            ->leftJoin('i.itemAttributes', 'ia')
-            ->leftJoin('ia.attribute', 'a')
-            ->addSelect('b, ia, a')
-            ->where('i.guid IN (:ITEM_GUIDS)')
-            ->setParameter('ITEM_GUIDS', $itemGuids);
-
-        $items = $itemsQb->getQuery()->getResult();
-
-        return [
-            'totalCount' => $totalCount,
-            'items' => $items,
-            'page' => $page,
-            'limit' => $limit,
-            'pagesCount' => (int) ceil($totalCount / $limit),
-        ];
-    }
-
-    private function createBaseItemsQueryBuilder(
-        array $subCategories,
-        ?float $minPrice = null,
-        ?float $maxPrice = null,
-        ?array $attributeGuids = []
-    ): QueryBuilder {
-        $qb = $this->createQueryBuilder('i')
-            ->leftJoin('i.categories', 'c')
-            ->leftJoin('i.itemAttributes', 'ia')
-            ->leftJoin('ia.attribute', 'a')
-            ->where('c IN (:SUB_CATEGORIES)')
-            ->andWhere('i.publishState IN (:PUBLISH_STATE)')
-            ->setParameter('SUB_CATEGORIES', $subCategories)
-            ->setParameter('PUBLISH_STATE', [
-                ItemPublishStateEnum::ACTIVE->value,
-                ItemPublishStateEnum::OUT_OF_STOCK->value
-            ]);
-
-        if ($minPrice !== null) {
-            $qb->andWhere('i.price >= :MIN_PRICE')
-                ->setParameter('MIN_PRICE', $minPrice);
-        }
-
-        if ($maxPrice !== null) {
-            $qb->andWhere('i.price <= :MAX_PRICE')
-                ->setParameter('MAX_PRICE', $maxPrice);
-        }
-
-        if (!empty($attributeGuids)) {
-            // Фильтр по атрибутам: только те товары, у которых есть хотя бы один указанный атрибут
-            $qb->andWhere('a.guid IN (:ATTRIBUTE_GUIDS)')
-                ->setParameter('ATTRIBUTE_GUIDS', $attributeGuids);
-        }
-
-        return $qb;
-    }
-
-    private function getSubCategoriesByCategory(Category $category): array
-    {
-        $conn = $this->getEntityManager()->getConnection();
-
-        $categoryGuidsSql = <<<SQL
-            WITH RECURSIVE category_tree AS (
-                SELECT guid
-                FROM category
-                WHERE guid = :categoryGuid
-                AND publish_state = :CATEGORY_PUBLISH_ACTIVE
-        
-                UNION ALL
-        
-                SELECT c.guid
-                FROM category c
-                INNER JOIN category_tree ct ON c.parent_id = ct.guid
-                WHERE c.publish_state = :CATEGORY_PUBLISH_ACTIVE
-            )
-            SELECT guid
-            FROM category_tree
+        $sql = <<<SQL
+            SELECT 
+                i.guid,
+                i.brand_guid,
+                i.name,
+                i.sku,
+                i.url,
+                i.breadcrumbs
+            FROM item i
+                     LEFT JOIN item_category ic ON i.guid = ic.item_guid
+                     LEFT JOIN category c ON c.guid = ic.category_guid
+            WHERE c.guid IN (:CATEGORY_GUIDS)
+              AND i.publish_state IN (:ITEM_PUBLISH_ACTIVE, :ITEM_PUBLISH_OUT_OF_STOCK)
         SQL;
 
-        $categoryGuids = $conn->executeQuery(
-            $categoryGuidsSql,
+        $items = $conn->executeQuery(
+            $sql,
             [
-                'categoryGuid' => $category->getGuid(),
-                'CATEGORY_PUBLISH_ACTIVE' => CategoryPublishStateEnum::ACTIVE->value,
+                'CATEGORY_GUIDS' => $subCategories,
+                'ITEM_PUBLISH_ACTIVE' => ItemPublishStateEnum::ACTIVE->value,
+                'ITEM_PUBLISH_OUT_OF_STOCK' => ItemPublishStateEnum::OUT_OF_STOCK->value,
+            ],
+            [
+                'CATEGORY_GUIDS' => \Doctrine\DBAL\Connection::PARAM_STR_ARRAY,
+                'ITEM_PUBLISH_ACTIVE' => \PDO::PARAM_STR,
+                'ITEM_PUBLISH_OUT_OF_STOCK' => \PDO::PARAM_STR,
             ]
-        )->fetchFirstColumn();
+        )->fetchAllAssociative();
 
-        return $categoryGuids;
+        return $items;
+    }
+
+    public function getSubCategoriesByCategory(Category $category, ?int $level = null): array
+    {
+        static $categorySubCategoriesCache = [];
+
+        $categoryGuid = $category->getGuid();
+
+        if (!isset($categorySubCategoriesCache[$categoryGuid])) {
+            $conn = $this->getEntityManager()->getConnection();
+
+            $categoryGuidsSql = <<<SQL
+                WITH RECURSIVE category_tree AS (
+                    SELECT 
+                        guid,
+                        name,
+                        url,
+                        1 AS level
+                    FROM category
+                    WHERE guid = :categoryGuid
+                    AND publish_state = :CATEGORY_PUBLISH_ACTIVE
+            
+                    UNION ALL
+            
+                    SELECT 
+                        c.guid,
+                        c.name,
+                        c.url,
+                        ct.level + 1
+                    FROM category c
+                    INNER JOIN category_tree ct ON c.parent_id = ct.guid
+                    WHERE c.publish_state = :CATEGORY_PUBLISH_ACTIVE
+                )
+                SELECT guid, name, url, level
+                FROM category_tree
+                ORDER BY level ASC
+            SQL;
+
+            $categoryGuidsWithLevels = $conn->executeQuery(
+                $categoryGuidsSql,
+                [
+                    'categoryGuid' => $categoryGuid,
+                    'CATEGORY_PUBLISH_ACTIVE' => CategoryPublishStateEnum::ACTIVE->value,
+                ]
+            )->fetchAllAssociative();
+
+            $structuredCategories = [];
+
+            foreach ($categoryGuidsWithLevels as $row) {
+                $structuredCategories[$row['level']][] = [
+                    'guid' => $row['guid'],
+                    'name' => $row['name'],
+                    'url' => $row['url'],
+                ];
+            }
+
+            $categorySubCategoriesCache[$categoryGuid] = $structuredCategories;
+        }
+
+        $structuredCategories = $categorySubCategoriesCache[$categoryGuid];
+
+        if (null !== $level) {
+            return $structuredCategories[$level] ?? [];
+        }
+
+        $allGuids = [];
+
+        foreach ($structuredCategories as $levelCategories) {
+            foreach ($levelCategories as $categoryRow) {
+                $allGuids[] = $categoryRow['guid'];
+            }
+        }
+
+        return $allGuids;
     }
 }

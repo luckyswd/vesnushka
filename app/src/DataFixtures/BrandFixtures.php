@@ -6,18 +6,38 @@ use App\Entity\Brand;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Bundle\FixturesBundle\FixtureGroupInterface;
 use Doctrine\Persistence\ObjectManager;
-use Faker\Factory;
 
 class BrandFixtures extends Fixture implements FixtureGroupInterface
 {
     public function load(ObjectManager $manager): void
     {
-        $faker = Factory::create();
+        $brands = [
+            'Laneige',
+            'Innisfree',
+            'Etude',
+            'Missha',
+            'Sulwhasoo',
+            'The Face Shop',
+            'Nature Republic',
+            'Holika Holika',
+            'Skinfood',
+            'Dr. Jart+',
+            'COSRX',
+            'Banila Co',
+            'Tony Moly',
+            'Mamonde',
+            'IOPE',
+            'Hera',
+            'Klairs',
+            'Belif',
+            'Too Cool For School',
+            'Pyunkang Yul',
+        ];
 
-        for ($i = 0; $i < 20; ++$i) {
+        foreach ($brands as $key => $brandName) {
             $brand = new Brand();
-            $brand->setName($faker->company);
-            $brand->setUrl($faker->slug);
+            $brand->setName($brandName);
+            $brand->setUrl('url_'.$key);
 
             $manager->persist($brand);
         }

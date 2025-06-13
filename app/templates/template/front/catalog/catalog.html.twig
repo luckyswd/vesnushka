@@ -1,83 +1,83 @@
 {% extends 'template/front/base.html.twig' %}
 
 {% block body %}
-    <section class="catalog">
-        <div class="container">
-            <ul class="catalog__breadcrumbs">
-                {% for breadcrumb in breadcrumbs %}
-                    <li class="catalog__breadcrumbs-item">
-                        {% if not loop.last %}
-                            <a href="{{ breadcrumb.link }}">{{ breadcrumb.text }}</a>
-                        {% else %}
-                            {{ breadcrumb.text }}
-                        {% endif %}
-                    </li>
-                {% endfor %}
-            </ul>
+{#    <section class="catalog">#}
+{#        <div class="container">#}
+{#            <ul class="catalog__breadcrumbs">#}
+{#                {% for breadcrumb in breadcrumbs %}#}
+{#                    <li class="catalog__breadcrumbs-item">#}
+{#                        {% if not loop.last %}#}
+{#                            <a href="{{ breadcrumb.link }}">{{ breadcrumb.text }}</a>#}
+{#                        {% else %}#}
+{#                            {{ breadcrumb.text }}#}
+{#                        {% endif %}#}
+{#                    </li>#}
+{#                {% endfor %}#}
+{#            </ul>#}
 
-            <div class="catalog__wrap">
-                <div class="catalog__left">
-                    {% if subCategories is not empty %}
-                        <div class="filter__wrap">
-                            <p class="filter-title">Подкатегории</p>
-                            <ul class="subcategories__list">
-                                {% for subCategory in subCategories %}
-                                    <li>
-                                        <a href="{{ subCategory.url }}">{{ subCategory.name }}</a>
-                                    </li>
-                                {% endfor %}
-                            </ul>
-                        </div>
-                    {% endif %}
+{#            <div class="catalog__wrap">#}
+{#                <div class="catalog__left">#}
+{#                    {% if subCategories is not empty %}#}
+{#                        <div class="filter__wrap">#}
+{#                            <p class="filter-title">Подкатегории</p>#}
+{#                            <ul class="subcategories__list">#}
+{#                                {% for subCategory in subCategories %}#}
+{#                                    <li>#}
+{#                                        <a href="{{ subCategory.url }}">{{ subCategory.name }}</a>#}
+{#                                    </li>#}
+{#                                {% endfor %}#}
+{#                            </ul>#}
+{#                        </div>#}
+{#                    {% endif %}#}
 
-                    <div class="filter__wrap">
-                        <p class="filter-title">Бренды</p>
-                        <div class="filter-inputs">
-                            {% for brand in brands %}
-                                {% include 'template/common/input/_checkbox.html.twig' with {
-                                    id: 'checkbox-brand-' ~ loop.index,
-                                    label: brand.name ~ ' (' ~ brand.count ~ ')',
-                                    checked: false
-                                } %}
-                            {% endfor %}
-                        </div>
-                    </div>
+{#                    <div class="filter__wrap">#}
+{#                        <p class="filter-title">Бренды</p>#}
+{#                        <div class="filter-inputs">#}
+{#                            {% for brand in brands %}#}
+{#                                {% include 'template/common/input/_checkbox.html.twig' with {#}
+{#                                    id: 'checkbox-brand-' ~ loop.index,#}
+{#                                    label: brand.name ~ ' (' ~ brand.count ~ ')',#}
+{#                                    checked: false#}
+{#                                } %}#}
+{#                            {% endfor %}#}
+{#                        </div>#}
+{#                    </div>#}
 
-                    {% for attributeName, attributeValues in attributes %}
-                        <div class="filter__wrap">
-                            <p class="filter-title">{{ attributeName }}</p>
-                            <div class="filter-inputs">
-                                {% for attributeValue, count in attributeValues %}
-                                    {% include 'template/common/input/_checkbox.html.twig' with {
-                                        id: 'checkbox-attribute-' ~ loop.index,
-                                        label: attributeValue ~ ' (' ~ count ~ ')',
-                                        checked: false
-                                    } %}
-                                {% endfor %}
-                            </div>
-                        </div>
-                    {% endfor %}
-                </div>
+{#                    {% for attributeName, attributeValues in attributes %}#}
+{#                        <div class="filter__wrap">#}
+{#                            <p class="filter-title">{{ attributeName }}</p>#}
+{#                            <div class="filter-inputs">#}
+{#                                {% for attributeValue, count in attributeValues %}#}
+{#                                    {% include 'template/common/input/_checkbox.html.twig' with #}{#}#}
+{#                                        id: 'checkbox-attribute-' ~ loop.index,#}
+{#                                        label: attributeValue ~ ' (' ~ count ~ ')',#}
+{#                                        checked: false#}
+{#                                    } %}#}
+{#                                {% endfor %}#}
+{#                            </div>#}
+{#                        </div>#}
+{#                    {% endfor %}#}
+{#                </div>#}
 
-                <div class="catalog__right">
-                    <h1>
-                        {{ category.name }}
-                    </h1>
-                    <div class="catalog__sort">
+{#                <div class="catalog__right">#}
+{#                    <h1>#}
+{#                        {{ category.name }}#}
+{#                    </h1>#}
+{#                    <div class="catalog__sort">#}
 
-                    </div>
+{#                    </div>#}
 
-                    <div class="catalog__items">
-                        <div>({{ itemsCount }})</div>
-                        {% for item in items %}
-                            <div class="catalog__item">
-                                <h2>{{ item.name }}</h2>
-                                <!-- Add more item details here if needed -->
-                            </div>
-                        {% endfor %}
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
+{#                    <div class="catalog__items">#}
+{#                        <div>({{ itemsCount }})</div>#}
+{#                        {% for item in items %}#}
+{#                            <div class="catalog__item">#}
+{#                                <h2>{{ item.name }}</h2>#}
+{#                                <!-- Add more item details here if needed -->#}
+{#                            </div>#}
+{#                        {% endfor %}#}
+{#                    </div>#}
+{#                </div>#}
+{#            </div>#}
+{#        </div>#}
+{#    </section>#}
 {% endblock %}

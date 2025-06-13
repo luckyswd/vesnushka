@@ -2,10 +2,11 @@
 
 namespace App\Entity;
 
+use App\Repository\AttributeRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Entity]
+#[ORM\Entity(repositoryClass: AttributeRepository::class)]
 class Attribute extends BaseEntity
 {
     #[ORM\Id]

@@ -22,6 +22,8 @@ use Doctrine\ORM\Mapping as ORM;
 )]
 class Category extends BaseEntity
 {
+    public const int LISTING_LIMIT = 20;
+
     public const string URL_CATALOG = '/catalog';
 
     #[ORM\Id]

@@ -5,20 +5,37 @@ namespace App\DataFixtures;
 use App\Entity\Attribute;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
-use Faker\Factory;
 
 class AttributeFixtures extends Fixture
 {
     public function load(ObjectManager $manager): void
     {
-        $faker = Factory::create();
+        $attributes = [
+            'Тип кожи' => 'skin_type',
+            'Назначение' => 'purpose',
+            'Форма выпуска' => 'product_form',
+            'Объем' => 'volume',
+            'Страна производства' => 'country_of_origin',
+            'Активные компоненты' => 'active_ingredients',
+            'SPF защита' => 'spf',
+            'Подходит для возраста' => 'age_range',
+            'Эффект' => 'effect',
+            'Цвет' => 'color',
+            'Тип продукта' => 'product_type',
+            'Тип упаковки' => 'packaging_type',
+        ];
 
-        for ($i = 0; $i < 15; ++$i) {
+        $i = 0;
+
+        foreach ($attributes as $name => $code) {
             $attribute = new Attribute();
-            $attribute->setName($faker->word());
-            $attribute->setCode('attribute_'.$i);
+            $attribute->setName($name);
+            $attribute->setCode($code);
+
             $manager->persist($attribute);
+
             $this->addReference('attribute_'.$i, $attribute);
+            ++$i;
         }
 
         $manager->flush();

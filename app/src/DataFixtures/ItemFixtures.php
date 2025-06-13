@@ -9,58 +9,89 @@ use App\Entity\Item;
 use App\Entity\ItemAttribute;
 use App\Enum\ItemPublishStateEnum;
 use Doctrine\Bundle\FixturesBundle\Fixture;
-use Doctrine\Common\DataFixtures\DependentFixtureInterface;
+use Doctrine\Bundle\FixturesBundle\FixtureGroupInterface;
 use Doctrine\Persistence\ObjectManager;
-use Faker\Factory;
 
-class ItemFixtures extends Fixture implements DependentFixtureInterface
+class ItemFixtures extends Fixture implements FixtureGroupInterface
 {
+    private const BATCH_SIZE = 100; // Reduced batch size
+
     public function load(ObjectManager $manager): void
     {
-        $faker = Factory::create();
-
         $brands = $manager->getRepository(Brand::class)->findAll();
         $categories = $manager->getRepository(Category::class)->findAll();
         $attributes = $manager->getRepository(Attribute::class)->findAll();
 
-        for ($i = 0; $i < 70; ++$i) {
+        $countBrands = count($brands);
+        $countCategories = count($categories);
+        $countAttributes = count($attributes);
+
+        for ($i = 0; $i < 1000; ++$i) {
             $item = new Item();
-            $item->setName($faker->sentence(3));
-            $item->setSku($faker->unique()->ean13());
-            $item->setUrl($faker->slug());
-            $item->setPublishState($faker->randomElement(ItemPublishStateEnum::cases()));
-            $item->setBreadcrumbs([$faker->word() => $faker->url(), $faker->word() => $faker->url()]);
+            $item->setName('test_'.$i.rand(0, 9999999));
+            $item->setSku('test_'.$i.rand(0, 9999999));
+            $item->setPublishState(ItemPublishStateEnum::ACTIVE);
 
-            // Связываем с случайным брендом
-            $brand = $faker->randomElement($brands);
-            $item->setBrand($brand);
+            // Assign a brand
+            $item->setBrand($brands[rand(0, $countBrands - 1)]);
 
-            // Связываем со случайными категориями
-            $numCategories = $faker->numberBetween(1, 3);
-            $randomCategories = $faker->randomElements($categories, $numCategories);
+            // Assign multiple categories (1 to 3 randomly)
+            $numCategories = rand(1, 3);
+            $addedCategories = [];
+            for ($j = 0; $j < $numCategories; ++$j) {
+                do {
+                    $categoryIndex = rand(0, $countCategories - 1);
+                } while (in_array($categoryIndex, $addedCategories));
 
-            foreach ($randomCategories as $category) {
-                $item->addCategory($category);
+                $item->addCategory($categories[$categoryIndex]);
+                $addedCategories[] = $categoryIndex;
             }
 
-            $itemAttribute = new ItemAttribute();
-            $itemAttribute->setItem($item)
-                ->setAttribute($faker->randomElement($attributes))
-                ->setValue($faker->sentence(2));
+            // Assign multiple attributes (2 to 5 randomly)
+            $numAttributes = rand(2, 5);
+            $addedAttributes = [];
+            for ($k = 0; $k < $numAttributes; ++$k) {
+                do {
+                    $attributeIndex = rand(0, $countAttributes - 1);
+                } while (in_array($attributeIndex, $addedAttributes));
 
-            $manager->persist($itemAttribute);
+                $itemAttribute = new ItemAttribute();
+                $itemAttribute->setItem($item)
+                    ->setAttribute($attributes[$attributeIndex])
+                    ->setValue('test_attr_'.$i.rand(0, 9999999).'_'.$k);
+
+                $manager->persist($itemAttribute);
+                $addedAttributes[] = $attributeIndex;
+            }
+
             $manager->persist($item);
-            $this->addReference('item_'.$i, $item);
+
+            if (0 === $i % self::BATCH_SIZE && $i > 0) {
+                $manager->flush();
+                $manager->clear();
+
+                // Clear the arrays holding Brands, Categories and Attributes
+                unset($brands, $categories, $attributes);
+
+                // Re-fetch repositories and counts
+                $brands = $manager->getRepository(Brand::class)->findAll();
+                $categories = $manager->getRepository(Category::class)->findAll();
+                $attributes = $manager->getRepository(Attribute::class)->findAll();
+
+                $countBrands = count($brands);
+                $countCategories = count($categories);
+                $countAttributes = count($attributes);
+
+                echo "Inserted $i items\n";
+            }
         }
 
         $manager->flush();
+        $manager->clear(); // Clear at the end too
     }
 
-    public function getDependencies(): array
+    public static function getGroups(): array
     {
-        return [
-            BrandFixtures::class,
-            CategoryFixtures::class,
-        ];
+        return ['items'];
     }
 }
