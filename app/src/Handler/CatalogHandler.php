@@ -6,7 +6,6 @@ use App\Entity\Category;
 use App\Entity\Item;
 use App\Repository\BrandRepository;
 use App\Repository\CategoryRepository;
-use App\Repository\ItemAttributeRepository;
 use App\Repository\ItemRepository;
 use App\Service\CatalogService;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -23,7 +22,6 @@ readonly class CatalogHandler
         private Environment $twig,
         private RequestStack $requestStack,
         private BrandRepository $brandRepository,
-        private ItemAttributeRepository $itemAttributeRepository,
     ) {
     }
 
@@ -100,7 +98,6 @@ readonly class CatalogHandler
 
         $subCategories = $this->itemRepository->getSubCategoriesByCategory($category, 2);
         $brands = $this->brandRepository->findBrands();
-        $itemsAttributes = $this->itemAttributeRepository->findItemAttributes();
 
         $items = $this->itemRepository->findItemsByCategory(category: $category);
 
@@ -121,22 +118,22 @@ readonly class CatalogHandler
 
             ++$brands[$brandGuid]['count'];
 
-            $itemAttrs = $itemsAttributes[$itemGuid];
+//            $itemAttrs = $itemsAttributes[$itemGuid];
 
-            foreach ($itemAttrs as $attr) {
-                $attributeName = $attr['name'];
-                $attributeValue = $attr['value'];
-
-                if (!isset($attributes[$attributeName])) {
-                    $attributes[$attributeName] = [];
-                }
-
-                if (!isset($attributes[$attributeName][$attributeValue])) {
-                    $attributes[$attributeName][$attributeValue] = 0;
-                }
-
-                ++$attributes[$attributeName][$attributeValue];
-            }
+//            foreach ($itemAttrs as $attr) {
+//                $attributeName = $attr['name'];
+//                $attributeValue = $attr['value'];
+//
+//                if (!isset($attributes[$attributeName])) {
+//                    $attributes[$attributeName] = [];
+//                }
+//
+//                if (!isset($attributes[$attributeName][$attributeValue])) {
+//                    $attributes[$attributeName][$attributeValue] = 0;
+//                }
+//
+//                ++$attributes[$attributeName][$attributeValue];
+//            }
         }
 
         return $this->twig->render('template/front/catalog/catalog.html.twig', [

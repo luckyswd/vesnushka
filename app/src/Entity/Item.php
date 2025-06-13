@@ -41,6 +41,9 @@ class Item extends BaseEntity
     #[ORM\Column(type: Types::JSON, nullable: false)]
     private array $breadcrumbs = [];
 
+    #[ORM\Column(type: Types::JSON, nullable: false, options: ['comment' => 'Атрибуты товара (хранятся в jsonb)'])]
+    private array $attributes = [];
+
     #[ORM\ManyToMany(targetEntity: Category::class, inversedBy: 'items')]
     #[ORM\JoinTable(
         name: 'item_category',
@@ -53,15 +56,18 @@ class Item extends BaseEntity
     #[ORM\JoinColumn(name: 'brand_guid', referencedColumnName: 'guid', nullable: false)]
     private Brand $brand;
 
-    #[ORM\OneToMany(targetEntity: ItemAttribute::class, mappedBy: 'item', cascade: ['persist', 'remove'])]
-    private Collection $itemAttributes;
+    #[ORM\OneToMany(targetEntity: ItemPrice::class, mappedBy: 'item', cascade: ['persist', 'remove'])]
+    private Collection $prices;
+
+    #[ORM\Column(type: Types::INTEGER)]
+    private int $stock = 0;
 
     public function __construct()
     {
         parent::__construct();
 
         $this->categories = new ArrayCollection();
-        $this->itemAttributes = new ArrayCollection();
+        $this->prices = new ArrayCollection();
     }
 
     public function getGuid(): string
@@ -157,6 +163,18 @@ class Item extends BaseEntity
         return $this;
     }
 
+    public function getAttributes(): array
+    {
+        return $this->attributes;
+    }
+
+    public function setAttributes(array $attributes): static
+    {
+        $this->attributes = $attributes;
+
+        return $this;
+    }
+
     public function getBrand(): Brand
     {
         return $this->brand;
@@ -169,20 +187,19 @@ class Item extends BaseEntity
         return $this;
     }
 
-    /**
-     * @return Collection<int, ItemAttribute>
-     */
-    public function getItemAttributes(): Collection
+    public function getPrices(): Collection
     {
-        return $this->itemAttributes;
+        return $this->prices;
     }
 
-    public function addItemAttribute(ItemAttribute $itemAttribute): static
+    public function getStock(): int
     {
-        if (!$this->itemAttributes->contains($itemAttribute)) {
-            $this->itemAttributes->add($itemAttribute);
-            $itemAttribute->setItem($this);
-        }
+        return $this->stock;
+    }
+
+    public function setStock(int $stock): self
+    {
+        $this->stock = $stock;
 
         return $this;
     }
