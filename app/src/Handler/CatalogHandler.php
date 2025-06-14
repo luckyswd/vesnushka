@@ -4,6 +4,7 @@ namespace App\Handler;
 
 use App\Entity\Category;
 use App\Entity\Item;
+use App\Enum\CurrencyEnum;
 use App\Repository\BrandRepository;
 use App\Repository\CategoryRepository;
 use App\Repository\ItemRepository;
@@ -95,55 +96,92 @@ readonly class CatalogHandler
     {
         $request = $this->requestStack->getCurrentRequest();
         $page = max(1, (int) $request->get('page', 1));
+        $limit = Category::LISTING_LIMIT;
+        $offset = ($page - 1) * $limit;
 
+        // Загрузка данных
         $subCategories = $this->itemRepository->getSubCategoriesByCategory($category, 2);
-        $brands = $this->brandRepository->findBrands();
+        $brandList = $this->brandRepository->findBrands();
+        $allItems = $this->itemRepository->findItemsByCategory($category);
 
-        $items = $this->itemRepository->findItemsByCategory(category: $category);
+        // Фильтры из запроса
+        $priceFilter = $request->get('price', []);
+        $attributeFilter = $request->get('attributes', []);
 
-        $attributes = [];
+        $filteredItems = [];
+        $brandStats = [];
+        $attributeStats = [];
 
-        /** @var Item $item */
-        foreach ($items as $item) {
-            $brandGuid = $item['brand_guid'];
-            $itemGuid = $item['guid'];
-            $brand = $brands[$brandGuid];
+        foreach ($allItems as $item) {
+            $priceData = json_decode($item['price'], true);
+            $attrData = json_decode($item['attributes'], true);
 
-            if (!isset($brands[$brandGuid])) {
-                $brands[$brandGuid] = [
-                    'name' => $brand['name'],
-                    'count' => 0,
-                ];
+            // --- Фильтрация по цене ---
+            if (!empty($priceFilter)) {
+                $price = isset($priceData[CurrencyEnum::BYN->value]) ? $priceData[CurrencyEnum::BYN->value] / 100 : null;
+                $min = $priceFilter['min'] ?? null;
+                $max = $priceFilter['max'] ?? null;
+
+                if (!is_numeric($price) || (isset($min) && $price < $min) || (isset($max) && $price > $max)) {
+                    continue;
+                }
             }
 
-            ++$brands[$brandGuid]['count'];
+            // --- Фильтрация по атрибутам ---
+            $matched = true;
 
-//            $itemAttrs = $itemsAttributes[$itemGuid];
+            foreach ($attributeFilter as $attr => $value) {
+                if (!isset($attrData[$attr]) || $attrData[$attr] !== $value) {
+                    $matched = false;
 
-//            foreach ($itemAttrs as $attr) {
-//                $attributeName = $attr['name'];
-//                $attributeValue = $attr['value'];
-//
-//                if (!isset($attributes[$attributeName])) {
-//                    $attributes[$attributeName] = [];
-//                }
-//
-//                if (!isset($attributes[$attributeName][$attributeValue])) {
-//                    $attributes[$attributeName][$attributeValue] = 0;
-//                }
-//
-//                ++$attributes[$attributeName][$attributeValue];
-//            }
+                    break;
+                }
+            }
+
+            if (!$matched) {
+                continue;
+            }
+
+            $filteredItems[] = $item;
+
+            // --- Сбор статистики по брендам ---
+            $brandGuid = $item['brand_guid'];
+            $brandStats[$brandGuid]['name'] = $brandList[$brandGuid]['name'];
+            $brandStats[$brandGuid]['count'] = ($brandStats[$brandGuid]['count'] ?? 0) + 1;
+
+            // --- Сбор статистики по атрибутам ---
+            foreach ($attrData as $name => $value) {
+                $attributeStats[$name][$value] = ($attributeStats[$name][$value] ?? 0) + 1;
+            }
+        }
+
+        // Пагинация
+        $paginatedItems = array_slice($filteredItems, $offset, $limit);
+        $items = [];
+
+        foreach ($paginatedItems as $item) {
+            $items[] = [
+                'guid' => $item['guid'],
+                'name' => $item['name'],
+                'sku' => $item['sku'],
+                'url' => $item['url'],
+                'price' => json_decode($item['price'], true),
+                'brand' => $brandStats[$item['brand_guid']]['name'] ?? 'Unknown',
+            ];
         }
 
         return $this->twig->render('template/front/catalog/catalog.html.twig', [
             'category' => $category,
             'breadcrumbs' => $category->getBreadcrumbs(),
-            'subCategories' => $subCategories,
             'items' => $items,
-            'brands' => $brands,
-            'attributes' => $attributes,
-            'itemsCount' => count($items),
+            'itemsCount' => count($filteredItems),
+            'currentPage' => $page,
+            'totalPages' => ceil(count($filteredItems) / $limit),
+            'filters' => [
+                'subCategories' => $subCategories,
+                'brands' => $brandStats,
+                'attributes' => $attributeStats,
+            ],
         ]);
     }
 }

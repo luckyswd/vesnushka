@@ -16,6 +16,8 @@ use Doctrine\ORM\Mapping as ORM;
     name: 'item',
     indexes: [
         new ORM\Index(name: 'idx_item_publish_state', columns: ['publish_state']),
+        new ORM\Index(name: 'idx_item_sku', columns: ['sku']),
+        new ORM\Index(name: 'idx_item_url', columns: ['url']),
     ]
 )]
 class Item extends BaseEntity
@@ -44,6 +46,9 @@ class Item extends BaseEntity
     #[ORM\Column(type: Types::JSON, nullable: false, options: ['comment' => 'Атрибуты товара (хранятся в jsonb)'])]
     private array $attributes = [];
 
+    #[ORM\Column(type: Types::JSON, nullable: false, options: ['comment' => 'Цены товара (хранятся в jsonb)'])]
+    private array $price = [];
+
     #[ORM\ManyToMany(targetEntity: Category::class, inversedBy: 'items')]
     #[ORM\JoinTable(
         name: 'item_category',
@@ -56,9 +61,6 @@ class Item extends BaseEntity
     #[ORM\JoinColumn(name: 'brand_guid', referencedColumnName: 'guid', nullable: false)]
     private Brand $brand;
 
-    #[ORM\OneToMany(targetEntity: ItemPrice::class, mappedBy: 'item', cascade: ['persist', 'remove'])]
-    private Collection $prices;
-
     #[ORM\Column(type: Types::INTEGER)]
     private int $stock = 0;
 
@@ -67,7 +69,6 @@ class Item extends BaseEntity
         parent::__construct();
 
         $this->categories = new ArrayCollection();
-        $this->prices = new ArrayCollection();
     }
 
     public function getGuid(): string
@@ -187,11 +188,6 @@ class Item extends BaseEntity
         return $this;
     }
 
-    public function getPrices(): Collection
-    {
-        return $this->prices;
-    }
-
     public function getStock(): int
     {
         return $this->stock;
@@ -202,5 +198,15 @@ class Item extends BaseEntity
         $this->stock = $stock;
 
         return $this;
+    }
+
+    public function getPrice(): array
+    {
+        return $this->price;
+    }
+
+    public function setPrice(array $price): void
+    {
+        $this->price = $price;
     }
 }

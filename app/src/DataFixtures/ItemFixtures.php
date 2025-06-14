@@ -27,7 +27,7 @@ class ItemFixtures extends Fixture implements FixtureGroupInterface
         $countCategories = count($categories);
         $countAttributes = count($attributes);
 
-        for ($i = 0; $i < 500; ++$i) {
+        for ($i = 0; $i < 1000; ++$i) {
             $item = new Item();
             $item->setName('test_'.$i.rand(0, 9999999));
             $item->setSku('test_'.$i.rand(0, 9999999));
@@ -48,15 +48,29 @@ class ItemFixtures extends Fixture implements FixtureGroupInterface
                 $addedCategories[] = $categoryIndex;
             }
 
-            foreach (PriceTypeEnum::cases() as $priceType) {
-                $itemPrice = new ItemPrice();
-                $itemPrice->setItem($item)
-                    ->setPrice(rand(0, 100000))
-                    ->setCurrency(CurrencyEnum::BYN)
-                    ->setPriceType($priceType);
+            // Add attributes
+            $itemAttributes = [];
+            $numAttributes = rand(3, 7); // Случайное количество атрибутов от 3 до 7
+            $addedAttributes = [];
+            for ($j = 0; $j < $numAttributes; ++$j) {
+                do {
+                    $attributeIndex = rand(0, $countAttributes - 1);
+                } while (in_array($attributeIndex, $addedAttributes));
 
-                $manager->persist($itemPrice);
+                $attribute = $attributes[$attributeIndex];
+                $itemAttributes[$attribute->getCode()] = $this->generateRandomAttributeValue($attribute->getCode());
+                $addedAttributes[] = $attributeIndex;
             }
+            $item->setAttributes($itemAttributes);
+
+            $prices = [];
+            foreach (PriceTypeEnum::cases() as $priceType) {
+                $prices[$priceType->value] = [];
+                foreach (CurrencyEnum::cases() as $currency) {
+                    $prices[$priceType->value][$currency->value] = rand(0, 1000);
+                }
+            }
+            $item->setPrice($prices);
 
             $manager->persist($item);
         }
@@ -67,5 +81,37 @@ class ItemFixtures extends Fixture implements FixtureGroupInterface
     public static function getGroups(): array
     {
         return ['items'];
+    }
+
+    private function generateRandomAttributeValue(string $attributeCode): string
+    {
+        switch ($attributeCode) {
+            case 'skin_type':
+                return ['Нормальная', 'Сухая', 'Жирная', 'Комбинированная'][array_rand(['Нормальная', 'Сухая', 'Жирная', 'Комбинированная'])];
+            case 'purpose':
+                return ['Увлажнение', 'Питание', 'Очищение', 'Защита'][array_rand(['Увлажнение', 'Питание', 'Очищение', 'Защита'])];
+            case 'product_form':
+                return ['Крем', 'Гель', 'Лосьон', 'Маска'][array_rand(['Крем', 'Гель', 'Лосьон', 'Маска'])];
+            case 'volume':
+                return rand(30, 500) . ' мл';
+            case 'country_of_origin':
+                return ['Франция', 'Корея', 'Япония', 'США', 'Германия'][array_rand(['Франция', 'Корея', 'Япония', 'США', 'Германия'])];
+            case 'active_ingredients':
+                return ['Гиалуроновая кислота', 'Витамин C', 'Ретинол', 'Коллаген'][array_rand(['Гиалуроновая кислота', 'Витамин C', 'Ретинол', 'Коллаген'])];
+            case 'spf':
+                return 'SPF ' . rand(15, 50);
+            case 'age_range':
+                return rand(18, 60) . '+';
+            case 'effect':
+                return ['Антивозрастной', 'Матирующий', 'Осветляющий', 'Успокаивающий'][array_rand(['Антивозрастной', 'Матирующий', 'Осветляющий', 'Успокаивающий'])];
+            case 'color':
+                return ['Бесцветный', 'Розовый', 'Бежевый', 'Зеленый'][array_rand(['Бесцветный', 'Розовый', 'Бежевый', 'Зеленый'])];
+            case 'product_type':
+                return ['Крем для лица', 'Сыворотка', 'Тоник', 'Пенка для умывания'][array_rand(['Крем для лица', 'Сыворотка', 'Тоник', 'Пенка для умывания'])];
+            case 'packaging_type':
+                return ['Тюбик', 'Флакон', 'Банка', 'Спрей'][array_rand(['Тюбик', 'Флакон', 'Банка', 'Спрей'])];
+            default:
+                return 'Значение';
+        }
     }
 }

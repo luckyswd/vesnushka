@@ -36,28 +36,31 @@ class ItemRepository extends ServiceEntityRepository
             ->getOneOrNullResult();
     }
 
-    public function findItemsByCategory(
-        Category $category,
-    ): array {
+    public function findItemsByCategory(Category $category): \Traversable
+    {
         $conn = $this->getEntityManager()->getConnection();
         $subCategories = $this->getSubCategoriesByCategory($category);
 
         $sql = <<<SQL
-            SELECT 
+            SELECT DISTINCT ON (i.guid)
                 i.guid,
                 i.brand_guid,
                 i.name,
                 i.sku,
                 i.url,
-                i.breadcrumbs
+                i.breadcrumbs,
+                i.stock,
+                i.attributes,
+                i.price->'retail' AS price
             FROM item i
-                     LEFT JOIN item_category ic ON i.guid = ic.item_guid
-                     LEFT JOIN category c ON c.guid = ic.category_guid
+                INNER JOIN item_category ic ON i.guid = ic.item_guid
+                INNER JOIN category c ON c.guid = ic.category_guid
             WHERE c.guid IN (:CATEGORY_GUIDS)
               AND i.publish_state IN (:ITEM_PUBLISH_ACTIVE, :ITEM_PUBLISH_OUT_OF_STOCK)
+            ORDER BY i.guid;
         SQL;
 
-        $items = $conn->executeQuery(
+        $stmt = $conn->executeQuery(
             $sql,
             [
                 'CATEGORY_GUIDS' => $subCategories,
@@ -68,10 +71,12 @@ class ItemRepository extends ServiceEntityRepository
                 'CATEGORY_GUIDS' => \Doctrine\DBAL\Connection::PARAM_STR_ARRAY,
                 'ITEM_PUBLISH_ACTIVE' => \PDO::PARAM_STR,
                 'ITEM_PUBLISH_OUT_OF_STOCK' => \PDO::PARAM_STR,
-            ]
-        )->fetchAllAssociative();
+            ],
+        );
 
-        return $items;
+        while ($row = $stmt->fetchAssociative()) {
+            yield $row;
+        }
     }
 
     public function getSubCategoriesByCategory(Category $category, ?int $level = null): array
