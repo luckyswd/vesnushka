@@ -5,3 +5,14 @@
 a {
 
 }
+
+h1 {
+    font-family: "Roboto Bold", serif;
+    font-size: 28px;
+    line-height: normal;
+    color: color('black', 400);
+
+    @include tablet() {
+        font-size: 20px;
+    }
+}

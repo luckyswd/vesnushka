@@ -64,6 +64,9 @@ class Item extends BaseEntity
     #[ORM\Column(type: Types::INTEGER)]
     private int $stock = 0;
 
+    #[ORM\Column(type: Types::INTEGER)]
+    private int $rank = 0;
+
     public function __construct()
     {
         parent::__construct();
@@ -181,7 +184,7 @@ class Item extends BaseEntity
         return $this->brand;
     }
 
-    public function setBrand(Brand $brand): self
+    public function setBrand(Brand $brand): static
     {
         $this->brand = $brand;
 
@@ -193,7 +196,7 @@ class Item extends BaseEntity
         return $this->stock;
     }
 
-    public function setStock(int $stock): self
+    public function setStock(int $stock): static
     {
         $this->stock = $stock;
 
@@ -205,8 +208,22 @@ class Item extends BaseEntity
         return $this->price;
     }
 
-    public function setPrice(array $price): void
+    public function setPrice(array $price): static
     {
         $this->price = $price;
+
+        return $this;
+    }
+
+    public function getRank(): int
+    {
+        return $this->rank;
+    }
+
+    public function setRank(int $rank): static
+    {
+        $this->rank = $rank;
+
+        return $this;
     }
 }

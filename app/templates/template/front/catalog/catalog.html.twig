@@ -87,15 +87,32 @@
                 </div>
 
                 <div class="catalog__right">
-                    <h1>
-                        {{ category.name }}
-                    </h1>
-                    <div class="catalog__sort">
+                    <div class="catalog__right-top">
+                        <div class="title">
+                            <h1>
+                                {{ category.name }}
+                            </h1>
+                            <span class="catalog__right-items-count"> {{ itemsCount }} </span>
+                        </div>
 
+                        <div class="catalog__sort">
+                            {% include 'template/common/input/_select.html.twig' with {
+                                id: 'sort-select',
+                                name: 'sort',
+                                options: {
+                                    'popular': 'По популярности',
+                                    'cheap': 'По возрастанию цены',
+                                    'expensive': 'По убыванию цены',
+                                    'new': 'По новинкам'
+                                },
+                                selected: 'popular'
+                            } %}
+                        </div>
                     </div>
 
+
+
                     <div class="catalog__items">
-                        <div>({{ itemsCount }})</div>
                         {% for item in items %}
                             <div class="catalog__item">
                                 <h2>{{ item.name }}</h2>

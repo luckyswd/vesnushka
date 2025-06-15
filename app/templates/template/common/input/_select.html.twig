@@ -1,0 +1,38 @@
+{% set id = id|default('select-' ~ random()) %}
+
+<div class="custom-select-wrap">
+    {% if label is defined and label is not empty %}
+        <label for="{{ id }}" class="custom-select-label">{{ label }}</label>
+    {% endif %}
+    <div class="custom-select">
+        <select id="{{ id }}" class="custom-select-native">
+            {% if placeholder is defined %}
+                <option value="" {% if selected is not defined %}selected{% endif %} disabled>{{ placeholder }}</option>
+            {% endif %}
+            {% for value, option in options %}
+                <option value="{{ value }}" {% if selected is defined and selected == value %}selected{% endif %}>
+                    {{ option }}
+                </option>
+            {% endfor %}
+        </select>
+        <div class="custom-select-trigger">
+            <span class="custom-select-trigger-text">
+                {% if selected is defined %}
+                    {{ options[selected] }}
+                {% elseif placeholder is defined %}
+                    {{ placeholder }}
+                {% else %}
+                    {{ options|first }}
+                {% endif %}
+            </span>
+            <span class="custom-select-trigger-icon">
+
+            </span>
+        </div>
+        <ul class="custom-select-options">
+            {% for value, option in options %}
+                <li class="custom-select-option" data-value="{{ value }}">{{ option }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+</div>

@@ -108,7 +108,8 @@ readonly class CatalogHandler
         $priceFilter = $request->get('price', []);
         $attributeFilter = $request->get('attributes', []);
 
-        $filteredItems = [];
+        $items = [];
+        $matchedCount = 0;
         $brandStats = [];
         $attributeStats = [];
 
@@ -129,11 +130,9 @@ readonly class CatalogHandler
 
             // --- Фильтрация по атрибутам ---
             $matched = true;
-
             foreach ($attributeFilter as $attr => $value) {
                 if (!isset($attrData[$attr]) || $attrData[$attr] !== $value) {
                     $matched = false;
-
                     break;
                 }
             }
@@ -142,7 +141,8 @@ readonly class CatalogHandler
                 continue;
             }
 
-            $filteredItems[] = $item;
+            // Совпадающий товар
+            ++$matchedCount;
 
             // --- Сбор статистики по брендам ---
             $brandGuid = $item['brand_guid'];
@@ -153,35 +153,53 @@ readonly class CatalogHandler
             foreach ($attrData as $name => $value) {
                 $attributeStats[$name][$value] = ($attributeStats[$name][$value] ?? 0) + 1;
             }
-        }
 
-        // Пагинация
-        $paginatedItems = array_slice($filteredItems, $offset, $limit);
-        $items = [];
+            // Пропускаем до offset
+            if ($matchedCount <= $offset) {
+                continue;
+            }
 
-        foreach ($paginatedItems as $item) {
-            $items[] = [
-                'guid' => $item['guid'],
-                'name' => $item['name'],
-                'sku' => $item['sku'],
-                'url' => $item['url'],
-                'price' => json_decode($item['price'], true),
-                'brand' => $brandStats[$item['brand_guid']]['name'] ?? 'Unknown',
-            ];
+            // Заполняем только текущую страницу
+            if (count($items) < $limit) {
+                $items[] = [
+                    'guid' => $item['guid'],
+                    'name' => $item['name'],
+                    'sku' => $item['sku'],
+                    'url' => $item['url'],
+                    'price' => $priceData,
+                    'brand' => $brandStats[$brandGuid]['name'] ?? 'Unknown',
+                ];
+            }
         }
 
         return $this->twig->render('template/front/catalog/catalog.html.twig', [
             'category' => $category,
             'breadcrumbs' => $category->getBreadcrumbs(),
             'items' => $items,
-            'itemsCount' => count($filteredItems),
+            'itemsCount' => $this->formatItemsFound($matchedCount),
             'currentPage' => $page,
-            'totalPages' => ceil(count($filteredItems) / $limit),
+            'totalPages' => ceil($matchedCount / $limit),
             'filters' => [
                 'subCategories' => $subCategories,
                 'brands' => $brandStats,
                 'attributes' => $attributeStats,
             ],
         ]);
+    }
+
+    private function formatItemsFound(int $number): string
+    {
+        $mod10 = $number % 10;
+        $mod100 = $number % 100;
+
+        if ($mod10 === 1 && $mod100 !== 11) {
+            $word = 'товар';
+        } elseif (in_array($mod10, [2, 3, 4]) && !in_array($mod100, [12, 13, 14])) {
+            $word = 'товара';
+        } else {
+            $word = 'товаров';
+        }
+
+        return 'Найдено ' . $number . ' ' . $word;
     }
 }

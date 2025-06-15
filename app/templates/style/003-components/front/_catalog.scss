@@ -47,6 +47,24 @@
         }
     }
 
+    .catalog__right-top {
+        border-bottom: 1px solid color('gray', 700);
+        padding-bottom: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+
+        .title {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+
+            .catalog__right-items-count {
+                color: color('gray', 500);
+            }
+        }
+    }
+
     .filter__wrap {
         border-bottom: 1px solid color('gray', 700);
 
@@ -68,6 +86,11 @@
             flex-direction: column;
             gap: 8px;
             padding-bottom: 12px;
+        }
+
+        .show-more-button {
+            padding-bottom: 12px;
+            color: color('orange', 400);
         }
     }
 }
