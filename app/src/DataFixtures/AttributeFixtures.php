@@ -34,7 +34,7 @@ class AttributeFixtures extends Fixture
 
             $manager->persist($attribute);
 
-            $this->addReference('attribute_'.$i, $attribute);
+            $this->addReference('attribute_' . $i, $attribute);
             ++$i;
         }
 

@@ -16,6 +16,7 @@ class Brand extends BaseEntity
     #[ORM\CustomIdGenerator('doctrine.uuid_generator')]
     #[ORM\Column(type: Types::GUID, nullable: false)]
     private string $guid;
+
     #[ORM\Column(length: 255)]
     private string $name;
 
@@ -24,6 +25,10 @@ class Brand extends BaseEntity
 
     #[ORM\OneToMany(targetEntity: Item::class, mappedBy: 'brand')]
     private Collection $items;
+
+    #[ORM\ManyToOne(targetEntity: File::class)]
+    #[ORM\JoinColumn(name: 'image_guid', referencedColumnName: 'guid', nullable: true)]
+    private ?File $image = null;
 
     public function __construct()
     {
@@ -82,6 +87,18 @@ class Brand extends BaseEntity
             $this->items->add($item);
             $item->setBrand($this);
         }
+
+        return $this;
+    }
+
+    public function getImage(): ?File
+    {
+        return $this->image;
+    }
+
+    public function setImage(?File $image): self
+    {
+        $this->image = $image;
 
         return $this;
     }

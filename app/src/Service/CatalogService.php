@@ -8,6 +8,6 @@ class CatalogService
 {
     public static function getCatalogUrl(string $path): string
     {
-        return Category::URL_CATALOG.'/'.$path;
+        return Category::URL_CATALOG . '/' . $path;
     }
 }

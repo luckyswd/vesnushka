@@ -54,6 +54,10 @@ class Category extends BaseEntity
     #[ORM\ManyToMany(targetEntity: Item::class, mappedBy: 'categories')]
     private Collection $items;
 
+    #[ORM\ManyToOne(targetEntity: File::class)]
+    #[ORM\JoinColumn(name: 'image_guid', referencedColumnName: 'guid', nullable: true)]
+    private ?File $image = null;
+
     public function __construct()
     {
         parent::__construct();
@@ -146,6 +150,18 @@ class Category extends BaseEntity
     public function setBreadcrumbs(array $breadcrumbs): static
     {
         $this->breadcrumbs = $breadcrumbs;
+
+        return $this;
+    }
+
+    public function getImage(): ?File
+    {
+        return $this->image;
+    }
+
+    public function setImage(?File $image): self
+    {
+        $this->image = $image;
 
         return $this;
     }

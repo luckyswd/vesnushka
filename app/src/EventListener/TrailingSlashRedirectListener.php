@@ -25,10 +25,10 @@ class TrailingSlashRedirectListener
         if ('/' !== $pathInfo && str_ends_with($pathInfo, '/')) {
             $cleanPath = rtrim($pathInfo, '/');
 
-            $newUrl = $request->getSchemeAndHttpHost().$cleanPath;
+            $newUrl = $request->getSchemeAndHttpHost() . $cleanPath;
 
             if ($request->getQueryString()) {
-                $newUrl .= '?'.$request->getQueryString();
+                $newUrl .= '?' . $request->getQueryString();
             }
 
             $response = new RedirectResponse($newUrl, 301);

@@ -5,8 +5,11 @@ namespace App\Service;
 class TextService
 {
     public const int MODE_RU_EN = 1;
+
     public const int MODE_EN_RU = 2;
+
     public const int MODE_BOTH = 3;
+
     public const string DEFAULT_PATTERN = '/[^0-9A-Za-zА-Яа-яЁё-]/u';
 
     protected static array $baseReplaceTable = [

@@ -192,7 +192,7 @@ readonly class CatalogHandler
         $mod10 = $number % 10;
         $mod100 = $number % 100;
 
-        if ($mod10 === 1 && $mod100 !== 11) {
+        if (1 === $mod10 && 11 !== $mod100) {
             $word = 'товар';
         } elseif (in_array($mod10, [2, 3, 4]) && !in_array($mod100, [12, 13, 14])) {
             $word = 'товара';

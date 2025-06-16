@@ -37,7 +37,7 @@ class BrandFixtures extends Fixture implements FixtureGroupInterface
         foreach ($brands as $key => $brandName) {
             $brand = new Brand();
             $brand->setName($brandName);
-            $brand->setUrl('url_'.$key);
+            $brand->setUrl('url_' . $key);
 
             $manager->persist($brand);
         }

@@ -67,11 +67,24 @@ class Item extends BaseEntity
     #[ORM\Column(type: Types::INTEGER)]
     private int $rank = 0;
 
+    #[ORM\ManyToOne(targetEntity: File::class)]
+    #[ORM\JoinColumn(name: 'main_image_guid', referencedColumnName: 'guid', nullable: true)]
+    private ?File $mainImage = null;
+
+    #[ORM\ManyToMany(targetEntity: File::class)]
+    #[ORM\JoinTable(
+        name: 'item_images',
+        joinColumns: [new ORM\JoinColumn(name: 'item_guid', referencedColumnName: 'guid')],
+        inverseJoinColumns: [new ORM\JoinColumn(name: 'file_guid', referencedColumnName: 'guid')]
+    )]
+    private Collection $images;
+
     public function __construct()
     {
         parent::__construct();
 
         $this->categories = new ArrayCollection();
+        $this->images = new ArrayCollection();
     }
 
     public function getGuid(): string
@@ -223,6 +236,39 @@ class Item extends BaseEntity
     public function setRank(int $rank): static
     {
         $this->rank = $rank;
+
+        return $this;
+    }
+
+    public function getMainImage(): ?File
+    {
+        return $this->mainImage;
+    }
+
+    public function setMainImage(?File $mainImage): self
+    {
+        $this->mainImage = $mainImage;
+
+        return $this;
+    }
+
+    public function getImages(): Collection
+    {
+        return $this->images;
+    }
+
+    public function addImage(File $image): self
+    {
+        if (!$this->images->contains($image)) {
+            $this->images[] = $image;
+        }
+
+        return $this;
+    }
+
+    public function removeImage(File $image): self
+    {
+        $this->images->removeElement($image);
 
         return $this;
     }

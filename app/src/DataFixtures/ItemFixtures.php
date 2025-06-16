@@ -27,8 +27,8 @@ class ItemFixtures extends Fixture implements FixtureGroupInterface
 
         for ($i = 0; $i < 1000; ++$i) {
             $item = new Item();
-            $item->setName('test_'.$i.rand(0, 9999999));
-            $item->setSku('test_'.$i.rand(0, 9999999));
+            $item->setName('test_' . $i . rand(0, 9999999));
+            $item->setSku('test_' . $i . rand(0, 9999999));
             $item->setPublishState(ItemPublishStateEnum::ACTIVE);
 
             // Assign a brand
@@ -91,15 +91,15 @@ class ItemFixtures extends Fixture implements FixtureGroupInterface
             case 'product_form':
                 return ['Крем', 'Гель', 'Лосьон', 'Маска'][array_rand(['Крем', 'Гель', 'Лосьон', 'Маска'])];
             case 'volume':
-                return rand(30, 500).' мл';
+                return rand(30, 500) . ' мл';
             case 'country_of_origin':
                 return ['Франция', 'Корея', 'Япония', 'США', 'Германия'][array_rand(['Франция', 'Корея', 'Япония', 'США', 'Германия'])];
             case 'active_ingredients':
                 return ['Гиалуроновая кислота', 'Витамин C', 'Ретинол', 'Коллаген'][array_rand(['Гиалуроновая кислота', 'Витамин C', 'Ретинол', 'Коллаген'])];
             case 'spf':
-                return 'SPF '.rand(15, 50);
+                return 'SPF ' . rand(15, 50);
             case 'age_range':
-                return rand(18, 60).'+';
+                return rand(18, 60) . '+';
             case 'effect':
                 return ['Антивозрастной', 'Матирующий', 'Осветляющий', 'Успокаивающий'][array_rand(['Антивозрастной', 'Матирующий', 'Осветляющий', 'Успокаивающий'])];
             case 'color':
