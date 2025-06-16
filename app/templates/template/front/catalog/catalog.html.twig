@@ -110,14 +110,11 @@
                         </div>
                     </div>
 
-
-
                     <div class="catalog__items">
                         {% for item in items %}
-                            <div class="catalog__item">
-                                <h2>{{ item.name }}</h2>
-                                <!-- Add more item details here if needed -->
-                            </div>
+                            {% include 'template/front/components/item-card.html.twig' with {
+                                item: item,
+                            } %}
                         {% endfor %}
                     </div>
                 </div>

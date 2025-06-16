@@ -51,10 +51,12 @@ class ItemRepository extends ServiceEntityRepository
                 i.breadcrumbs,
                 i.stock,
                 i.attributes,
-                i.price->'retail' AS price
+                i.price->'retail' AS price,
+                f.path AS main_image_path
             FROM item i
                 INNER JOIN item_category ic ON i.guid = ic.item_guid
                 INNER JOIN category c ON c.guid = ic.category_guid
+                LEFT JOIN file f ON i.main_image_guid = f.guid
             WHERE c.guid IN (:CATEGORY_GUIDS)
               AND i.publish_state IN (:ITEM_PUBLISH_ACTIVE, :ITEM_PUBLISH_OUT_OF_STOCK)
             ORDER BY i.guid;

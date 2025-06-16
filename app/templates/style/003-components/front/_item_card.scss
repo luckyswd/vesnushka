@@ -1,0 +1,38 @@
+.item-card-wrap {
+    display: flex;
+    flex-direction: column;
+
+    .item-link {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        padding-bottom: 12px;
+
+        .card-image {
+            min-height: 300px;
+            border-radius: 8px;
+            overflow: hidden;
+
+            img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+            }
+        }
+
+        .item-price {
+            @include body-20-bold();
+        }
+
+        .item-name {
+            @include body-16();
+        }
+    }
+
+    .item-card-btn {
+
+        svg path {
+            stroke: color('white', 400);
+        }
+    }
+}

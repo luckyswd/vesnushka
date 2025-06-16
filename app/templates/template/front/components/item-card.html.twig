@@ -1,3 +1,20 @@
-<div class="item-card-wrap">
+{% import "template/front/components/picture.html.twig" as picture %}
 
+<div class="item-card-wrap">
+    <a class="item-link" href="{{ item.url }}">
+        <div class="card-image">
+            {{ picture.render(item.main_image_path, 300, 300, true, item.name) }}
+        </div>
+        <div class="item-name">
+            {{ item.name }}
+        </div>
+        <div class="item-price">
+            {{ item.price }} р.
+        </div>
+    </a>
+
+    <button class="item-card-btn btn" type="button">
+        {% include 'template/icon/cart.html.twig' %}
+        В корзину
+    </button>
 </div>

@@ -166,8 +166,9 @@ readonly class CatalogHandler
                     'name' => $item['name'],
                     'sku' => $item['sku'],
                     'url' => $item['url'],
-                    'price' => $priceData,
+                    'price' => $priceData[CurrencyEnum::BYN->value] / 100,
                     'brand' => $brandStats[$brandGuid]['name'] ?? 'Unknown',
+                    'main_image_path' => $item['main_image_path'],
                 ];
             }
         }

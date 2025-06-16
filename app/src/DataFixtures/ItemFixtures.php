@@ -5,6 +5,7 @@ namespace App\DataFixtures;
 use App\Entity\Attribute;
 use App\Entity\Brand;
 use App\Entity\Category;
+use App\Entity\File;
 use App\Entity\Item;
 use App\Enum\CurrencyEnum;
 use App\Enum\ItemPublishStateEnum;
@@ -12,9 +13,16 @@ use App\Enum\PriceTypeEnum;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Bundle\FixturesBundle\FixtureGroupInterface;
 use Doctrine\Persistence\ObjectManager;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
 class ItemFixtures extends Fixture implements FixtureGroupInterface
 {
+    private ParameterBagInterface $parameterBag;
+
+    public function __construct(ParameterBagInterface $parameterBag)
+    {
+        $this->parameterBag = $parameterBag;
+    }
     public function load(ObjectManager $manager): void
     {
         $brands = $manager->getRepository(Brand::class)->findAll();
@@ -48,7 +56,7 @@ class ItemFixtures extends Fixture implements FixtureGroupInterface
 
             // Add attributes
             $itemAttributes = [];
-            $numAttributes = rand(3, 7); // Случайное количество атрибутов от 3 до 7
+            $numAttributes = rand(3, 7);
             $addedAttributes = [];
             for ($j = 0; $j < $numAttributes; ++$j) {
                 do {
@@ -65,15 +73,36 @@ class ItemFixtures extends Fixture implements FixtureGroupInterface
             foreach (PriceTypeEnum::cases() as $priceType) {
                 $prices[$priceType->value] = [];
                 foreach (CurrencyEnum::cases() as $currency) {
-                    $prices[$priceType->value][$currency->value] = rand(0, 1000);
+                    $prices[$priceType->value][$currency->value] = rand(1000, 100000);
                 }
             }
             $item->setPrice($prices);
+
+            $mockFile = $this->createMockFile($manager);
+            $item->setMainImage($mockFile);
 
             $manager->persist($item);
         }
 
         $manager->flush();
+    }
+
+    private function createMockFile(ObjectManager $manager): File
+    {
+        $projectDir = $this->parameterBag->get('kernel.project_dir');
+        $mockImagePath = '/uploads/item/moock.png';
+        $fullPath = $projectDir . '/public' . $mockImagePath;
+
+        $file = new File();
+        $file->setFilename('moock.png');
+        $file->setOriginalFilename('moock.png');
+        $file->setMimeType('image/png');
+        $file->setSize(filesize($fullPath));
+        $file->setPath($mockImagePath);
+
+        $manager->persist($file);
+
+        return $file;
     }
 
     public static function getGroups(): array

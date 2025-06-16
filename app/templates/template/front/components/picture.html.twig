@@ -1,0 +1,12 @@
+{% macro render(url, width, height, lazy, alt) %}
+    <picture>
+        <source srcset="{{ url }}" type="image/webp">
+        <img
+            src="{{ url }}"
+            width="{{ width }}"
+            height="{{ height }}"
+            {% if lazy %}loading="lazy"{% endif %}
+            alt="{{ alt|default('') }}"
+        >
+    </picture>
+{% endmacro %}
