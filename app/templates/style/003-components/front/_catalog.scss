@@ -86,9 +86,15 @@
             padding-bottom: 12px;
         }
 
-        .filter-inputs {
+        .filter-checkbox {
             display: flex;
             flex-direction: column;
+            gap: 8px;
+            padding-bottom: 12px;
+        }
+
+        .filter-inputs {
+            display: flex;
             gap: 8px;
             padding-bottom: 12px;
         }

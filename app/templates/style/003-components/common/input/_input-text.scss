@@ -1,0 +1,14 @@
+.input-text {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 8px 10px;
+    border: 1px solid color('gray', 600);
+    border-radius: 8px;
+    width: 100%;
+
+    &::placeholder {
+        color: color('gray', 600);
+        opacity: 1;
+    }
+}

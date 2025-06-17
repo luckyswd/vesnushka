@@ -12,9 +12,32 @@
 {% endif %}
 
 <div class="filter__wrap">
+    <p class="filter-title">Цена р.</p>
+    <div class="filter-inputs" id="filters-price">
+        {% include 'template/common/input/_input-text.html.twig' with {
+            id: 'price_from',
+            placeholder: 'от',
+            class: 'input--price',
+            value: filters.minPrice ?? 0,
+            type: 'price',
+            data_value: 'from'
+        } %}
+
+        {% include 'template/common/input/_input-text.html.twig' with {
+            id: 'price_to',
+            placeholder: 'до',
+            class: 'input--price',
+            value: filters.maxPrice ?? 1000,
+            type: 'price',
+            data_value: 'to'
+        } %}
+    </div>
+</div>
+
+<div class="filter__wrap">
     <p class="filter-title">Бренды</p>
     {% set isExpandable = filters.brands|length > 5 %}
-    <div class="filter-inputs" id="filters-brands">
+    <div class="filter-checkbox" id="filters-brands">
         {% for brand in filters.brands %}
             {% set isHidden = loop.index > 5 %}
             <div class="{{ isHidden ? 'hidden extra-filter' }}">
@@ -45,7 +68,7 @@
     <div class="filter__wrap">
         <p class="filter-title">{{ attributeName }}</p>
 
-        <div class="filter-inputs" id="filters-{{ attributeKey }}">
+        <div class="filter-checkbox" id="filters-{{ attributeKey }}">
             {% for attributeValue, count in attributeValues %}
                 {% set isHidden = loop.index > 5 %}
                 <div class="{{ isHidden ? 'hidden extra-filter' }}">

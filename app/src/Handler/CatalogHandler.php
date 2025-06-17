@@ -104,7 +104,8 @@ readonly class CatalogHandler
         $brandList = $this->brandRepository->findBrands();
         $allItems = $this->itemRepository->findItemsByCategory($category, $sort);
 
-        $priceFilter = $request->get('price', []);
+        $minPrice = $request->get('minPrice');
+        $maxPrice = $request->get('maxPrice');
         $brandFilterList = $this->getFilterListBrand($request->get('brand'));
         $attributeFilterList = $this->getFilterListAttribute($request->get('attribute'));
 
@@ -137,6 +138,15 @@ readonly class CatalogHandler
 
             // --- Сбор brandStats и attributeStats ТОЛЬКО по полностью подходящим товарам ---
             if ($passesAttributeFilter && $passesBrandFilter) {
+                // --- Расчёт min/max цены ---
+                $price = $item['price'] / 100;
+
+                if ($minPrice === null || $price < $minPrice) {
+                    $minPrice = $price;
+                }
+                if ($maxPrice === null || $price > $maxPrice) {
+                    $maxPrice = $price;
+                }
 
                 if ($brandName) {
                     $brandStats[$brandGuid]['name'] = $brandName;
@@ -177,13 +187,15 @@ readonly class CatalogHandler
         foreach ($attributeStats as &$values) {
             ksort($values, SORT_STRING | SORT_FLAG_CASE);
         }
-
         unset($values);
 
         ksort($brandStats, SORT_STRING | SORT_FLAG_CASE);
         ksort($attributeStats, SORT_STRING | SORT_FLAG_CASE);
 
-        $selectedChips = $this->getSelectedChips(brandFilterList: $brandFilterList ?? [], attributeFilterList: $attributeFilterList ?? []);
+        $selectedChips = $this->getSelectedChips(
+            brandFilterList: $brandFilterList ?? [],
+            attributeFilterList: $attributeFilterList ?? []
+        );
 
         if ($request->isXmlHttpRequest()) {
             $itemsHtml = $this->twig->render('template/front/components/item-card.html.twig', [
@@ -197,6 +209,8 @@ readonly class CatalogHandler
                     'attributes' => $attributeStats,
                     'brandFilterList' => $brandFilterList,
                     'attributeFilterList' => $attributeFilterList,
+                    'minPrice' => $minPrice,
+                    'maxPrice' => $maxPrice,
                 ],
             ]);
 
@@ -224,6 +238,8 @@ readonly class CatalogHandler
                 'attributes' => $attributeStats,
                 'brandFilterList' => $brandFilterList,
                 'attributeFilterList' => $attributeFilterList,
+                'minPrice' => $minPrice,
+                'maxPrice' => $maxPrice,
             ],
         ]));
     }
