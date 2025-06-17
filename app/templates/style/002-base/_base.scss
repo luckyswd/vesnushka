@@ -93,6 +93,7 @@ button {
   .custom-select-trigger-text {
     position: relative;
     padding-right: 20px;
+    user-select: none;
     transition: $transition;
   }
 
@@ -133,6 +134,11 @@ button {
   }
 
   &.active {
+    .custom-select-trigger {
+      border-bottom-left-radius: 0;
+      border-bottom-right-radius: 0;
+    }
+
     .custom-select-trigger-icon {
       transform: translateY(-50%) rotate(180deg);
       border-top: 5px solid color('black', 400);
@@ -140,6 +146,8 @@ button {
 
     .custom-select-options {
       display: block;
+      border-bottom-left-radius: 8px;
+      border-bottom-right-radius: 8px;
     }
   }
 }

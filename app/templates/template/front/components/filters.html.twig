@@ -1,0 +1,71 @@
+{% if filters.subCategories is not empty %}
+    <div class="filter__wrap">
+        <p class="filter-title">Подкатегории</p>
+        <ul class="subcategories__list">
+            {% for subCategory in filters.subCategories %}
+                <li>
+                    <a href="{{ subCategory.url }}">{{ subCategory.name }}</a>
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+{% endif %}
+
+<div class="filter__wrap">
+    <p class="filter-title">Бренды</p>
+    {% set isExpandable = filters.brands|length > 5 %}
+    <div class="filter-inputs" id="filters-brands">
+        {% for brand in filters.brands %}
+            {% set isHidden = loop.index > 5 %}
+            <div class="{{ isHidden ? 'hidden extra-filter' }}">
+                {% include 'template/common/input/_checkbox.html.twig' with {
+                    id: 'checkbox-brand-' ~ loop.index,
+                    label: brand.name ~ ' (' ~ brand.count ~ ')',
+                    checked: filters.brandFilterList is defined and brand.name in filters.brandFilterList,
+                    type: 'brand',
+                    value: brand.name
+                } %}
+            </div>
+        {% endfor %}
+    </div>
+
+    {% if isExpandable %}
+        <button type="button"
+                class="show-more-button"
+                data-target="filters-brands">
+            Показать все
+        </button>
+    {% endif %}
+</div>
+
+{% for attributeName, attributeValues in filters.attributes %}
+    {% set attributeKey = attributeName|lower|replace({' ': '_'}) %}
+    {% set isExpandable = attributeValues|length > 5 %}
+
+    <div class="filter__wrap">
+        <p class="filter-title">{{ attributeName }}</p>
+
+        <div class="filter-inputs" id="filters-{{ attributeKey }}">
+            {% for attributeValue, count in attributeValues %}
+                {% set isHidden = loop.index > 5 %}
+                <div class="{{ isHidden ? 'hidden extra-filter' }}">
+                    {% include 'template/common/input/_checkbox.html.twig' with {
+                        id: 'checkbox-attribute-' ~ attributeKey ~ '-' ~ loop.index,
+                        label: attributeValue ~ ' (' ~ count ~ ')',
+                        checked: filters.attributeFilterList[attributeName] is defined and attributeValue in filters.attributeFilterList[attributeName],
+                        type: 'attribute',
+                        value: attributeName ~ '_' ~ attributeValue
+                    } %}
+                </div>
+            {% endfor %}
+        </div>
+
+        {% if isExpandable %}
+            <button type="button"
+                    class="show-more-button"
+                    data-target="filters-{{ attributeKey }}">
+                Показать все
+            </button>
+        {% endif %}
+    </div>
+{% endfor %}

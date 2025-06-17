@@ -23,6 +23,7 @@ class ItemFixtures extends Fixture implements FixtureGroupInterface
     {
         $this->parameterBag = $parameterBag;
     }
+
     public function load(ObjectManager $manager): void
     {
         $brands = $manager->getRepository(Brand::class)->findAll();
@@ -33,7 +34,7 @@ class ItemFixtures extends Fixture implements FixtureGroupInterface
         $countCategories = count($categories);
         $countAttributes = count($attributes);
 
-        for ($i = 0; $i < 1000; ++$i) {
+        for ($i = 0; $i < 500; ++$i) {
             $item = new Item();
             $item->setName('test_' . $i . rand(0, 9999999));
             $item->setSku('test_' . $i . rand(0, 9999999));
@@ -64,7 +65,7 @@ class ItemFixtures extends Fixture implements FixtureGroupInterface
                 } while (in_array($attributeIndex, $addedAttributes));
 
                 $attribute = $attributes[$attributeIndex];
-                $itemAttributes[$attribute->getCode()] = $this->generateRandomAttributeValue($attribute->getCode());
+                $itemAttributes[$attribute->getName()] = $this->generateRandomAttributeValue($attribute->getCode());
                 $addedAttributes[] = $attributeIndex;
             }
             $item->setAttributes($itemAttributes);

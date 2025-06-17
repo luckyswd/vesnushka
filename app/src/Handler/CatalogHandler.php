@@ -4,11 +4,11 @@ namespace App\Handler;
 
 use App\Entity\Category;
 use App\Entity\Item;
-use App\Enum\CurrencyEnum;
 use App\Repository\BrandRepository;
 use App\Repository\CategoryRepository;
 use App\Repository\ItemRepository;
 use App\Service\CatalogService;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
@@ -33,7 +33,7 @@ readonly class CatalogHandler
             $category = $this->categoryRepository->findOneBy(['url' => Category::URL_CATALOG]);
 
             if ($category) {
-                return new Response($this->renderCategory(category: $category));
+                return $this->renderCategory(category: $category);
             }
         }
 
@@ -43,14 +43,14 @@ readonly class CatalogHandler
         $item = $this->itemRepository->findVisibleItemByUrl($url);
 
         if ($item) {
-            return new Response($this->renderItem(item: $item));
+            return $this->renderItem(item: $item);
         }
 
         // 2. Ищем категорию
         $category = $this->categoryRepository->findVisibleCategoryByUrl($url);
 
         if ($category) {
-            return new Response($this->renderCategory(category: $category));
+            return $this->renderCategory(category: $category);
         }
 
         // 3. Пытаемся найти ближайшую категорию, постепенно убирая сегменты пути справа
@@ -85,28 +85,28 @@ readonly class CatalogHandler
         return null;
     }
 
-    private function renderItem(Item $item): string
+    private function renderItem(Item $item): Response
     {
-        return $this->twig->render('template/front/catalog/item.html.twig', [
+        return new Response($this->twig->render('template/front/catalog/item.html.twig', [
             'item' => $item,
-        ]);
+        ]));
     }
 
-    private function renderCategory(Category $category): string
+    private function renderCategory(Category $category): Response
     {
         $request = $this->requestStack->getCurrentRequest();
         $page = max(1, (int) $request->get('page', 1));
+        $sort = $request->get('sort', 'popular');
         $limit = Category::LISTING_LIMIT;
         $offset = ($page - 1) * $limit;
 
-        // Загрузка данных
         $subCategories = $this->itemRepository->getSubCategoriesByCategory($category, 2);
         $brandList = $this->brandRepository->findBrands();
-        $allItems = $this->itemRepository->findItemsByCategory($category);
+        $allItems = $this->itemRepository->findItemsByCategory($category, $sort);
 
-        // Фильтры из запроса
         $priceFilter = $request->get('price', []);
-        $attributeFilter = $request->get('attributes', []);
+        $brandFilterList = $this->getFilterListBrand($request->get('brand'));
+        $attributeFilterList = $this->getFilterListAttribute($request->get('attribute'));
 
         $items = [];
         $matchedCount = 0;
@@ -114,66 +114,98 @@ readonly class CatalogHandler
         $attributeStats = [];
 
         foreach ($allItems as $item) {
-            $priceData = json_decode($item['price'], true);
             $attrData = json_decode($item['attributes'], true);
+            $brandGuid = $item['brand_guid'];
+            $brandName = $brandList[$brandGuid]['name'] ?? null;
 
-            // --- Фильтрация по цене ---
-            if (!empty($priceFilter)) {
-                $price = isset($priceData[CurrencyEnum::BYN->value]) ? $priceData[CurrencyEnum::BYN->value] / 100 : null;
-                $min = $priceFilter['min'] ?? null;
-                $max = $priceFilter['max'] ?? null;
-
-                if (!is_numeric($price) || (isset($min) && $price < $min) || (isset($max) && $price > $max)) {
-                    continue;
+            // --- Проверка, проходит ли по атрибутам ---
+            $passesAttributeFilter = true;
+            if (!empty($attributeFilterList)) {
+                foreach ($attributeFilterList as $attrType => $allowedValues) {
+                    if (!isset($attrData[$attrType]) || !in_array($attrData[$attrType], $allowedValues, true)) {
+                        $passesAttributeFilter = false;
+                        break;
+                    }
                 }
             }
 
-            // --- Фильтрация по атрибутам ---
-            $matched = true;
-            foreach ($attributeFilter as $attr => $value) {
-                if (!isset($attrData[$attr]) || $attrData[$attr] !== $value) {
-                    $matched = false;
-                    break;
+            // --- Проверка, проходит ли по брендам ---
+            $passesBrandFilter = true;
+            if (!empty($brandFilterList) && !in_array($brandName, $brandFilterList, true)) {
+                $passesBrandFilter = false;
+            }
+
+            // --- Сбор brandStats (игнорируя brandFilter) ---
+            if ($passesAttributeFilter && $brandName) {
+                $brandStats[$brandGuid]['name'] = $brandName;
+                $brandStats[$brandGuid]['count'] = ($brandStats[$brandGuid]['count'] ?? 0) + 1;
+            }
+
+            // --- Сбор attributeStats (игнорируя attributeFilter) ---
+            if ($passesBrandFilter) {
+                foreach ($attrData as $name => $value) {
+                    $attributeStats[$name][$value] = ($attributeStats[$name][$value] ?? 0) + 1;
                 }
             }
 
-            if (!$matched) {
+            // --- Фильтрация для отображения ---
+            if (!$passesAttributeFilter || !$passesBrandFilter) {
                 continue;
             }
 
-            // Совпадающий товар
             ++$matchedCount;
 
-            // --- Сбор статистики по брендам ---
-            $brandGuid = $item['brand_guid'];
-            $brandStats[$brandGuid]['name'] = $brandList[$brandGuid]['name'];
-            $brandStats[$brandGuid]['count'] = ($brandStats[$brandGuid]['count'] ?? 0) + 1;
-
-            // --- Сбор статистики по атрибутам ---
-            foreach ($attrData as $name => $value) {
-                $attributeStats[$name][$value] = ($attributeStats[$name][$value] ?? 0) + 1;
-            }
-
-            // Пропускаем до offset
             if ($matchedCount <= $offset) {
                 continue;
             }
 
-            // Заполняем только текущую страницу
             if (count($items) < $limit) {
                 $items[] = [
                     'guid' => $item['guid'],
                     'name' => $item['name'],
                     'sku' => $item['sku'],
                     'url' => $item['url'],
-                    'price' => $priceData[CurrencyEnum::BYN->value] / 100,
-                    'brand' => $brandStats[$brandGuid]['name'] ?? 'Unknown',
+                    'price' => $item['price'] / 100,
+                    'brand' => $brandName,
                     'main_image_path' => $item['main_image_path'],
+                    'stock' => $item['stock'],
                 ];
             }
         }
 
-        return $this->twig->render('template/front/catalog/catalog.html.twig', [
+        // --- Сортировка фильтров по алфавиту ---
+        foreach ($attributeStats as &$values) {
+            ksort($values, SORT_STRING | SORT_FLAG_CASE);
+        }
+
+        unset($values);
+
+        ksort($brandStats, SORT_STRING | SORT_FLAG_CASE);
+        ksort($attributeStats, SORT_STRING | SORT_FLAG_CASE);
+
+        if ($request->isXmlHttpRequest()) {
+            $itemsHtml = $this->twig->render('template/front/components/item-card.html.twig', [
+                'items' => $items,
+            ]);
+
+            $filtersHtml = $this->twig->render('template/front/components/filters.html.twig', [
+                'filters' => [
+                    'subCategories' => $subCategories,
+                    'brands' => $brandStats,
+                    'attributes' => $attributeStats,
+                    'brandFilterList' => $brandFilterList,
+                    'attributeFilterList' => $attributeFilterList,
+                ],
+            ]);
+
+            return new JsonResponse([
+                'items' => $itemsHtml,
+                'itemsCount' => $this->formatItemsFound($matchedCount),
+                'filters' => $filtersHtml,
+            ]);
+        }
+
+        return new Response($this->twig->render('template/front/catalog/catalog.html.twig', [
             'category' => $category,
             'breadcrumbs' => $category->getBreadcrumbs(),
             'items' => $items,
@@ -184,8 +216,10 @@ readonly class CatalogHandler
                 'subCategories' => $subCategories,
                 'brands' => $brandStats,
                 'attributes' => $attributeStats,
+                'brandFilterList' => $brandFilterList,
+                'attributeFilterList' => $attributeFilterList,
             ],
-        ]);
+        ]));
     }
 
     private function formatItemsFound(int $number): string
@@ -202,5 +236,33 @@ readonly class CatalogHandler
         }
 
         return 'Найдено ' . $number . ' ' . $word;
+    }
+
+    private function getFilterListBrand(?string $filter): ?array
+    {
+        if (!$filter) {
+            return null;
+        }
+
+        return explode(',', $filter);
+    }
+
+    private function getFilterListAttribute(?string $filter): ?array
+    {
+        if (!$filter) {
+            return null;
+        }
+
+        $attributes = explode(',', $filter);
+
+        $result = [];
+
+        foreach ($attributes as $attribute) {
+            $data = explode('_', $attribute);
+
+            $result[$data[0]][] = $data[1];
+        }
+
+        return $result;
     }
 }

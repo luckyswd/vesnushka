@@ -5,6 +5,7 @@ namespace App\Repository;
 use App\Entity\Category;
 use App\Entity\Item;
 use App\Enum\CategoryPublishStateEnum;
+use App\Enum\CurrencyEnum;
 use App\Enum\ItemPublishStateEnum;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
@@ -36,31 +37,56 @@ class ItemRepository extends ServiceEntityRepository
             ->getOneOrNullResult();
     }
 
-    public function findItemsByCategory(Category $category): \Traversable
-    {
+    public function findItemsByCategory(
+        Category $category,
+        string $sort,
+        string $currency = CurrencyEnum::BYN->value,
+    ): \Traversable {
         $conn = $this->getEntityManager()->getConnection();
         $subCategories = $this->getSubCategoriesByCategory($category);
 
+        $allowedCurrencies = array_column(CurrencyEnum::cases(), 'value');
+
+        if (!in_array($currency, $allowedCurrencies, true)) {
+            throw new \InvalidArgumentException("Недопустимая валюта: $currency");
+        }
+
+        $jsonPathCurrency = "'$currency'";
+
+        $sortOuter = match ($sort) {
+            'cheap' => 'CAST(price AS NUMERIC) ASC',
+            'expensive' => 'CAST(price AS NUMERIC) DESC',
+            default, => 'rank DESC',
+        };
+
         $sql = <<<SQL
-            SELECT DISTINCT ON (i.guid)
-                i.guid,
-                i.brand_guid,
-                i.name,
-                i.sku,
-                i.url,
-                i.breadcrumbs,
-                i.stock,
-                i.attributes,
-                i.price->'retail' AS price,
-                f.path AS main_image_path
-            FROM item i
-                INNER JOIN item_category ic ON i.guid = ic.item_guid
-                INNER JOIN category c ON c.guid = ic.category_guid
-                LEFT JOIN file f ON i.main_image_guid = f.guid
-            WHERE c.guid IN (:CATEGORY_GUIDS)
-              AND i.publish_state IN (:ITEM_PUBLISH_ACTIVE, :ITEM_PUBLISH_OUT_OF_STOCK)
-            ORDER BY i.guid;
-        SQL;
+                SELECT *
+                FROM (
+                    SELECT
+                        i.guid,
+                        i.brand_guid,
+                        i.name,
+                        i.sku,
+                        i.url,
+                        i.breadcrumbs,
+                        i.stock,
+                        i.attributes,
+                        i.price->'retail'->$jsonPathCurrency AS price,
+                        i.rank,
+                        f.path AS main_image_path,
+                        ROW_NUMBER() OVER (
+                            PARTITION BY i.guid
+                        ) as row_num
+                    FROM item i
+                        INNER JOIN item_category ic ON i.guid = ic.item_guid
+                        INNER JOIN category c ON c.guid = ic.category_guid
+                        LEFT JOIN file f ON i.main_image_guid = f.guid
+                    WHERE c.guid IN (:CATEGORY_GUIDS)
+                      AND i.publish_state IN (:ITEM_PUBLISH_ACTIVE, :ITEM_PUBLISH_OUT_OF_STOCK)
+                ) sub
+                WHERE sub.row_num = 1
+                ORDER BY $sortOuter
+            SQL;
 
         $stmt = $conn->executeQuery(
             $sql,
