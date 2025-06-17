@@ -21,12 +21,14 @@ class Catalog {
 
     init() {
         this.setInitialSort();
+        this.setInitialPrice(); // --- ЦЕНА ---
         this.attachScrollListener();
         this.attachSortChangeListener();
         this.attachShowMoreToggle();
         this.attachFilterCheckboxListener();
         this.attachChipRemoveListener();
         this.attachClearAllChipsListener();
+        this.attachPriceInputListener(); // --- ЦЕНА ---
     }
 
     attachScrollListener() {
@@ -82,6 +84,19 @@ class Catalog {
         });
     }
 
+    attachPriceInputListener() {
+        const minInput = document.getElementById("min_price");
+        const maxInput = document.getElementById("max_price");
+
+        if (minInput) {
+            minInput.addEventListener("change", () => this.resetAndFetch());
+        }
+
+        if (maxInput) {
+            maxInput.addEventListener("change", () => this.resetAndFetch());
+        }
+    }
+
     isAtBottom() {
         const scrollTop = window.scrollY || window.pageYOffset;
         const windowHeight = window.innerHeight;
@@ -96,11 +111,11 @@ class Catalog {
         const sort = Select.getValueById("sort-select");
         const path = window.location.pathname.replace(/\/$/, "");
 
-        const filters = this.collectFilters();
+        const filters = this.collectFilters(); // Includes price
         const params = { page };
 
         if (sort) {
-            params.sort = sort
+            params.sort = sort;
         }
 
         Object.assign(params, filters);
@@ -114,7 +129,6 @@ class Catalog {
 
             if (!data || !data.items || data.items.trim() === "") {
                 this.hasMore = false;
-
                 return;
             }
 
@@ -175,6 +189,7 @@ class Catalog {
 
             this.attachFilterCheckboxListener();
             this.attachShowMoreToggle();
+            this.attachPriceInputListener(); // --- ЦЕНА ---
         }
     }
 
@@ -222,6 +237,18 @@ class Catalog {
         }
     }
 
+    setInitialPrice() {
+        const params = new URLSearchParams(window.location.search);
+        const min = params.get("min_price");
+        const max = params.get("max_price");
+
+        const minInput = document.getElementById("min_price");
+        const maxInput = document.getElementById("max_price");
+
+        if (min && minInput) minInput.value = min;
+        if (max && maxInput) maxInput.value = max;
+    }
+
     collectFilters() {
         const filters = {};
         const checkedBoxes = document.querySelectorAll(".input-checkbox__input:checked");
@@ -239,6 +266,17 @@ class Catalog {
             filters[type].push(value);
         });
 
+        // --- ЦЕНА ---
+        const minInput = document.getElementById("min_price");
+        const maxInput = document.getElementById("max_price");
+
+        if (minInput && minInput.value.trim()) {
+            filters.min_price = minInput.value.trim();
+        }
+        if (maxInput && maxInput.value.trim()) {
+            filters.max_price = maxInput.value.trim();
+        }
+
         return filters;
     }
 
@@ -249,6 +287,12 @@ class Catalog {
 
             document.querySelectorAll(".input-checkbox__input:checked")
               .forEach(cb => cb.checked = false);
+
+            const minInput = document.getElementById("min_price");
+            const maxInput = document.getElementById("max_price");
+
+            if (minInput) minInput.value = "";
+            if (maxInput) maxInput.value = "";
 
             this.resetAndFetch();
         });

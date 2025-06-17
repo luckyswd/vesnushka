@@ -104,8 +104,14 @@ readonly class CatalogHandler
         $brandList = $this->brandRepository->findBrands();
         $allItems = $this->itemRepository->findItemsByCategory($category, $sort);
 
-        $minPrice = $request->get('minPrice');
-        $maxPrice = $request->get('maxPrice');
+        // --- Получаем фильтры ---
+        $minPriceFilter = $request->get('min_price');
+        $maxPriceFilter = $request->get('max_price');
+
+        // --- Приводим к null, если пустые строки ---
+        $minPriceFilter = $minPriceFilter !== '' ? $minPriceFilter : null;
+        $maxPriceFilter = $maxPriceFilter !== '' ? $maxPriceFilter : null;
+
         $brandFilterList = $this->getFilterListBrand($request->get('brand'));
         $attributeFilterList = $this->getFilterListAttribute($request->get('attribute'));
 
@@ -114,12 +120,17 @@ readonly class CatalogHandler
         $brandStats = [];
         $attributeStats = [];
 
+        $minPrice = null;
+        $maxPrice = null;
+
         foreach ($allItems as $item) {
             $attrData = json_decode($item['attributes'], true);
             $brandGuid = $item['brand_guid'];
             $brandName = $brandList[$brandGuid]['name'] ?? null;
 
-            // --- Проверка, проходит ли по атрибутам ---
+            $price = $item['price'] / 100;
+
+            // --- Проверка фильтра по атрибутам ---
             $passesAttributeFilter = true;
             if (!empty($attributeFilterList)) {
                 foreach ($attributeFilterList as $attrType => $allowedValues) {
@@ -130,37 +141,45 @@ readonly class CatalogHandler
                 }
             }
 
-            // --- Проверка, проходит ли по брендам ---
+            // --- Проверка фильтра по брендам ---
             $passesBrandFilter = true;
             if (!empty($brandFilterList) && !in_array($brandName, $brandFilterList, true)) {
                 $passesBrandFilter = false;
             }
 
-            // --- Сбор brandStats и attributeStats ТОЛЬКО по полностью подходящим товарам ---
-            if ($passesAttributeFilter && $passesBrandFilter) {
-                // --- Расчёт min/max цены ---
-                $price = $item['price'] / 100;
+            // --- Проверка фильтра по цене ---
+            $passesPriceFilter = true;
+            if ($minPriceFilter !== null && $price < (float)$minPriceFilter) {
+                $passesPriceFilter = false;
+            }
+            if ($maxPriceFilter !== null && $price > (float)$maxPriceFilter) {
+                $passesPriceFilter = false;
+            }
 
-                if ($minPrice === null || $price < $minPrice) {
-                    $minPrice = $price;
-                }
-                if ($maxPrice === null || $price > $maxPrice) {
-                    $maxPrice = $price;
-                }
-
+            // --- Бренды ВСЕГДА считаются по товарам, прошедшим только атрибуты+цену ---
+            if ($passesAttributeFilter && $passesPriceFilter) {
                 if ($brandName) {
                     $brandStats[$brandGuid]['name'] = $brandName;
                     $brandStats[$brandGuid]['count'] = ($brandStats[$brandGuid]['count'] ?? 0) + 1;
                 }
-
-                foreach ($attrData as $name => $value) {
-                    $attributeStats[$name][$value] = ($attributeStats[$name][$value] ?? 0) + 1;
-                }
             }
 
-            // --- Фильтрация для отображения ---
-            if (!$passesAttributeFilter || !$passesBrandFilter) {
+            // --- Применяем ВСЕ фильтры только для отображения ---
+            if (!$passesAttributeFilter || !$passesBrandFilter || !$passesPriceFilter) {
                 continue;
+            }
+
+            // --- Считаем min/max только если клиент их не задал ---
+            if ($minPriceFilter === null && ($minPrice === null || $price < $minPrice)) {
+                $minPrice = $price;
+            }
+            if ($maxPriceFilter === null && ($maxPrice === null || $price > $maxPrice)) {
+                $maxPrice = $price;
+            }
+
+            // --- Считаем только по товарам, которые попадут в выдачу ---
+            foreach ($attrData as $name => $value) {
+                $attributeStats[$name][$value] = ($attributeStats[$name][$value] ?? 0) + 1;
             }
 
             ++$matchedCount;
@@ -175,7 +194,7 @@ readonly class CatalogHandler
                     'name' => $item['name'],
                     'sku' => $item['sku'],
                     'url' => $item['url'],
-                    'price' => $item['price'] / 100,
+                    'price' => $price,
                     'brand' => $brandName,
                     'main_image_path' => $item['main_image_path'],
                     'stock' => $item['stock'],
@@ -209,8 +228,8 @@ readonly class CatalogHandler
                     'attributes' => $attributeStats,
                     'brandFilterList' => $brandFilterList,
                     'attributeFilterList' => $attributeFilterList,
-                    'minPrice' => $minPrice,
-                    'maxPrice' => $maxPrice,
+                    'minPrice' => $minPriceFilter ?? $minPrice,
+                    'maxPrice' => $maxPriceFilter ?? $maxPrice,
                 ],
             ]);
 
@@ -238,12 +257,11 @@ readonly class CatalogHandler
                 'attributes' => $attributeStats,
                 'brandFilterList' => $brandFilterList,
                 'attributeFilterList' => $attributeFilterList,
-                'minPrice' => $minPrice,
-                'maxPrice' => $maxPrice,
+                'minPrice' => $minPriceFilter ?? $minPrice,
+                'maxPrice' => $maxPriceFilter ?? $maxPrice,
             ],
         ]));
     }
-
     private function getSelectedChips(array $brandFilterList, array $attributeFilterList): array
     {
         $chips = [];
