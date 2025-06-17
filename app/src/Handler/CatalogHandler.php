@@ -135,14 +135,14 @@ readonly class CatalogHandler
                 $passesBrandFilter = false;
             }
 
-            // --- Сбор brandStats (игнорируя brandFilter) ---
-            if ($passesAttributeFilter && $brandName) {
-                $brandStats[$brandGuid]['name'] = $brandName;
-                $brandStats[$brandGuid]['count'] = ($brandStats[$brandGuid]['count'] ?? 0) + 1;
-            }
+            // --- Сбор brandStats и attributeStats ТОЛЬКО по полностью подходящим товарам ---
+            if ($passesAttributeFilter && $passesBrandFilter) {
 
-            // --- Сбор attributeStats (игнорируя attributeFilter) ---
-            if ($passesBrandFilter) {
+                if ($brandName) {
+                    $brandStats[$brandGuid]['name'] = $brandName;
+                    $brandStats[$brandGuid]['count'] = ($brandStats[$brandGuid]['count'] ?? 0) + 1;
+                }
+
                 foreach ($attrData as $name => $value) {
                     $attributeStats[$name][$value] = ($attributeStats[$name][$value] ?? 0) + 1;
                 }
