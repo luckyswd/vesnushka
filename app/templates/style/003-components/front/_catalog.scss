@@ -106,4 +106,40 @@
         column-gap: 16px;
         grid-template-columns: repeat(4, 1fr);
     }
+
+    .catalog-selected-chip {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-top: 12px;
+
+        .chip, .clear-all-chips {
+            @include body-14();
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px 8px 16px;
+            background-color: color('main', 400);
+            border-radius: 16px;
+            color: color('white', 400);
+
+            svg {
+                margin-right: -8px;
+                cursor: pointer;
+
+                &:hover {
+                    path {
+                        fill: color('gray', 700);
+
+                    }
+                }
+            }
+        }
+
+        .clear-all-chips {
+            background-color: color('gray', 700);
+            color: color('black', 400);
+            border: 1px solid color('gray', 600);
+        }
+    }
 }

@@ -183,6 +183,8 @@ readonly class CatalogHandler
         ksort($brandStats, SORT_STRING | SORT_FLAG_CASE);
         ksort($attributeStats, SORT_STRING | SORT_FLAG_CASE);
 
+        $selectedChips = $this->getSelectedChips(brandFilterList: $brandFilterList ?? [], attributeFilterList: $attributeFilterList ?? []);
+
         if ($request->isXmlHttpRequest()) {
             $itemsHtml = $this->twig->render('template/front/components/item-card.html.twig', [
                 'items' => $items,
@@ -198,10 +200,15 @@ readonly class CatalogHandler
                 ],
             ]);
 
+            $chipsHtml = $this->twig->render('template/front/components/chips.html.twig', [
+                'chips' => $selectedChips,
+            ]);
+
             return new JsonResponse([
                 'items' => $itemsHtml,
                 'itemsCount' => $this->formatItemsFound($matchedCount),
                 'filters' => $filtersHtml,
+                'chips' => $chipsHtml,
             ]);
         }
 
@@ -210,8 +217,7 @@ readonly class CatalogHandler
             'breadcrumbs' => $category->getBreadcrumbs(),
             'items' => $items,
             'itemsCount' => $this->formatItemsFound($matchedCount),
-            'currentPage' => $page,
-            'totalPages' => ceil($matchedCount / $limit),
+            'chips' => $selectedChips,
             'filters' => [
                 'subCategories' => $subCategories,
                 'brands' => $brandStats,
@@ -221,6 +227,32 @@ readonly class CatalogHandler
             ],
         ]));
     }
+
+    private function getSelectedChips(array $brandFilterList, array $attributeFilterList): array
+    {
+        $chips = [];
+
+        foreach ($brandFilterList as $brand) {
+            $chips[] = [
+                'label' => 'Бренд: ' . $brand,
+                'type' => 'brand',
+                'value' => $brand,
+            ];
+        }
+
+        foreach ($attributeFilterList as $attributeName => $values) {
+            foreach ($values as $value) {
+                $chips[] = [
+                    'label' => $attributeName . ': ' . $value,
+                    'type' => 'attribute',
+                    'value' => $attributeName . '_' . $value, // важно!
+                ];
+            }
+        }
+
+        return $chips;
+    }
+
 
     private function formatItemsFound(int $number): string
     {

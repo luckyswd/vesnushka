@@ -1,0 +1,16 @@
+{% if chips is not empty %}
+    <div class="catalog-selected-chip">
+        {% for chip in chips %}
+            <div class="chip"
+                 data-type="{{ chip.type }}"
+                 data-value="{{ chip.value }}">
+                {{ chip.label }}
+                <svg class="chip-remove-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16">
+                    <path fill="currentColor"
+                          d="M8 16c4.964 0 8-3.036 8-8s-3.036-8-8-8-8 3.036-8 8 3.036 8 8 8M6.85 5.594 8 6.743l1.15-1.15a.889.889 0 1 1 1.256 1.258L9.257 8l1.15 1.15a.889.889 0 1 1-1.258 1.256L8 9.257l-1.15 1.15a.889.889 0 1 1-1.256-1.258L6.743 8l-1.15-1.15a.889.889 0 0 1 1.258-1.256"></path>
+                </svg>
+            </div>
+        {% endfor %}
+        <button type="button" class="clear-all-chips">Сбросить фильтры</button>
+    </div>
+{% endif %}

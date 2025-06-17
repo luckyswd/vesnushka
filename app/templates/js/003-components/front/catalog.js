@@ -12,6 +12,7 @@ class Catalog {
         this.container = document.querySelector(".catalog__items");
         this.containerItemsCount = document.querySelector(".catalog__right-items-count");
         this.filtersContainer = document.querySelector(".catalog__left");
+        this.chipsContainer = document.querySelector(".catalog__right-chips");
 
         if (this.container) {
             this.init();
@@ -24,6 +25,8 @@ class Catalog {
         this.attachSortChangeListener();
         this.attachShowMoreToggle();
         this.attachFilterCheckboxListener();
+        this.attachChipRemoveListener();
+        this.attachClearAllChipsListener();
     }
 
     attachScrollListener() {
@@ -119,6 +122,7 @@ class Catalog {
                 this.clearItems();
                 this.updateFilters(data.filters);
                 this.updateItemsCount(data.itemsCount);
+                this.updateChips(data.chips);
                 this.page = 1;
             } else {
                 this.page = page;
@@ -180,6 +184,14 @@ class Catalog {
         }
     }
 
+    updateChips(chipsHtml) {
+        if (this.chipsContainer && chipsHtml) {
+            this.chipsContainer.innerHTML = chipsHtml;
+        } else {
+            this.chipsContainer.innerHTML = "";
+        }
+    }
+
     clearItems() {
         this.container.innerHTML = "";
     }
@@ -228,6 +240,42 @@ class Catalog {
         });
 
         return filters;
+    }
+
+    attachClearAllChipsListener() {
+        window.addEventListener("click", (e) => {
+            const clearBtn = e.target.closest(".clear-all-chips");
+            if (!clearBtn) return;
+
+            document.querySelectorAll(".input-checkbox__input:checked")
+              .forEach(cb => cb.checked = false);
+
+            this.resetAndFetch();
+        });
+    }
+
+    attachChipRemoveListener() {
+        window.addEventListener("click", (e) => {
+            const icon = e.target.closest(".chip-remove-icon");
+            if (!icon) return;
+
+            const chip = icon.closest(".chip");
+            if (!chip) return;
+
+            const type = chip.dataset.type;
+            const value = chip.dataset.value;
+
+            if (!type || !value) return;
+
+            const selector = `.input-checkbox__input[data-type="${type}"][data-value="${value}"]`;
+            const checkbox = document.querySelector(selector);
+
+            if (checkbox) {
+                checkbox.checked = false;
+            }
+
+            this.resetAndFetch();
+        });
     }
 }
 
