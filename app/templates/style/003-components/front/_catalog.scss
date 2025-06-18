@@ -51,11 +51,11 @@
             left: -1000px;
             max-width: 100%;
             width: 100%;
+            max-height: calc(100vh - 250px);
+            overflow: scroll;
 
             &.active-mobile {
                 left: 0;
-                overflow: scroll;
-                max-height: calc(100vh - 250px);
             }
         }
 
