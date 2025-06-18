@@ -1,6 +1,7 @@
 import Api from "../common/api.js";
 import Select from "../common/select.js";
 import Checkbox from "../common/checkbox.js";
+import Input from "../common/input.js";
 
 class Catalog {
     constructor() {
@@ -21,14 +22,13 @@ class Catalog {
 
     init() {
         this.setInitialSort();
-        this.setInitialPrice(); // --- ЦЕНА ---
         this.attachScrollListener();
         this.attachSortChangeListener();
         this.attachShowMoreToggle();
         this.attachFilterCheckboxListener();
         this.attachChipRemoveListener();
         this.attachClearAllChipsListener();
-        this.attachPriceInputListener(); // --- ЦЕНА ---
+        this.attachPriceInputListener();
     }
 
     attachScrollListener() {
@@ -88,12 +88,32 @@ class Catalog {
         const minInput = document.getElementById("min_price");
         const maxInput = document.getElementById("max_price");
 
+        const validateAndFetch = (e) => {
+            const min = parseFloat(minInput?.value ?? '');
+            const max = parseFloat(maxInput?.value ?? '');
+
+            const isMinValid = !isNaN(min);
+            const isMaxValid = !isNaN(max);
+
+            if (isMinValid && isMaxValid) {
+                if (e.target === minInput && min > max) {
+                    minInput.value = "";
+                }
+
+                if (e.target === maxInput && max < min) {
+                    maxInput.value = "";
+                }
+            }
+
+            this.resetAndFetch();
+        };
+
         if (minInput) {
-            minInput.addEventListener("change", () => this.resetAndFetch());
+            minInput.addEventListener("change", validateAndFetch);
         }
 
         if (maxInput) {
-            maxInput.addEventListener("change", () => this.resetAndFetch());
+            maxInput.addEventListener("change", validateAndFetch);
         }
     }
 
@@ -111,7 +131,7 @@ class Catalog {
         const sort = Select.getValueById("sort-select");
         const path = window.location.pathname.replace(/\/$/, "");
 
-        const filters = this.collectFilters(); // Includes price
+        const filters = this.collectFilters();
         const params = { page };
 
         if (sort) {
@@ -144,6 +164,7 @@ class Catalog {
 
             this.appendItems(data.items);
             new Checkbox();
+            new Input();
         } catch (err) {
             console.error("Error fetching items:", err);
         } finally {
@@ -237,18 +258,6 @@ class Catalog {
         }
     }
 
-    setInitialPrice() {
-        const params = new URLSearchParams(window.location.search);
-        const min = params.get("min_price");
-        const max = params.get("max_price");
-
-        const minInput = document.getElementById("min_price");
-        const maxInput = document.getElementById("max_price");
-
-        if (min && minInput) minInput.value = min;
-        if (max && maxInput) maxInput.value = max;
-    }
-
     collectFilters() {
         const filters = {};
         const checkedBoxes = document.querySelectorAll(".input-checkbox__input:checked");
@@ -266,15 +275,18 @@ class Catalog {
             filters[type].push(value);
         });
 
-        // --- ЦЕНА ---
         const minInput = document.getElementById("min_price");
         const maxInput = document.getElementById("max_price");
 
-        if (minInput && minInput.value.trim()) {
-            filters.min_price = minInput.value.trim();
+        const currentMin = parseFloat(minInput?.value ?? '');
+        const currentMax = parseFloat(maxInput?.value ?? '');
+
+        if (currentMin) {
+            filters.min_price = currentMin;
         }
-        if (maxInput && maxInput.value.trim()) {
-            filters.max_price = maxInput.value.trim();
+
+        if (currentMax) {
+            filters.max_price = currentMax;
         }
 
         return filters;
@@ -310,6 +322,18 @@ class Catalog {
             const value = chip.dataset.value;
 
             if (!type || !value) return;
+
+            if (type === "price") {
+                const minInput = document.getElementById("min_price");
+                const maxInput = document.getElementById("max_price");
+
+                if (minInput) minInput.value = "";
+                if (maxInput) maxInput.value = "";
+
+                this.resetAndFetch();
+
+                return;
+            }
 
             const selector = `.input-checkbox__input[data-type="${type}"][data-value="${value}"]`;
             const checkbox = document.querySelector(selector);

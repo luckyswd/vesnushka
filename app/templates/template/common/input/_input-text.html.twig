@@ -1,7 +1,7 @@
 <input
-        type="text"
+        type="{{ type }}"
         id="{{ id }}"
-        class="input-text"
+        class="input-text {{ class ?? '' }}"
         {% if placeholder is defined and placeholder is not empty %}placeholder="{{ placeholder }}"{% endif %}
         {% if required is defined and required %}required{% endif %}
         {% if disabled is defined and disabled %}disabled{% endif %}
@@ -9,6 +9,4 @@
         {% if maxlength is defined %}maxlength="{{ maxlength }}"{% endif %}
         {% if minlength is defined %}minlength="{{ minlength }}"{% endif %}
         {% if value is defined and value is not same as(false) %}value="{{ value }}"{% endif %}
-        {% if type is defined and type is not empty %}data-type="{{ type }}"{% endif %}
-        {% if data_value is defined and data_value is not empty %}data-value="{{ data_value }}"{% endif %}
 />

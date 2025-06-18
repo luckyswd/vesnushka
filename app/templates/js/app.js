@@ -17,6 +17,7 @@
 import './003-components/common/api.js';
 import './003-components/common/select.js';
 import './003-components/common/checkbox.js';
+import './003-components/common/input.js';
 import './003-components/common/notification.js';
 import './003-components/front/catalog.js';
 

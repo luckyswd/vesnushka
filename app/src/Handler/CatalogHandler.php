@@ -105,12 +105,8 @@ readonly class CatalogHandler
         $allItems = $this->itemRepository->findItemsByCategory($category, $sort);
 
         // --- Получаем фильтры ---
-        $minPriceFilter = $request->get('min_price');
-        $maxPriceFilter = $request->get('max_price');
-
-        // --- Приводим к null, если пустые строки ---
-        $minPriceFilter = $minPriceFilter !== '' ? $minPriceFilter : null;
-        $maxPriceFilter = $maxPriceFilter !== '' ? $maxPriceFilter : null;
+        $clientMinPrice = $request->get('min_price') ? (float)$request->get('min_price') : null;
+        $clientMaxPrice = $request->get('max_price') ? (float)$request->get('max_price') : null;
 
         $brandFilterList = $this->getFilterListBrand($request->get('brand'));
         $attributeFilterList = $this->getFilterListAttribute($request->get('attribute'));
@@ -120,8 +116,8 @@ readonly class CatalogHandler
         $brandStats = [];
         $attributeStats = [];
 
-        $minPrice = null;
-        $maxPrice = null;
+        $defaultMinPrice = null;
+        $defaultMaxPrice = null;
 
         foreach ($allItems as $item) {
             $attrData = json_decode($item['attributes'], true);
@@ -149,14 +145,14 @@ readonly class CatalogHandler
 
             // --- Проверка фильтра по цене ---
             $passesPriceFilter = true;
-            if ($minPriceFilter !== null && $price < (float)$minPriceFilter) {
+            if ($clientMinPrice !== null && $price < (float)$clientMinPrice) {
                 $passesPriceFilter = false;
             }
-            if ($maxPriceFilter !== null && $price > (float)$maxPriceFilter) {
+            if ($clientMaxPrice !== null && $price > (float)$clientMaxPrice) {
                 $passesPriceFilter = false;
             }
 
-            // --- Бренды ВСЕГДА считаются по товарам, прошедшим только атрибуты+цену ---
+            // --- Статистика по брендам — если проходят атрибуты и цену ---
             if ($passesAttributeFilter && $passesPriceFilter) {
                 if ($brandName) {
                     $brandStats[$brandGuid]['name'] = $brandName;
@@ -164,20 +160,19 @@ readonly class CatalogHandler
                 }
             }
 
-            // --- Применяем ВСЕ фильтры только для отображения ---
+            // --- Применяем все фильтры (для отображения и остальных расчётов) ---
             if (!$passesAttributeFilter || !$passesBrandFilter || !$passesPriceFilter) {
                 continue;
             }
 
-            // --- Считаем min/max только если клиент их не задал ---
-            if ($minPriceFilter === null && ($minPrice === null || $price < $minPrice)) {
-                $minPrice = $price;
+            // --- min/max только если клиент их не задал ---
+            if ($clientMinPrice === null && ($defaultMinPrice === null || $price < $defaultMinPrice)) {
+                $defaultMinPrice = $price;
             }
-            if ($maxPriceFilter === null && ($maxPrice === null || $price > $maxPrice)) {
-                $maxPrice = $price;
+            if ($clientMaxPrice === null && ($defaultMaxPrice === null || $price > $defaultMaxPrice)) {
+                $defaultMaxPrice = $price;
             }
 
-            // --- Считаем только по товарам, которые попадут в выдачу ---
             foreach ($attrData as $name => $value) {
                 $attributeStats[$name][$value] = ($attributeStats[$name][$value] ?? 0) + 1;
             }
@@ -211,9 +206,14 @@ readonly class CatalogHandler
         ksort($brandStats, SORT_STRING | SORT_FLAG_CASE);
         ksort($attributeStats, SORT_STRING | SORT_FLAG_CASE);
 
+        // --- Собираем выбранные чипсы ---
         $selectedChips = $this->getSelectedChips(
             brandFilterList: $brandFilterList ?? [],
-            attributeFilterList: $attributeFilterList ?? []
+            attributeFilterList: $attributeFilterList ?? [],
+            clientMinPrice: $clientMinPrice ?? null,
+            clientMaxPrice: $clientMaxPrice ?? null,
+            defaultMinPrice: $defaultMinPrice,
+            defaultMaxPrice: $defaultMaxPrice,
         );
 
         if ($request->isXmlHttpRequest()) {
@@ -228,8 +228,8 @@ readonly class CatalogHandler
                     'attributes' => $attributeStats,
                     'brandFilterList' => $brandFilterList,
                     'attributeFilterList' => $attributeFilterList,
-                    'minPrice' => $minPriceFilter ?? $minPrice,
-                    'maxPrice' => $maxPriceFilter ?? $maxPrice,
+                    'minPrice' => $clientMinPrice,
+                    'maxPrice' => $clientMaxPrice,
                 ],
             ]);
 
@@ -257,13 +257,19 @@ readonly class CatalogHandler
                 'attributes' => $attributeStats,
                 'brandFilterList' => $brandFilterList,
                 'attributeFilterList' => $attributeFilterList,
-                'minPrice' => $minPriceFilter ?? $minPrice,
-                'maxPrice' => $maxPriceFilter ?? $maxPrice,
+                'minPrice' => $clientMinPrice,
+                'maxPrice' => $clientMaxPrice,
             ],
         ]));
     }
-    private function getSelectedChips(array $brandFilterList, array $attributeFilterList): array
-    {
+    private function getSelectedChips(
+        array $brandFilterList,
+        array $attributeFilterList,
+        ?float $clientMinPrice = null,
+        ?float $clientMaxPrice = null,
+        ?float $defaultMinPrice = null,
+        ?float $defaultMaxPrice = null,
+    ): array {
         $chips = [];
 
         foreach ($brandFilterList as $brand) {
@@ -279,14 +285,32 @@ readonly class CatalogHandler
                 $chips[] = [
                     'label' => $attributeName . ': ' . $value,
                     'type' => 'attribute',
-                    'value' => $attributeName . '_' . $value, // важно!
+                    'value' => $attributeName . '_' . $value,
                 ];
             }
         }
 
+        if ($clientMinPrice !== null || $clientMaxPrice !== null) {
+            $minPrice = $clientMinPrice ?? $defaultMinPrice;
+            $maxPrice = $clientMaxPrice ?? $defaultMaxPrice;
+
+            $priceLabel = 'Цена:';
+            if ($minPrice !== null) {
+                $priceLabel .= ' от ' . $minPrice;
+            }
+            if ($maxPrice !== null) {
+                $priceLabel .= ' до ' . $maxPrice;
+            }
+
+            $chips[] = [
+                'label' => $priceLabel,
+                'type' => 'price',
+                'value' => 'price',
+            ];
+        }
+
         return $chips;
     }
-
 
     private function formatItemsFound(int $number): string
     {

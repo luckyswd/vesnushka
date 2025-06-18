@@ -16,16 +16,19 @@
     <div class="filter-inputs" id="filters-price">
         {% include 'template/common/input/_input-text.html.twig' with {
             id: 'min_price',
+            type: 'text',
             placeholder: 'от',
-            class: 'input--price',
-            value: filters.minPrice ?? 0,
+            class: 'input-price',
+            value: filters.minPrice,
+            default_value: filters.minPrice,
         } %}
 
         {% include 'template/common/input/_input-text.html.twig' with {
             id: 'max_price',
+            type: 'text',
             placeholder: 'до',
-            class: 'input--price',
-            value: filters.maxPrice ?? 1000,
+            class: 'input-price',
+            value: filters.maxPrice,
         } %}
     </div>
 </div>
