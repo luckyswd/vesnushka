@@ -14,6 +14,7 @@ class Catalog {
         this.containerItemsCount = document.querySelector(".catalog__right-items-count");
         this.filtersContainer = document.querySelector(".catalog__left");
         this.chipsContainer = document.querySelector(".catalog__right-chips");
+        this.catalogWrap = document.querySelector(".catalog__wrap");
 
         if (this.container) {
             this.init();
@@ -128,9 +129,12 @@ class Catalog {
     async fetchItems(page = 1, reset = false) {
         this.loading = true;
 
+        if (this.catalogWrap) {
+            this.catalogWrap.classList.add("loader");
+        }
+
         const sort = Select.getValueById("sort-select");
         const path = window.location.pathname.replace(/\/$/, "");
-
         const filters = this.collectFilters();
         const params = { page };
 
@@ -169,6 +173,9 @@ class Catalog {
             console.error("Error fetching items:", err);
         } finally {
             this.loading = false;
+            if (this.catalogWrap) {
+                this.catalogWrap.classList.remove("loader");
+            }
         }
     }
 

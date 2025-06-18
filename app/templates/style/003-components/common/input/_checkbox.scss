@@ -26,7 +26,8 @@
 
     &.active {
         .input-checkbox__box {
-            background-color: color('black', 400);
+            background-color: color('main', 400);
+            border: 1px solid color('main', 400);
             display: block;
         }
 
