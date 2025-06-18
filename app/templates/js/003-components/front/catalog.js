@@ -30,6 +30,7 @@ class Catalog {
         this.attachChipRemoveListener();
         this.attachClearAllChipsListener();
         this.attachPriceInputListener();
+        this.openMobileFilter();
     }
 
     attachScrollListener() {
@@ -350,6 +351,21 @@ class Catalog {
             }
 
             this.resetAndFetch();
+        });
+    }
+
+    openMobileFilter() {
+        const mobileFilterBtn = document.querySelector('.mobile-filters');
+        const body = document.body;
+
+        if (!mobileFilterBtn || !this.filtersContainer) return;
+
+        mobileFilterBtn.addEventListener('click', () => {
+            const isActive = this.filtersContainer.classList.toggle('active-mobile');
+
+            mobileFilterBtn.textContent = isActive ? 'Скрыть фильтры' : 'Фильтры';
+
+            body.style.overflow = isActive ? 'hidden' : '';
         });
     }
 }

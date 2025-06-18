@@ -1,41 +1,16 @@
 .catalog {
     margin: 40px 0;
 
+    @include mobile() {
+        margin: 16px 0;
+    }
+
     .catalog__wrap {
         display: flex;
         gap: 32px;
         position: relative;
         overflow: hidden;
-
-        &.loader::after {
-            content: "";
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: linear-gradient(
-                            135deg,
-                            transparent 0%,
-                            rgba(5, 150, 105, 0.15) 40%,
-                            rgba(5, 150, 105, 0.25) 50%,
-                            rgba(5, 150, 105, 0.15) 60%,
-                            transparent 100%
-            );
-            animation: subtle-wave 0.8s linear infinite;
-            pointer-events: all;
-            z-index: 10;
-            border-radius: 8px;
-        }
-    }
-
-    @keyframes subtle-wave {
-        0% {
-            transform: translate(0%, 0%);
-        }
-        100% {
-            transform: translate(20px, 20px);
-        }
+        border-radius: 8px;
     }
 
     .catalog__left {
@@ -49,6 +24,31 @@
         flex-direction: column;
         gap: 12px;
         height: max-content;
+        transition: $transition;
+
+        @include min-desktop() {
+            max-width: 260px;
+        }
+
+        @include tablet() {
+            position: absolute;
+            top: 50px;
+            z-index: 5;
+            background: color('white', 400);
+            left: -1000px;
+            max-width: 100%;
+            width: 100%;
+
+            &.active-mobile {
+                left: 0;
+                overflow: scroll;
+                max-height: calc(100vh - 250px );
+            }
+        }
+
+        @include mobile() {
+            top: 130px;
+        }
     }
 
     .catalog__right {
@@ -58,6 +58,19 @@
         box-shadow: rgba(0, 0, 0, 0.07) 0 7px 10px;
         border-radius: 8px;
         padding: 16px;
+        min-height: 100vh;
+
+        @include tablet() {
+            padding: 0;
+            border: none;
+            box-shadow: none;
+        }
+
+        .catalog__sort {
+            @include mobile() {
+                width: 100%;
+            }
+        }
     }
 
     .catalog__breadcrumbs {
@@ -88,6 +101,13 @@
         align-items: center;
         justify-content: space-between;
 
+        @include mobile() {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            align-items: center;
+        }
+
         .title {
             display: flex;
             gap: 10px;
@@ -100,6 +120,18 @@
 
         .custom-select-wrap {
             min-width: 210px;
+
+            @include mobile() {
+                max-width: 100%;
+            }
+        }
+
+        .mobile-filters {
+            display: none;
+
+            @include tablet() {
+                display: flex;
+            }
         }
     }
 
@@ -147,7 +179,19 @@
         display: grid;
         row-gap: 32px;
         column-gap: 16px;
-        grid-template-columns: repeat(4, 1fr);
+        grid-template-columns: repeat(3, 1fr);
+
+        @include min-desktop() {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        @include tablet() {
+            grid-template-columns: repeat(3, 1fr);
+        }
+
+        @include mobile() {
+            grid-template-columns: repeat(2, 1fr);
+        }
     }
 
     .catalog-selected-chip {
