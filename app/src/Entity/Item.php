@@ -79,6 +79,21 @@ class Item extends BaseEntity
     )]
     private Collection $images;
 
+    #[ORM\Column(type: Types::TEXT, nullable: true)]
+    private ?string $shorDescription = null;
+
+    #[ORM\Column(type: Types::TEXT, nullable: true)]
+    private ?string $description = null;
+
+    #[ORM\Column(type: Types::TEXT, nullable: true)]
+    private ?string $composition = null;
+
+    #[ORM\Column(type: Types::STRING, length: 255, nullable: true)]
+    private ?string $metaTitle = null;
+
+    #[ORM\Column(type: Types::STRING, length: 255, nullable: true)]
+    private ?string $metaDescription = null;
+
     public function __construct()
     {
         parent::__construct();
@@ -269,6 +284,66 @@ class Item extends BaseEntity
     public function removeImage(File $image): self
     {
         $this->images->removeElement($image);
+
+        return $this;
+    }
+
+    public function getShorDescription(): ?string
+    {
+        return $this->shorDescription;
+    }
+
+    public function setShorDescription(?string $shorDescription): self
+    {
+        $this->shorDescription = $shorDescription;
+
+        return $this;
+    }
+
+    public function getDescription(): ?string
+    {
+        return $this->description;
+    }
+
+    public function setDescription(?string $description): self
+    {
+        $this->description = $description;
+
+        return $this;
+    }
+
+    public function getComposition(): ?string
+    {
+        return $this->composition;
+    }
+
+    public function setComposition(?string $composition): self
+    {
+        $this->composition = $composition;
+
+        return $this;
+    }
+
+    public function getMetaTitle(): ?string
+    {
+        return $this->metaTitle;
+    }
+
+    public function setMetaTitle(?string $metaTitle): self
+    {
+        $this->metaTitle = $metaTitle;
+
+        return $this;
+    }
+
+    public function getMetaDescription(): ?string
+    {
+        return $this->metaDescription;
+    }
+
+    public function setMetaDescription(?string $metaDescription): self
+    {
+        $this->metaDescription = $metaDescription;
 
         return $this;
     }
