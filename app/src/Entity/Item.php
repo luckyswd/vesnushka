@@ -2,7 +2,9 @@
 
 namespace App\Entity;
 
+use App\Enum\CurrencyEnum;
 use App\Enum\ItemPublishStateEnum;
+use App\Enum\PriceTypeEnum;
 use App\EventListener\Doctrine\UrlAndBreadcrumbsListener;
 use App\Repository\ItemRepository;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -234,6 +236,11 @@ class Item extends BaseEntity
     public function getPrice(): array
     {
         return $this->price;
+    }
+
+    public function getDefaultPrice(): float
+    {
+        return $this->price[PriceTypeEnum::RETAIL->value][CurrencyEnum::BYN->value] / 100;
     }
 
     public function setPrice(array $price): static

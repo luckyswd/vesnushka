@@ -5,6 +5,10 @@
         margin: 16px 0;
     }
 
+    .catalog-name {
+        @include body-28-bold();
+    }
+
     .catalog__wrap {
         display: flex;
         gap: 32px;
@@ -82,27 +86,6 @@
         .catalog__sort {
             @include mobile() {
                 width: 100%;
-            }
-        }
-    }
-
-    .catalog__breadcrumbs {
-        display: flex;
-        gap: 8px;
-        color: color('gray', 500);
-        margin-bottom: 16px;
-
-        .catalog__breadcrumbs-item::after {
-            content: "/";
-            color: color('gray', 600);
-            margin-left: 8px;
-        }
-
-        .catalog__breadcrumbs-item:last-child {
-            color: color('main', 400);
-
-            &::after {
-                content: "";
             }
         }
     }
@@ -240,6 +223,27 @@
             background-color: color('gray', 700);
             color: color('black', 400);
             border: 1px solid color('gray', 600);
+        }
+    }
+}
+
+.breadcrumbs {
+    display: flex;
+    gap: 8px;
+    color: color('gray', 500);
+    margin-bottom: 16px;
+
+    .breadcrumbs-item::after {
+        content: "/";
+        color: color('gray', 600);
+        margin-left: 8px;
+    }
+
+    .breadcrumbs-item:last-child {
+        color: color('main', 400);
+
+        &::after {
+            content: "";
         }
     }
 }

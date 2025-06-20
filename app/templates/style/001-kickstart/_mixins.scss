@@ -22,47 +22,105 @@
 	}
 }
 
-@mixin body-14() {
-	font-family: "Roboto Regular", serif;
-	font-size: 14px;
-	line-height: normal;
+@mixin body-12() {
+	font-family: Hauss, Segoe UI, -apple-system, Roboto, Helvetica Neue, Noto Sans, Arial, sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol, Noto Color Emoji;
+	text-rendering: geometricPrecision;
+	font-variation-settings: "wght" 450;
+	font-size: 12px;
 	color: color('black', 400);
+}
 
-	@include tablet() {
-		font-size: 12px;
-	}
+@mixin body-12-bold() {
+	font-family: Hauss, Segoe UI, -apple-system, Roboto, Helvetica Neue, Noto Sans, Arial, sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol, Noto Color Emoji;
+	text-rendering: geometricPrecision;
+	font-variation-settings: "wght" 650;
+	font-size: 12px;
+	color: color('black', 400);
+}
+
+@mixin body-14() {
+	font-family: Hauss, Segoe UI, -apple-system, Roboto, Helvetica Neue, Noto Sans, Arial, sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol, Noto Color Emoji;
+	text-rendering: geometricPrecision;
+	font-variation-settings: "wght" 450;
+	font-size: 14px;
+	color: color('black', 400);
+}
+
+@mixin body-14-bold() {
+	font-family: Hauss, Segoe UI, -apple-system, Roboto, Helvetica Neue, Noto Sans, Arial, sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol, Noto Color Emoji;
+	text-rendering: geometricPrecision;
+	font-variation-settings: "wght" 650;
+	font-size: 14px;
+	color: color('black', 400);
 }
 
 @mixin body-16() {
-	font-family: "Roboto Regular", serif;
+	font-family: Hauss, Segoe UI, -apple-system, Roboto, Helvetica Neue, Noto Sans, Arial, sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol, Noto Color Emoji;
+	text-rendering: geometricPrecision;
+	font-variation-settings: "wght" 450;
 	font-size: 16px;
 	line-height: normal;
 	color: color('black', 400);
-
-	@include tablet() {
-		font-size: 12px;
-	}
 }
 
 @mixin body-16-bold() {
-	font-family: "Roboto Bold", serif;
+	font-family: Hauss, Segoe UI, -apple-system, Roboto, Helvetica Neue, Noto Sans, Arial, sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol, Noto Color Emoji;
+	text-rendering: geometricPrecision;
+	font-variation-settings: "wght" 650;
 	font-size: 16px;
 	line-height: normal;
 	color: color('black', 400);
-
-	@include tablet() {
-		font-size: 12px;
-	}
 }
 
-@mixin body-20-bold() {
-	font-family: "Roboto Bold", serif;
+@mixin body-20() {
+	font-family: Hauss, Segoe UI, -apple-system, Roboto, Helvetica Neue, Noto Sans, Arial, sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol, Noto Color Emoji;
+	text-rendering: geometricPrecision;
+	font-variation-settings: "wght" 450;
 	font-size: 20px;
 	line-height: normal;
 	color: color('black', 400);
 
 	@include tablet() {
 		font-size: 16px;
+	}
+}
+
+@mixin body-20-bold() {
+	font-family: Hauss, Segoe UI, -apple-system, Roboto, Helvetica Neue, Noto Sans, Arial, sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol, Noto Color Emoji;
+	text-rendering: geometricPrecision;
+	font-variation-settings: "wght" 650;
+	font-size: 20px;
+	line-height: normal;
+	color: color('black', 400);
+
+	@include tablet() {
+		font-size: 16px;
+	}
+}
+
+@mixin body-28() {
+	font-family: Hauss, Segoe UI, -apple-system, Roboto, Helvetica Neue, Noto Sans, Arial, sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol, Noto Color Emoji;
+	text-rendering: geometricPrecision;
+	font-variation-settings: "wght" 450;
+	font-size: 28px;
+	line-height: normal;
+	color: color('black', 400);
+
+	@include tablet() {
+		font-size: 18px;
+	}
+}
+
+@mixin body-28-bold() {
+	font-family: Hauss, Segoe UI, -apple-system, Roboto, Helvetica Neue, Noto Sans, Arial, sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol, Noto Color Emoji;
+	text-rendering: geometricPrecision;
+	font-variation-settings: "wght" 650;
+	font-size: 28px;
+	line-height: normal;
+	color: color('black', 400);
+
+	@include tablet() {
+		font-size: 18px;
 	}
 }
 

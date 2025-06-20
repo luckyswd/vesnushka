@@ -3,17 +3,9 @@
 {% block body %}
     <section class="catalog">
         <div class="container">
-            <ul class="catalog__breadcrumbs">
-                {% for breadcrumb in breadcrumbs %}
-                    <li class="catalog__breadcrumbs-item">
-                        {% if not loop.last %}
-                            <a href="{{ breadcrumb.link }}">{{ breadcrumb.text }}</a>
-                        {% else %}
-                            {{ breadcrumb.text }}
-                        {% endif %}
-                    </li>
-                {% endfor %}
-            </ul>
+            {% include 'template/front/components/breadcrumbs.html.twig' with {
+                breadcrumbs: breadcrumbs,
+            } %}
 
             <div class="catalog__wrap">
                 <div class="catalog__left">
@@ -23,7 +15,7 @@
                 <div class="catalog__right">
                     <div class="catalog__right-top">
                         <div class="title">
-                            <h1>
+                            <h1 class="catalog-name">
                                 {{ category.name }}
                             </h1>
                             <span class="catalog__right-items-count"> {{ itemsCount }} </span>

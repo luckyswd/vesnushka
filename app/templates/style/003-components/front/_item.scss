@@ -1,0 +1,247 @@
+.item {
+    margin: 40px 0;
+
+    @include mobile() {
+        margin: 16px 0;
+    }
+
+    .item__wrap {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 20px;
+
+        .item__data {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+
+            .item-name {
+                @include body-20-bold();
+            }
+
+            .item-short-description {
+                @include body-14-bold();
+            }
+
+            .item-price {
+                @include body-28-bold();
+            }
+
+            .item-stock {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                @include body-14-bold();
+            }
+
+            .item-brand {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                @include body-14-bold();
+                width: max-content;
+
+                &:hover {
+                    .item-brand-wrap {
+                        .name, .brand-catalog {
+                            color: color('main', 400);
+                        }
+                    }
+                }
+
+                .icon {
+                    width: 36px;
+                    height: 36px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    border-radius: 8px;
+                    background: color('white', 500);
+                }
+
+                .item-brand-wrap {
+                    display: flex;
+                    flex-direction: column;
+
+                    .name {
+                        transition: $transition;
+                        @include body-14();
+                    }
+
+                    .brand-catalog {
+                        transition: $transition;
+                        @include body-12();
+                        color: color('gray', 500);
+                    }
+
+
+                }
+            }
+
+            .item-attributes {
+                color: color('gray', 500);
+
+                tr {
+                    text-align: left;
+
+                    .cell {
+                        display: inline-block;
+                        width: 100%;
+                        position: relative;
+
+                        .attr-cell {
+                            position: relative;
+                            background: #fff;
+                            width: max-content;
+                            z-index: 2;
+                            padding-right: 12px;
+                        }
+
+                        &::after {
+                            content: "";
+                            width: 100%;
+                            height: 20px;
+                            display: block;
+                            position: absolute;
+                            bottom: 5px;
+                            left: 0;
+                            background-image: linear-gradient(90deg, #d3d4dd 50%, rgba(255, 255, 255, 0) 0%);
+                            background-position: bottom;
+                            background-repeat: repeat-x;
+                            background-size: 2px 1px;
+                        }
+                    }
+                }
+
+                td {
+                    padding: 4px 0 4px 12px;
+                    display: flex;
+                    align-items: center;
+                    gap: 8px;
+                    @include body-14();
+
+                    .sku-copy {
+                        cursor: pointer;
+                    }
+                }
+            }
+
+            .item__buttons {
+                display: flex;
+                gap: 8px;
+
+                .description {
+                    background: color('gray', 700);
+                    color: color('black', 400);
+                }
+
+                button {
+                    width: 100%;
+                }
+            }
+        }
+
+        .item__slider {
+            display: grid;
+            grid-template-columns: auto 1fr;
+            gap: 8px;
+            align-items: start;
+
+            .swiper-left {
+                user-select: none;
+                height: 700px;
+                width: 84px;
+
+                .swiper-slide {
+                    height: auto;
+                    cursor: pointer;
+                    border: 2px solid color('gray', 400);
+                    border-radius: 12px;
+
+                    &.swiper-slide-thumb-active {
+                        border: 2px solid color('main', 400);
+                    }
+                }
+
+                picture {
+                    display: flex;
+
+                    img {
+                        object-fit: cover;
+                        width: 100%;
+                        height: 100%;
+                        border-radius: 10px;
+                    }
+                }
+
+                .swiper-button-next {
+                    left: 50%;
+                    transform: translateX(-50%);
+                    bottom: 30px;
+                    top: unset;
+
+                    svg {
+                        transform: rotate(180deg);
+                    }
+                }
+
+                .swiper-button-prev {
+                    left: 50%;
+                    transform: translateX(-50%);
+                    top: 30px;
+                }
+            }
+
+            .swiper-main {
+                user-select: none;
+                width: 100%;
+                height: 700px;
+
+                picture {
+                    img {
+                        object-fit: cover;
+                        width: 100%;
+                        height: 100%;
+                        border-radius: 10px;
+                    }
+                }
+
+                .swiper-button-next {
+                    svg {
+                        transform: rotate(90deg);
+                    }
+                }
+
+                .swiper-button-prev {
+                    svg {
+                        transform: rotate(270deg);
+                    }
+                }
+            }
+
+            .swiper-button-prev, .swiper-button-next {
+                &:after {
+                    content: none;
+                }
+
+                background: color('white', 400);
+                width: 44px;
+                height: 44px;
+                border-radius: 22px;
+
+                span {
+                    display: flex;
+                    position: absolute;
+                    top: 50%;
+                    left: 50%;
+                    transform: translate(-50%, -50%);
+                }
+
+                svg {
+                    width: 18px;
+                    height: 18px;
+                }
+            }
+        }
+    }
+}
