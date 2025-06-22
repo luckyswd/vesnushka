@@ -1,6 +1,11 @@
 //-----------------------------------------------------------
 // BASE
 //-----------------------------------------------------------
+
+html {
+  scroll-behavior: smooth;
+}
+
 body {
   @include body-14();
   position: relative;
@@ -9,7 +14,7 @@ body {
 }
 
 main {
-  height: 100%;
+
 }
 
 picture {

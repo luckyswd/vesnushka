@@ -13,11 +13,16 @@ class Item {
     }
 
     init() {
+        this.handleSliders();
+        this.handleTabs();
+    }
+
+    handleSliders() {
         const swiperLeft = new Swiper(".swiper-left", {
             direction: 'vertical',
             speed: 0,
             loop: false,
-            spaceBetween: 12,
+            spaceBetween: 8,
             slidesPerView: 6,
             freeMode: true,
             watchSlidesProgress: true,
@@ -26,7 +31,6 @@ class Item {
                 prevEl: ".swiper-left .swiper-button-prev",
             },
         });
-
 
         const swiperMain = new Swiper(".swiper-main", {
             loop: false,
@@ -39,11 +43,50 @@ class Item {
             thumbs: {
                 swiper: swiperLeft,
             },
+            breakpoints: {
+                0: {
+                    allowTouchMove: true,
+                    speed: 300,
+                },
+                1025: {
+                    allowTouchMove: false,
+                }
+            }
         });
+
+        const counterEl = document.querySelector('.swiper-counter');
+        function updateCounter(swiper) {
+            if (counterEl) {
+                counterEl.textContent = `${swiper.realIndex + 1}/${swiper.slides.length}`;
+            }
+        }
+
+        swiperMain.on('init', () => updateCounter(swiperMain));
+        swiperMain.on('slideChange', () => updateCounter(swiperMain));
+
+        updateCounter(swiperMain);
 
         swiperLeft.slides.forEach((slide, index) => {
             slide.addEventListener('mouseenter', () => {
                 swiperMain.slideTo(index, 0);
+                updateCounter(swiperMain);
+            });
+        });
+    }
+
+    handleTabs() {
+        const tabButtons = document.querySelectorAll('.tabs__btn');
+        const tabPanels = document.querySelectorAll('.tabs__panel');
+
+        tabButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const target = button.dataset.tab;
+
+                tabButtons.forEach(btn => btn.classList.remove('active'));
+                tabPanels.forEach(panel => panel.classList.remove('active'));
+
+                button.classList.add('active');
+                document.querySelector(`.tabs__panel[data-tab="${target}"]`).classList.add('active');
             });
         });
     }

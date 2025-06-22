@@ -94,6 +94,7 @@
                                 {{ picture.render('https://swiperjs.com/demos/images/nature-3.jpg', 300, 300, true, item.name) }}
                             </div>
                         </div>
+                        <div class="swiper-counter">1 / 1</div>
                         <div class="swiper-button-next">
                             <span>
                                 <svg xmlns="http://www.w3.org/2000/svg" width="16"
@@ -181,13 +182,22 @@
                         </tbody>
                     </table>
                     <div class="item__buttons">
-                        <button type="button" class="description btn">Характеристики и описание
+                        <a href="#item__tabs" class="description btn">Перейти к описанию
                             <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="none">
                                 <path d="m4.25 9.5 3.39-3.39c.04-.04.06-.06.06-.08a.1.1 0 0 0 0-.06c0-.02-.02-.04-.06-.08L4.25 2.5"
                                       stroke="#A9A8B0" stroke-width="1.3" stroke-linecap="round"/>
                             </svg>
-                        </button>
-                        <button type="button" class="add-cart btn">Добавить в корзину</button>
+                        </a>
+
+                        {% if item.stock > 0 %}
+                            <button class="add-cart btn" type="button">
+                                Добавить в корзину
+                            </button>
+                        {% else %}
+                            <button class="add-cart stock btn" type="button">
+                                Под заказ
+                            </button>
+                        {% endif %}
                     </div>
                     <div class="item-stock">
                         <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="none">
@@ -197,10 +207,32 @@
                                   fill="#B9B9C1"/>
                         </svg>
                         {% if item.stock > 0 %}
-                            Наличие: Есть в наличии
+                            Есть в наличии
                         {% else %}
-                            Наличие: Под заказ
+                            Под заказ
                         {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section class="item__tabs" id="item__tabs">
+        <div class="container">
+            <div class="tabs">
+                <div class="tabs__buttons">
+                    <button class="tabs__btn active" data-tab="description">Описание</button>
+                    <button class="tabs__btn" data-tab="composition">Состав</button>
+                    <button class="tabs__btn" data-tab="usage">Применения</button>
+                </div>
+                <div class="tabs__content">
+                    <div class="tabs__panel active" data-tab="description">
+                        <p>{{ item.description }}</p>
+                    </div>
+                    <div class="tabs__panel" data-tab="composition">
+                        <p>{{ item.composition }}</p>
+                    </div>
+                    <div class="tabs__panel" data-tab="usage">
+                        <p>{{ item.howToUse }}</p>
                     </div>
                 </div>
             </div>

@@ -90,6 +90,9 @@ class Item extends BaseEntity
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $composition = null;
 
+    #[ORM\Column(type: Types::TEXT, nullable: true)]
+    private ?string $howToUse = null;
+
     #[ORM\Column(type: Types::STRING, length: 255, nullable: true)]
     private ?string $metaTitle = null;
 
@@ -351,6 +354,18 @@ class Item extends BaseEntity
     public function setMetaDescription(?string $metaDescription): self
     {
         $this->metaDescription = $metaDescription;
+
+        return $this;
+    }
+
+    public function getHowToUse(): ?string
+    {
+        return $this->howToUse;
+    }
+
+    public function setHowToUse(?string $howToUse): self
+    {
+        $this->howToUse = $howToUse;
 
         return $this;
     }
