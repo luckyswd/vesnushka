@@ -1,16 +1,3 @@
-{% if filters.subCategories is not empty %}
-    <div class="filter__wrap">
-        <p class="filter-title">Подкатегории</p>
-        <ul class="subcategories__list">
-            {% for subCategory in filters.subCategories %}
-                <li>
-                    <a href="{{ subCategory.url }}">{{ subCategory.name }}</a>
-                </li>
-            {% endfor %}
-        </ul>
-    </div>
-{% endif %}
-
 <div class="filter__wrap">
     <p class="filter-title">Цена р.</p>
     <div class="filter-inputs" id="filters-price">
@@ -32,6 +19,19 @@
         } %}
     </div>
 </div>
+
+{% if filters.subCategories is not empty %}
+    <div class="filter__wrap">
+        <p class="filter-title">Подкатегории</p>
+        <ul class="subcategories__list">
+            {% for subCategory in filters.subCategories %}
+                <li>
+                    <a href="{{ subCategory.url }}">{{ subCategory.name }}</a>
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+{% endif %}
 
 <div class="filter__wrap">
     <p class="filter-title">Бренды</p>

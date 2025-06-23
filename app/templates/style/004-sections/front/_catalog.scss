@@ -58,7 +58,6 @@
             left: -1000px;
             max-width: 100%;
             width: 100%;
-            max-height: calc(100vh - 203px);
             overflow: scroll;
 
             &.active-mobile {
@@ -227,27 +226,6 @@
             background-color: color('gray', 700);
             color: color('black', 400);
             border: 1px solid color('gray', 600);
-        }
-    }
-}
-
-.breadcrumbs {
-    display: flex;
-    gap: 8px;
-    color: color('gray', 500);
-    margin-bottom: 16px;
-
-    .breadcrumbs-item::after {
-        content: "/";
-        color: color('gray', 600);
-        margin-left: 8px;
-    }
-
-    .breadcrumbs-item:last-child {
-        color: color('main', 400);
-
-        &::after {
-            content: "";
         }
     }
 }

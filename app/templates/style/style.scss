@@ -28,10 +28,11 @@
 @import "003-components/common/input/input-text";
 @import "003-components/common/notification";
 @import "003-components/front/item_card";
-@import "003-components/front/catalog";
-@import "003-components/front/item";
+@import "003-components/front/breadcrumbs";
 
 //-----------------------------------------------------------
 // SECTIONS
 //-----------------------------------------------------------
 
+@import "004-sections/front/catalog";
+@import "004-sections/front/item";
