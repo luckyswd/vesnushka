@@ -31,40 +31,6 @@
                 padding: 0 12px;
             }
 
-            .tabs {
-                display: flex;
-                flex-direction: column;
-                gap: 16px;
-
-                &__buttons {
-                    display: flex;
-                    gap: 12px;
-
-                    .tabs__btn {
-                        padding: 8px 16px;
-                        border: 1px solid color('gray', 400);
-                        background: transparent;
-                        cursor: pointer;
-                        transition: background 0.2s;
-
-                        &.active {
-                            background: color('main', 400);
-                            color: #fff;
-                        }
-                    }
-                }
-
-                &__content {
-                    .tabs__panel {
-                        display: none;
-
-                        &.active {
-                            display: block;
-                        }
-                    }
-                }
-            }
-
             flex-direction: column;
             gap: 16px;
 
@@ -389,16 +355,20 @@
                 padding: 8px 16px;
                 background: transparent;
                 cursor: pointer;
-                transition: background 0.2s;
                 border-top-left-radius: 8px;
                 border-top-right-radius: 8px;
                 border-bottom: 2px solid color('gray', 600);
                 margin-bottom: -2px;
                 @include body-16();
                 color: color('gray', 500);
+                transition: $transition;
 
                 @include tablet() {
                     padding: 8px 12px;
+                }
+
+                &:hover {
+                    color: color('main', 400);
                 }
 
                 &.active {
