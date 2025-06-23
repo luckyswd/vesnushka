@@ -226,13 +226,13 @@
                 </div>
                 <div class="tabs__content">
                     <div class="tabs__panel active" data-tab="description">
-                        <p>{{ item.description }}</p>
+                        <p>{{ item.description|nl2br }}</p>
                     </div>
                     <div class="tabs__panel" data-tab="composition">
-                        <p>{{ item.composition }}</p>
+                        <p>{{ item.composition|nl2br }}</p>
                     </div>
                     <div class="tabs__panel" data-tab="usage">
-                        <p>{{ item.howToUse }}</p>
+                        <p>{{ item.howToUse|nl2br }}</p>
                     </div>
                 </div>
             </div>

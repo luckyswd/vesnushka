@@ -14,6 +14,7 @@ use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Bundle\FixturesBundle\FixtureGroupInterface;
 use Doctrine\Persistence\ObjectManager;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
+use Faker\Factory as FakerFactory;
 
 class ItemFixtures extends Fixture implements FixtureGroupInterface
 {
@@ -26,6 +27,7 @@ class ItemFixtures extends Fixture implements FixtureGroupInterface
 
     public function load(ObjectManager $manager): void
     {
+        $faker = FakerFactory::create('ru_RU');
         $brands = $manager->getRepository(Brand::class)->findAll();
         $categories = $manager->getRepository(Category::class)->findAll();
         $attributes = $manager->getRepository(Attribute::class)->findAll();
@@ -81,6 +83,22 @@ class ItemFixtures extends Fixture implements FixtureGroupInterface
 
             $mockFile = $this->createMockFile($manager);
             $item->setMainImage($mockFile);
+
+            $item->setShorDescription($faker->sentence(6, true));
+
+            $item->setDescription(implode("\n\n", [
+                $faker->paragraph(),
+                $faker->paragraph(),
+                $faker->paragraph(),
+                $faker->paragraph(),
+                $faker->paragraph(),
+                $faker->paragraph(),
+            ]));
+
+            $item->setComposition($faker->sentence(10));
+            $item->setHowToUse($faker->paragraph(2));
+            $item->setMetaTitle($faker->words(5, true));
+            $item->setMetaDescription($faker->sentence(12));
 
             $manager->persist($item);
         }
