@@ -362,6 +362,7 @@ class Catalog {
 
         mobileFilterBtn.addEventListener('click', () => {
             const isActive = this.filtersContainer.classList.toggle('active-mobile');
+            this.filtersContainer.style.maxHeight = (window.innerHeight - 120) + 'px';
 
             mobileFilterBtn.textContent = isActive ? 'Скрыть фильтры' : 'Фильтры';
 

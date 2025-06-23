@@ -19,17 +19,30 @@
             overflow: hidden;
         }
 
-        &.loader::after {
-            content: "";
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            animation: subtle-wave 0.8s linear infinite;
-            pointer-events: all;
-            z-index: 10;
-            border-radius: 8px;
+        &.loader {
+            .catalog__left, .catalog__right {
+                position: relative;
+
+                &::after {
+                    content: "";
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    animation: subtle-wave 0.8s linear infinite;
+                    pointer-events: all;
+                    z-index: 10;
+                    border-radius: 8px;
+                    background: rgba(255, 255, 255, 0.6);
+                }
+            }
+
+            @include tablet() {
+                .catalog__left {
+                    position: absolute;
+                }
+            }
         }
     }
 
