@@ -33,32 +33,34 @@
     </div>
 {% endif %}
 
-<div class="filter__wrap">
-    <p class="filter-title">Бренды</p>
-    {% set isExpandable = filters.brands|length > 5 %}
-    <div class="filter-checkbox" id="filters-brands">
-        {% for brand in filters.brands %}
-            {% set isHidden = loop.index > 5 %}
-            <div class="{{ isHidden ? 'hidden extra-filter' }}">
-                {% include 'template/common/input/_checkbox.html.twig' with {
-                    id: 'checkbox-brand-' ~ loop.index,
-                    label: brand.name ~ ' (' ~ brand.count ~ ')',
-                    checked: filters.brandFilterList is defined and brand.name in filters.brandFilterList,
-                    type: 'brand',
-                    value: brand.name
-                } %}
-            </div>
-        {% endfor %}
-    </div>
+{% if filters.brands is not empty %}
+    <div class="filter__wrap">
+        <p class="filter-title">Бренды</p>
+        {% set isExpandable = filters.brands|length > 5 %}
+        <div class="filter-checkbox" id="filters-brands">
+            {% for brand in filters.brands %}
+                {% set isHidden = loop.index > 5 %}
+                <div class="{{ isHidden ? 'hidden extra-filter' }}">
+                    {% include 'template/common/input/_checkbox.html.twig' with {
+                        id: 'checkbox-brand-' ~ loop.index,
+                        label: brand.name ~ ' (' ~ brand.count ~ ')',
+                        checked: filters.brandFilterList is defined and brand.name in filters.brandFilterList,
+                        type: 'brand',
+                        value: brand.name
+                    } %}
+                </div>
+            {% endfor %}
+        </div>
 
-    {% if isExpandable %}
-        <button type="button"
-                class="show-more-button"
-                data-target="filters-brands">
-            Показать все
-        </button>
-    {% endif %}
-</div>
+        {% if isExpandable %}
+            <button type="button"
+                    class="show-more-button"
+                    data-target="filters-brands">
+                Показать все
+            </button>
+        {% endif %}
+    </div>
+{% endif %}
 
 {% for attributeName, attributeValues in filters.attributes %}
     {% set attributeKey = attributeName|lower|replace({' ': '_'}) %}

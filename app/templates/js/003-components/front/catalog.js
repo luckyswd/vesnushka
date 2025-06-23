@@ -7,7 +7,7 @@ class Catalog {
     constructor() {
         this.api = new Api();
         this.loading = false;
-        this.hasMore = true;
+        this.hasMore = false;
         this.page = 1;
 
         this.container = document.querySelector(".catalog__items");
@@ -152,9 +152,14 @@ class Catalog {
         try {
             const data = await this.api.get(path, params);
 
-            if (!data || !data.items || data.items.trim() === "") {
+            if (!data || !data.items) {
                 this.hasMore = false;
+
                 return;
+            }
+
+            if (data.items.trim() === "") {
+                this.hasMore = false;
             }
 
             if (reset) {
@@ -207,9 +212,14 @@ class Catalog {
         tempContainer.innerHTML = html;
 
         const newItems = tempContainer.querySelectorAll(".item-card-wrap");
-        newItems.forEach((item) => {
-            this.container.appendChild(item);
-        });
+
+        if (newItems.length > 0 ) {
+            newItems.forEach((item) => {
+                this.container.appendChild(item);
+            });
+        } else {
+            this.container.innerHTML = html;
+        }
     }
 
     updateFilters(filtersHtml) {
