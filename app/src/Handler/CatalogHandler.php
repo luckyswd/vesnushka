@@ -105,7 +105,6 @@ readonly class CatalogHandler
         $brandList = $this->brandRepository->findBrands();
         $allItems = $this->itemRepository->findItemsByCategory($category, $sort);
 
-        // --- Получаем фильтры ---
         $clientMinPrice = $request->get('min_price') ? (float) $request->get('min_price') : null;
         $clientMaxPrice = $request->get('max_price') ? (float) $request->get('max_price') : null;
 
@@ -124,10 +123,24 @@ readonly class CatalogHandler
             $attrData = json_decode($item['attributes'], true);
             $brandGuid = $item['brand_guid'];
             $brandName = $brandList[$brandGuid]['name'] ?? null;
-
             $price = $item['price'] / 100;
 
-            // --- Проверка фильтра по атрибутам ---
+            // --- Фильтр по цене ---
+            $passesPriceFilter = true;
+            if (null !== $clientMinPrice && $price < $clientMinPrice) {
+                $passesPriceFilter = false;
+            }
+            if (null !== $clientMaxPrice && $price > $clientMaxPrice) {
+                $passesPriceFilter = false;
+            }
+
+            // --- Фильтр по бренду ---
+            $passesBrandFilter = true;
+            if (!empty($brandFilterList) && !in_array($brandName, $brandFilterList, true)) {
+                $passesBrandFilter = false;
+            }
+
+            // --- Фильтр по атрибутам ---
             $passesAttributeFilter = true;
             if (!empty($attributeFilterList)) {
                 foreach ($attributeFilterList as $attrType => $allowedValues) {
@@ -138,22 +151,7 @@ readonly class CatalogHandler
                 }
             }
 
-            // --- Проверка фильтра по брендам ---
-            $passesBrandFilter = true;
-            if (!empty($brandFilterList) && !in_array($brandName, $brandFilterList, true)) {
-                $passesBrandFilter = false;
-            }
-
-            // --- Проверка фильтра по цене ---
-            $passesPriceFilter = true;
-            if (null !== $clientMinPrice && $price < (float) $clientMinPrice) {
-                $passesPriceFilter = false;
-            }
-            if (null !== $clientMaxPrice && $price > (float) $clientMaxPrice) {
-                $passesPriceFilter = false;
-            }
-
-            // --- Статистика по брендам — если проходят атрибуты и цену ---
+            // --- Бренд: если проходит атрибуты + цену, то учитываем ---
             if ($passesAttributeFilter && $passesPriceFilter) {
                 if ($brandName) {
                     $brandStats[$brandGuid]['name'] = $brandName;
@@ -161,21 +159,39 @@ readonly class CatalogHandler
                 }
             }
 
-            // --- Применяем все фильтры (для отображения и остальных расчётов) ---
+            // --- Атрибуты: считаем статистику независимо ---
+            foreach ($attrData as $attrName => $attrValue) {
+                // временно исключаем текущий атрибут из фильтра
+                $passesOtherAttrs = true;
+
+                if (!empty($attributeFilterList)) {
+                    foreach ($attributeFilterList as $filterName => $allowedValues) {
+                        if ($filterName === $attrName) {
+                            continue;
+                        }
+                        if (!isset($attrData[$filterName]) || !in_array($attrData[$filterName], $allowedValues, true)) {
+                            $passesOtherAttrs = false;
+                            break;
+                        }
+                    }
+                }
+
+                if ($passesOtherAttrs && $passesBrandFilter && $passesPriceFilter) {
+                    $attributeStats[$attrName][$attrValue] = ($attributeStats[$attrName][$attrValue] ?? 0) + 1;
+                }
+            }
+
+            // --- Основная фильтрация (для отображения) ---
             if (!$passesAttributeFilter || !$passesBrandFilter || !$passesPriceFilter) {
                 continue;
             }
 
-            // --- min/max только если клиент их не задал ---
+            // --- Минимальная/максимальная цена, если не задана пользователем ---
             if (null === $clientMinPrice && (null === $defaultMinPrice || $price < $defaultMinPrice)) {
                 $defaultMinPrice = $price;
             }
             if (null === $clientMaxPrice && (null === $defaultMaxPrice || $price > $defaultMaxPrice)) {
                 $defaultMaxPrice = $price;
-            }
-
-            foreach ($attrData as $name => $value) {
-                $attributeStats[$name][$value] = ($attributeStats[$name][$value] ?? 0) + 1;
             }
 
             ++$matchedCount;
