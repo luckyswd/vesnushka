@@ -7,7 +7,7 @@
                 breadcrumbs: breadcrumbs,
             } %}
 
-            <div class="catalog__wrap">
+            <div class="catalog__wrap" data-limit="{{ limit }}">
                 <div class="catalog__left">
                     {% include 'template/front/components/filters.html.twig' %}
                 </div>
@@ -42,10 +42,18 @@
                     </div>
 
                     <div class="catalog__items">
-                        {% include 'template/front/components/item-card.html.twig' %}
+                        {% if items is empty %}
+                            <p class="item-not-found">По выбранным фильтрам товаров не найдено.</p>
+                        {% else %}
+                            {% include 'template/front/components/item-card.html.twig' %}
+                        {% endif %}
                     </div>
                 </div>
             </div>
         </div>
     </section>
+    {% include 'template/front/section/scramble-items.html.twig' with {
+        title: 'Популярные товары',
+        items: popularItems
+    } %}
 {% endblock %}

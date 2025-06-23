@@ -7,7 +7,7 @@ class Catalog {
     constructor() {
         this.api = new Api();
         this.loading = false;
-        this.hasMore = false;
+        this.hasMore = true;
         this.page = 1;
 
         this.container = document.querySelector(".catalog__items");
@@ -120,11 +120,14 @@ class Catalog {
     }
 
     isAtBottom() {
-        const scrollTop = window.scrollY || window.pageYOffset;
-        const windowHeight = window.innerHeight;
-        const documentHeight = document.documentElement.scrollHeight;
+        if (!this.catalogWrap) {
+            return false;
+        }
 
-        return scrollTop + windowHeight >= documentHeight - 500;
+        const rect = this.catalogWrap.getBoundingClientRect();
+        const offsetBottom = 1000;
+
+        return (rect.bottom - offsetBottom) <= window.innerHeight;
     }
 
     async fetchItems(page = 1, reset = false) {
@@ -170,6 +173,14 @@ class Catalog {
                 this.page = 1;
             } else {
                 this.page = page;
+            }
+
+            const itemsCount = parseInt(data.itemsCount.replace(/\D/g, ''), 10);
+            const limit = parseInt(this.catalogWrap?.dataset.limit ?? '0', 10);
+            const totalPages = Math.ceil(itemsCount / limit);
+
+            if (this.page >= totalPages) {
+                this.hasMore = false;
             }
 
             this.appendItems(data.items);

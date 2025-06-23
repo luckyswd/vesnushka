@@ -1,0 +1,37 @@
+.scramble-items {
+    @include tablet() {
+        .container {
+            padding: 0;
+        }
+    }
+
+    .scramble-title {
+        @include body-28();
+        margin-bottom: 24px;
+    }
+
+    .wrap {
+        border: 1px solid color('gray', 700);
+        box-shadow: rgba(0, 0, 0, 0.07) 0 7px 10px, rgba(0, 0, 0, 0.07) 0 -7px 10px;
+        border-radius: 8px;
+        padding: 16px;
+
+        @include tablet() {
+            padding: 16px 12px;
+        }
+    }
+
+    .items {
+        display: grid;
+        gap: 12px;
+        grid-template-columns: repeat(6, 1fr);
+
+        @include min-desktop() {
+            grid-template-columns: repeat(3, 1fr);
+        }
+
+        @include mobile() {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+}

@@ -238,4 +238,9 @@
             </div>
         </div>
     </section>
+    {% include 'template/front/section/scramble-items.html.twig' with {
+        title: 'Похожие товары',
+        items: similarItems
+    } %}
+
 {% endblock %}

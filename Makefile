@@ -10,7 +10,7 @@ build:
 	docker compose build
 code:
 	docker exec -it vesnushka-php sh -c 'PHP_CS_FIXER_IGNORE_ENV=1 vendor/bin/php-cs-fixer fix src'
-	docker exec -it vesnushka-php vendor/bin/phpstan analyse
+	docker exec -it vesnushka-php sh -c 'vendor/bin/phpstan analyse --memory-limit=512M'
 seed:
 	docker exec -it vesnushka-php php bin/console doctrine:fixtures:load
 db:

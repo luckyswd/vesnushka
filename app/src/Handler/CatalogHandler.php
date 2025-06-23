@@ -87,8 +87,9 @@ readonly class CatalogHandler
 
     private function renderItem(Item $item): Response
     {
-        return new Response($this->twig->render('template/front/catalog/item.html.twig', [
+        return new Response($this->twig->render('template/front/section/item.html.twig', [
             'item' => $item,
+            'similarItems' => $this->itemRepository->findSimilarItems(category: $item->getCategories()->last()),
         ]));
     }
 
@@ -105,8 +106,8 @@ readonly class CatalogHandler
         $allItems = $this->itemRepository->findItemsByCategory($category, $sort);
 
         // --- Получаем фильтры ---
-        $clientMinPrice = $request->get('min_price') ? (float)$request->get('min_price') : null;
-        $clientMaxPrice = $request->get('max_price') ? (float)$request->get('max_price') : null;
+        $clientMinPrice = $request->get('min_price') ? (float) $request->get('min_price') : null;
+        $clientMaxPrice = $request->get('max_price') ? (float) $request->get('max_price') : null;
 
         $brandFilterList = $this->getFilterListBrand($request->get('brand'));
         $attributeFilterList = $this->getFilterListAttribute($request->get('attribute'));
@@ -145,10 +146,10 @@ readonly class CatalogHandler
 
             // --- Проверка фильтра по цене ---
             $passesPriceFilter = true;
-            if ($clientMinPrice !== null && $price < (float)$clientMinPrice) {
+            if (null !== $clientMinPrice && $price < (float) $clientMinPrice) {
                 $passesPriceFilter = false;
             }
-            if ($clientMaxPrice !== null && $price > (float)$clientMaxPrice) {
+            if (null !== $clientMaxPrice && $price > (float) $clientMaxPrice) {
                 $passesPriceFilter = false;
             }
 
@@ -166,10 +167,10 @@ readonly class CatalogHandler
             }
 
             // --- min/max только если клиент их не задал ---
-            if ($clientMinPrice === null && ($defaultMinPrice === null || $price < $defaultMinPrice)) {
+            if (null === $clientMinPrice && (null === $defaultMinPrice || $price < $defaultMinPrice)) {
                 $defaultMinPrice = $price;
             }
-            if ($clientMaxPrice === null && ($defaultMaxPrice === null || $price > $defaultMaxPrice)) {
+            if (null === $clientMaxPrice && (null === $defaultMaxPrice || $price > $defaultMaxPrice)) {
                 $defaultMaxPrice = $price;
             }
 
@@ -245,12 +246,13 @@ readonly class CatalogHandler
             ]);
         }
 
-        return new Response($this->twig->render('template/front/catalog/catalog.html.twig', [
+        return new Response($this->twig->render('template/front/section/catalog.html.twig', [
             'category' => $category,
             'breadcrumbs' => $category->getBreadcrumbs(),
             'items' => $items,
             'itemsCount' => $this->formatItemsFound($matchedCount),
             'chips' => $selectedChips,
+            'limit' => $limit,
             'filters' => [
                 'subCategories' => $subCategories,
                 'brands' => $brandStats,
@@ -260,8 +262,10 @@ readonly class CatalogHandler
                 'minPrice' => $clientMinPrice,
                 'maxPrice' => $clientMaxPrice,
             ],
+            'popularItems' => $this->itemRepository->findPopularItems(),
         ]));
     }
+
     private function getSelectedChips(
         array $brandFilterList,
         array $attributeFilterList,
@@ -290,15 +294,15 @@ readonly class CatalogHandler
             }
         }
 
-        if ($clientMinPrice !== null || $clientMaxPrice !== null) {
+        if (null !== $clientMinPrice || null !== $clientMaxPrice) {
             $minPrice = $clientMinPrice ?? $defaultMinPrice;
             $maxPrice = $clientMaxPrice ?? $defaultMaxPrice;
 
             $priceLabel = 'Цена:';
-            if ($minPrice !== null) {
+            if (null !== $minPrice) {
                 $priceLabel .= ' от ' . $minPrice;
             }
-            if ($maxPrice !== null) {
+            if (null !== $maxPrice) {
                 $priceLabel .= ' до ' . $maxPrice;
             }
 

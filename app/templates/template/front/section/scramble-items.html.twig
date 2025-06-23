@@ -1,0 +1,14 @@
+{% if items is not empty %}
+    <section class="scramble-items">
+        <div class="container">
+            <div class="wrap">
+                <p class="scramble-title">{{ title ?? '' }}</p>
+                <div class="items">
+                    {% include 'template/front/components/item-card.html.twig' with {
+                        items: items
+                    } %}
+                </div>
+            </div>
+        </div>
+    </section>
+{% endif %}

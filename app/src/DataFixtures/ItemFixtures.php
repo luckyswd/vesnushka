@@ -13,8 +13,8 @@ use App\Enum\PriceTypeEnum;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Bundle\FixturesBundle\FixtureGroupInterface;
 use Doctrine\Persistence\ObjectManager;
-use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Faker\Factory as FakerFactory;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
 class ItemFixtures extends Fixture implements FixtureGroupInterface
 {

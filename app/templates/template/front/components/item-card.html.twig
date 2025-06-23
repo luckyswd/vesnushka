@@ -1,44 +1,40 @@
 {% import "template/front/components/picture.html.twig" as picture %}
 
-{% if items is empty %}
-    <p class="item-not-found">По выбранным фильтрам товаров не найдено.</p>
-{% else %}
-    {% for item in items %}
-        <div class="item-card-wrap">
-            <a class="item-link" href="{{ item.url }}">
-                <div class="card-image">
-                    {{ picture.render(item.main_image_path, 300, 300, true, item.name) }}
-                </div>
-                <div class="item-price">
-                    {{ item.price }} р.
-                </div>
-                <div class="item-stock">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="none">
-                        <path d="M6.55.72c.29-.12.61-.12.9 0l4.93 2.08c.22.1.4.25.53.45a.59.59 0 0 0-.04.01L7 6.06l-5.87-2.8a.6.6 0 0 0-.04-.01c.12-.2.3-.36.53-.45L6.55.72Z"
-                              fill="#B9B9C1"/>
-                        <path d="m13.05 4.48-.48 5.73c-.04.42-.3.78-.67.96l-4.4 2.07c-.32.15-.68.15-1 0l-4.4-2.07a1.17 1.17 0 0 1-.67-.96L.95 4.48 6.5 7.12c.32.15.68.15 1 0l5.55-2.64Z"
-                              fill="#B9B9C1"/>
-                    </svg>
-                    {% if item.stock > 0 %}
-                        Есть в наличии
-                    {% else %}
-                        Под заказ
-                    {% endif %}
-                </div>
-                <div class="item-name">
-                    {{ item.name }}
-                </div>
-            </a>
-
-            {% if item.stock > 0 %}
-                <button class="item-card-btn btn" type="button">
-                    В корзину
-                </button>
-            {% else %}
-                <button class="item-card-not-stock btn" type="button">
+{% for item in items %}
+    <div class="item-card-wrap">
+        <a class="item-link" href="{{ item.url }}">
+            <div class="card-image">
+                {{ picture.render(item.main_image_path, 300, 300, true, item.name) }}
+            </div>
+            <div class="item-price">
+                {{ item.price }} р.
+            </div>
+            <div class="item-stock">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="none">
+                    <path d="M6.55.72c.29-.12.61-.12.9 0l4.93 2.08c.22.1.4.25.53.45a.59.59 0 0 0-.04.01L7 6.06l-5.87-2.8a.6.6 0 0 0-.04-.01c.12-.2.3-.36.53-.45L6.55.72Z"
+                          fill="#B9B9C1"/>
+                    <path d="m13.05 4.48-.48 5.73c-.04.42-.3.78-.67.96l-4.4 2.07c-.32.15-.68.15-1 0l-4.4-2.07a1.17 1.17 0 0 1-.67-.96L.95 4.48 6.5 7.12c.32.15.68.15 1 0l5.55-2.64Z"
+                          fill="#B9B9C1"/>
+                </svg>
+                {% if item.stock > 0 %}
+                    Есть в наличии
+                {% else %}
                     Под заказ
-                </button>
-            {% endif %}
-        </div>
-    {% endfor %}
-{% endif %}
+                {% endif %}
+            </div>
+            <div class="item-name">
+                {{ item.name }}
+            </div>
+        </a>
+
+        {% if item.stock > 0 %}
+            <button class="item-card-btn btn" type="button">
+                В корзину
+            </button>
+        {% else %}
+            <button class="item-card-not-stock btn" type="button">
+                Под заказ
+            </button>
+        {% endif %}
+    </div>
+{% endfor %}

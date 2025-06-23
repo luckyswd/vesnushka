@@ -44,14 +44,7 @@ class ItemRepository extends ServiceEntityRepository
     ): \Traversable {
         $conn = $this->getEntityManager()->getConnection();
         $subCategories = $this->getSubCategoriesByCategory($category);
-
-        $allowedCurrencies = array_column(CurrencyEnum::cases(), 'value');
-
-        if (!in_array($currency, $allowedCurrencies, true)) {
-            throw new \InvalidArgumentException("Недопустимая валюта: $currency");
-        }
-
-        $jsonPathCurrency = "'$currency'";
+        $jsonPathCurrency = $this->getJsonPathCurrency($currency);
 
         $sortOuter = match ($sort) {
             'cheap' => 'CAST(price AS NUMERIC) ASC',
@@ -60,33 +53,33 @@ class ItemRepository extends ServiceEntityRepository
         };
 
         $sql = <<<SQL
-                SELECT *
-                FROM (
-                    SELECT
-                        i.guid,
-                        i.brand_guid,
-                        i.name,
-                        i.sku,
-                        i.url,
-                        i.breadcrumbs,
-                        i.stock,
-                        i.attributes,
-                        i.price->'retail'->$jsonPathCurrency AS price,
-                        i.rank,
-                        f.path AS main_image_path,
-                        ROW_NUMBER() OVER (
-                            PARTITION BY i.guid
-                        ) as row_num
-                    FROM item i
-                        INNER JOIN item_category ic ON i.guid = ic.item_guid
-                        INNER JOIN category c ON c.guid = ic.category_guid
-                        LEFT JOIN file f ON i.main_image_guid = f.guid
-                    WHERE c.guid IN (:CATEGORY_GUIDS)
-                      AND i.publish_state IN (:ITEM_PUBLISH_ACTIVE, :ITEM_PUBLISH_OUT_OF_STOCK)
-                ) sub
-                WHERE sub.row_num = 1
-                ORDER BY $sortOuter
-            SQL;
+            SELECT *
+            FROM (
+                SELECT
+                    i.guid,
+                    i.brand_guid,
+                    i.name,
+                    i.sku,
+                    i.url,
+                    i.breadcrumbs,
+                    i.stock,
+                    i.attributes,
+                    i.price->'retail'->$jsonPathCurrency AS price,
+                    i.rank,
+                    f.path AS main_image_path,
+                    ROW_NUMBER() OVER (
+                        PARTITION BY i.guid
+                    ) as row_num
+                FROM item i
+                    INNER JOIN item_category ic ON i.guid = ic.item_guid
+                    INNER JOIN category c ON c.guid = ic.category_guid
+                    LEFT JOIN file f ON i.main_image_guid = f.guid
+                WHERE c.guid IN (:CATEGORY_GUIDS)
+                  AND i.publish_state IN (:ITEM_PUBLISH_ACTIVE, :ITEM_PUBLISH_OUT_OF_STOCK)
+            ) sub
+            WHERE sub.row_num = 1
+            ORDER BY $sortOuter
+        SQL;
 
         $stmt = $conn->executeQuery(
             $sql,
@@ -179,5 +172,102 @@ class ItemRepository extends ServiceEntityRepository
         }
 
         return $allGuids;
+    }
+
+    public function findSimilarItems(
+        Category $category,
+        string $currency = CurrencyEnum::BYN->value,
+    ): array {
+        $conn = $this->getEntityManager()->getConnection();
+        $jsonPathCurrency = $this->getJsonPathCurrency($currency);
+
+        $sql = <<<SQL
+            SELECT
+                i.guid,
+                i.brand_guid,
+                i.name,
+                i.sku,
+                i.url,
+                i.breadcrumbs,
+                i.stock,
+                i.attributes,
+                i.price->'retail'->$jsonPathCurrency AS price,
+                i.rank,
+                f.path AS main_image_path
+            FROM item i
+                INNER JOIN item_category ic ON i.guid = ic.item_guid
+                LEFT JOIN file f ON i.main_image_guid = f.guid
+            WHERE ic.category_guid = :CATEGORY_GUID
+              AND i.publish_state IN (:STATE_ACTIVE, :STATE_OUT_OF_STOCK)
+            ORDER BY i.rank DESC
+            LIMIT 6
+        SQL;
+
+        $stmt = $conn->executeQuery(
+            $sql,
+            [
+                'CATEGORY_GUID' => $category->getGuid(),
+                'STATE_ACTIVE' => ItemPublishStateEnum::ACTIVE->value,
+                'STATE_OUT_OF_STOCK' => ItemPublishStateEnum::OUT_OF_STOCK->value,
+            ],
+            [
+                'CATEGORY_GUID' => \PDO::PARAM_STR,
+                'STATE_ACTIVE' => \PDO::PARAM_STR,
+                'STATE_OUT_OF_STOCK' => \PDO::PARAM_STR,
+            ],
+        );
+
+        return $stmt->fetchAllAssociative();
+    }
+
+    public function findPopularItems(string $currency = CurrencyEnum::BYN->value): array
+    {
+        $conn = $this->getEntityManager()->getConnection();
+        $jsonPathCurrency = $this->getJsonPathCurrency($currency);
+
+        $sql = <<<SQL
+                SELECT
+                    i.guid,
+                    i.brand_guid,
+                    i.name,
+                    i.sku,
+                    i.url,
+                    i.breadcrumbs,
+                    i.stock,
+                    i.attributes,
+                    i.price->'retail'->$jsonPathCurrency AS price,
+                    i.rank,
+                    f.path AS main_image_path
+                FROM item i
+                    LEFT JOIN file f ON i.main_image_guid = f.guid
+                WHERE i.publish_state IN (:STATE_ACTIVE, :STATE_OUT_OF_STOCK)
+                ORDER BY i.rank DESC
+                LIMIT 6
+            SQL;
+
+        $stmt = $conn->executeQuery(
+            $sql,
+            [
+                'STATE_ACTIVE' => ItemPublishStateEnum::ACTIVE->value,
+                'STATE_OUT_OF_STOCK' => ItemPublishStateEnum::OUT_OF_STOCK->value,
+            ],
+            [
+                'STATE_ACTIVE' => \PDO::PARAM_STR,
+                'STATE_OUT_OF_STOCK' => \PDO::PARAM_STR,
+            ],
+        );
+
+        return $stmt->fetchAllAssociative();
+    }
+
+    private function getJsonPathCurrency(string $currency): string
+    {
+        $allowedCurrencies = array_column(CurrencyEnum::cases(), 'value');
+
+        if (!in_array($currency, $allowedCurrencies, true)) {
+            throw new \InvalidArgumentException("Недопустимая валюта: $currency");
+        }
+
+        return "'$currency'";
     }
 }
