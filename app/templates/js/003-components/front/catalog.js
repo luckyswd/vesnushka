@@ -229,7 +229,7 @@ class Catalog {
                 this.container.appendChild(item);
             });
         } else {
-            this.container.innerHTML = html;
+            this.container.innerHTML = '<p class="item-not-found">По выбранным фильтрам товаров не найдено.</p>';
         }
     }
 
@@ -243,9 +243,9 @@ class Catalog {
         }
     }
 
-    updateItemsCount(count) {
+    updateItemsCount(html) {
         if (this.containerItemsCount) {
-            this.containerItemsCount.textContent = count;
+            this.containerItemsCount.textContent = html;
         }
     }
 
