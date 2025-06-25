@@ -14,17 +14,14 @@
     {% endblock %}
 </head>
 <body>
-<header></header>
+
+{% include 'template/front/components/header.html.twig' %}
 
 <main class="main">
     {% block body %}{% endblock %}
 </main>
 
-<footer>
-    FOOTER
-    {% include 'template/common/notification.html.twig' %}
-</footer>
-
+{% include 'template/front/components/footer.html.twig' %}
 
 </body>
 </html>

@@ -1,6 +1,20 @@
 //-----------------------------------------------------------
 // Lib
 //-----------------------------------------------------------
+import { Fancybox } from '@fancyapps/ui';
+
+Fancybox.bind('[data-fancybox]', {
+  closeExisting: true,
+  fadeEffect: false,
+  zoomEffect: false,
+  showClass: false,
+  hideClass: false,
+  dragToClose: false,
+
+  Carousel: {
+    transition: false,
+  },
+});
 
 //-----------------------------------------------------------
 // Kickstart

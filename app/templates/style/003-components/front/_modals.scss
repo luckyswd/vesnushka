@@ -1,0 +1,43 @@
+.modal {
+    width: 100%;
+    max-width: 400px;
+    padding: 40px !important;
+    border-radius: 16px;
+    display: none;
+
+    @include tablet() {
+        padding: 24px !important;
+    }
+
+    .modal-wrapper {
+        width: 100%;
+    }
+
+    .f-button {
+        top: 6px !important;
+        right: 6px !important;
+
+        svg {
+            path {
+                stroke: color('gray', 500) !important;
+            }
+        }
+    }
+
+    .modal-title {
+        @include body-20-bold();
+        text-align: center;
+    }
+
+    .modal-content {
+        display: flex;
+        flex-direction: column;
+        gap: 24px;
+    }
+
+    .modal-form {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+    }
+}

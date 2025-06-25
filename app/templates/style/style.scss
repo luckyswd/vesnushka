@@ -2,6 +2,7 @@
 // Lib
 //-----------------------------------------------------------
 @import "000-lib/swiper-bundle.min.css";
+@import "@fancyapps/ui/dist/fancybox/fancybox.css";
 
 //-----------------------------------------------------------
 // Kickstart
@@ -29,6 +30,8 @@
 @import "003-components/common/notification";
 @import "003-components/front/item_card";
 @import "003-components/front/breadcrumbs";
+@import "003-components/front/header";
+@import "003-components/front/modals";
 
 //-----------------------------------------------------------
 // SECTIONS

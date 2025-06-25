@@ -1,0 +1,65 @@
+{% import "template/front/components/picture.html.twig" as picture %}
+
+<footer>
+    {% include 'template/common/notification.html.twig' %}
+
+    <div class="modal-login modal" id="modal-login">
+        <div class="modal-wrapper">
+            <div class="modal-content">
+                <p class="modal-title">Войти в личный кабинет</p>
+                <div class="modal-form">
+                    {% include 'template/common/input/_input-text.html.twig' with {
+                        id: 'login-email',
+                        type: 'text',
+                        placeholder: 'Введите e-mail',
+                        class: 'login-email',
+                    } %}
+                    {% include 'template/common/input/_input-text.html.twig' with {
+                        id: 'login-password',
+                        type: 'password',
+                        placeholder: 'Введите пароль',
+                        class: 'login-password',
+                    } %}
+                    <button class="btn btn-login">Войти</button>
+                    <button class="btn" data-fancybox data-src="#modal-register">Регистрация</button>
+                    <button class="btn btn-forgot-password">Забыли пароль?</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-register modal" id="modal-register">
+        <div class="modal-wrapper">
+            <div class="modal-content">
+                <p class="modal-title">Регистрация</p>
+                <div class="modal-form">
+                    {% include 'template/common/input/_input-text.html.twig' with {
+                        id: 'register-first-name',
+                        type: 'text',
+                        placeholder: 'Ваше имя',
+                        class: 'register-first-name',
+                    } %}
+                    {% include 'template/common/input/_input-text.html.twig' with {
+                        id: 'register-email',
+                        type: 'text',
+                        placeholder: 'Ваш e-mail',
+                        class: 'register-email',
+                    } %}
+                    {% include 'template/common/input/_input-text.html.twig' with {
+                        id: 'register-password',
+                        type: 'password',
+                        placeholder: 'Придумайте пароль',
+                        class: 'register-password',
+                    } %}
+                    {% include 'template/common/input/_input-text.html.twig' with {
+                        id: 'register-password-confirm',
+                        type: 'password',
+                        placeholder: 'Подтвердите пароль',
+                        class: 'register-password-confirm',
+                    } %}
+                    <button class="btn btn-register">Зарегистрироваться</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</footer>

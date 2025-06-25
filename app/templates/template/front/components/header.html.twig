@@ -1,0 +1,111 @@
+{% import "template/front/components/picture.html.twig" as picture %}
+
+<header class="header">
+    <div class="container">
+        <div class="header-wrap">
+            <a href="{{ path('app_home') }}" class="header__logo">
+                {{ picture.render('/uploads/item/logo.png', 300, 300, true, 'logo') }}
+            </a>
+
+            <a href="{{ path('app_catalog') }}" class="header-catalog">
+                Каталог
+            </a>
+
+            <div class="header__search">
+                {% include 'template/common/input/_input-text.html.twig' with {
+                    id: 'search',
+                    type: 'text',
+                    placeholder: 'Поиск по названию или артикулу',
+                    class: 'input-search',
+                } %}
+            </div>
+
+            <div class="header__actions">
+                {% if app.user %}
+                    <a href="/profile" class="user-profile">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="22" fill="none">
+                            <path fill="#fff"
+                                  d="M12.25 10.1c2.476 0 4.6-2.124 4.6-4.864C16.85 2.531 14.714.5 12.25.5c-2.464 0-4.612 2.078-4.6 4.76 0 2.716 2.124 4.84 4.6 4.84ZM12.25 12.3c-5.82 0-9.192 3.497-10.569 6.515-.687 1.507.612 2.885 2.268 2.885H20.55c1.657 0 2.955-1.379 2.268-2.886-1.378-3.018-4.75-6.514-10.569-6.514Z"/>
+                        </svg>
+                        Профиль
+                    </a>
+                {% else %}
+                    <button class="user-login" data-fancybox data-src="#modal-login">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="22" fill="none">
+                            <path fill="#fff"
+                                  d="M12.25 10.1c2.476 0 4.6-2.124 4.6-4.864C16.85 2.531 14.714.5 12.25.5c-2.464 0-4.612 2.078-4.6 4.76 0 2.716 2.124 4.84 4.6 4.84ZM12.25 12.3c-5.82 0-9.192 3.497-10.569 6.515-.687 1.507.612 2.885 2.268 2.885H20.55c1.657 0 2.955-1.379 2.268-2.886-1.378-3.018-4.75-6.514-10.569-6.514Z"/>
+                        </svg>
+                        Войти
+                    </button>
+                {% endif %}
+                <button class="user-cart">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="20" viewBox="0 0 18 20" fill="none">
+                        <path d="M1.5 4.99999L4 1.66666H14L16.5 4.99999M1.5 4.99999V16.6667C1.5 17.1087 1.67559 17.5326 1.98816 17.8452C2.30072 18.1577 2.72464 18.3333 3.16667 18.3333H14.8333C15.2754 18.3333 15.6993 18.1577 16.0118 17.8452C16.3244 17.5326 16.5 17.1087 16.5 16.6667V4.99999M1.5 4.99999H16.5M12.3333 8.33332C12.3333 9.21738 11.9821 10.0652 11.357 10.6903C10.7319 11.3155 9.88406 11.6667 9 11.6667C8.11595 11.6667 7.2681 11.3155 6.64298 10.6903C6.01786 10.0652 5.66667 9.21738 5.66667 8.33332"
+                              stroke="#1E1E1E" stroke-width="1.66667" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    Корзина
+                </button>
+            </div>
+        </div>
+    </div>
+</header>
+<div class="navbar-mobile">
+    {% set currentPath = app.request.get('_route') %}
+    <div class="container">
+        <div class="navbar-mobile-wrap">
+            <a href="{{ path('app_home') }}" class="home {{ currentPath == 'app_home' ? ' active' }}">
+                <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 21 22" fill="none">
+                    <path
+                            fill="currentColor"
+                            d="m19.463 8.858-.002-.002L11.302.54A1.829 1.829 0 0 0 10 0a1.83 1.83 0 0 0-1.302.54L.543 8.851l-.008.008a1.843 1.843 0 0 0 .003 2.6 1.83 1.83 0 0 0 1.279.54h.325v5.845c0 1.188.967 2.155 2.155 2.155H7.49a.586.586 0 0 0 .586-.586v-4.707c0-.542.442-.983.984-.983h1.883c.542 0 .983.44.983.983v4.707c0 .324.262.586.586.586h3.192a2.157 2.157 0 0 0 2.155-2.155V12h.302a1.83 1.83 0 0 0 1.302-.54 1.844 1.844 0 0 0 0-2.602Z"
+                    />
+                </svg>
+            </a>
+            <a href="{{ path('app_catalog') }}" class="navbar-mobile-catalog {{ currentPath == 'app_catalog' ? ' active' }}">
+                <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 21 21" fill="currentColor">
+                    <rect x="3" y="3" width="7" height="7" />
+                    <rect x="14" y="3" width="7" height="7" />
+                    <rect x="3" y="14" width="7" height="7" />
+                    <rect x="14" y="14" width="7" height="7" />
+                </svg>
+
+            </a>
+            <a href="{{ path('app_cart') }}" class="cart {{ currentPath == 'app_cart' ? ' active' }}">
+                <svg xmlns="http://www.w3.org/2000/svg"
+                     width="28" height="28"
+                     viewBox="0 0 18 20"
+                     preserveAspectRatio="xMidYMid meet"
+                     fill="none">
+                    <path
+                            d="M1.5 4.99999L4 1.66666H14L16.5 4.99999M1.5 4.99999V16.6667C1.5 17.1087 1.67559 17.5326 1.98816 17.8452C2.30072 18.1577 2.72464 18.3333 3.16667 18.3333H14.8333C15.2754 18.3333 15.6993 18.1577 16.0118 17.8452C16.3244 17.5326 16.5 17.1087 16.5 16.6667V4.99999M1.5 4.99999H16.5M12.3333 8.33332C12.3333 9.21738 11.9821 10.0652 11.357 10.6903C10.7319 11.3155 9.88406 11.6667 9 11.6667C8.11595 11.6667 7.2681 11.3155 6.64298 10.6903C6.01786 10.0652 5.66667 9.21738 5.66667 8.33332"
+                            stroke="currentColor"
+                            stroke-width="1.66667"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                    />
+                </svg>
+
+            </a>
+            {% if app.user %}
+                <a href="{{ path('app_profile') }}" class="user-profile {{ currentPath == 'app_profile' ? ' active' }}">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 22" fill="none">
+                        <path
+                                d="M12.25 10.1c2.476 0 4.6-2.124 4.6-4.864C16.85 2.531 14.714.5 12.25.5c-2.464 0-4.612 2.078-4.6 4.76 0 2.716 2.124 4.84 4.6 4.84ZM12.25 12.3c-5.82 0-9.192 3.497-10.569 6.515-.687 1.507.612 2.885 2.268 2.885H20.55c1.657 0 2.955-1.379 2.268-2.886-1.378-3.018-4.75-6.514-10.569-6.514Z"
+                                fill="currentColor"
+                        />
+                    </svg>
+
+                </a>
+            {% else %}
+                <button class="user-login" data-fancybox data-src="#modal-login">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 28 28" fill="none">
+                        <path
+                                d="M12.25 10.1c2.476 0 4.6-2.124 4.6-4.864C16.85 2.531 14.714.5 12.25.5c-2.464 0-4.612 2.078-4.6 4.76 0 2.716 2.124 4.84 4.6 4.84ZM12.25 12.3c-5.82 0-9.192 3.497-10.569 6.515-.687 1.507.612 2.885 2.268 2.885H20.55c1.657 0 2.955-1.379 2.268-2.886-1.378-3.018-4.75-6.514-10.569-6.514Z"
+                                fill="currentColor"
+                        />
+                    </svg>
+                </button>
+            {% endif %}
+        </div>
+    </div>
+</div>

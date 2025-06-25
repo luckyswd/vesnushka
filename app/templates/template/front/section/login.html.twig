@@ -1,0 +1,24 @@
+{% extends 'template/front/base.html.twig' %}
+
+{% block body %}
+    <section class="login">
+        <div class="container">
+            <form class="form-login" action="{{ path('app_login') }}" method="post">
+                {% if error %}
+                    <div class="login-error">Неверные учетные данные</div>
+                {% endif %}
+
+                <div class="form-row">
+                    <label for="username">Email</label>
+                    <input type="text" id="username" name="_username" value="{{ last_username }}">
+                </div>
+                <div class="form-row">
+                    <label for="password">Пароль</label>
+                    <input type="password" id="password" name="_password">
+                </div>
+                <input type="hidden" name="_target_path" value="/">
+                <button class="btn" type="submit">Вход</button>
+            </form>
+        </div>
+    </section>
+{% endblock %}

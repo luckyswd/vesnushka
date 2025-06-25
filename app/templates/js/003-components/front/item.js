@@ -93,3 +93,21 @@ class Item {
 }
 
 new Item();
+
+// document.querySelector('.user-login').addEventListener('click', () => {
+//     fetch('/api/login', {
+//         method: 'POST',
+//         headers: { 'Content-Type': 'application/json' },
+//         body: JSON.stringify({ email: 'admin@example.com', password: 'admin' }),
+//         credentials: 'include'
+//     });
+// })
+//
+// document.querySelector('.user-logout').addEventListener('click', () => {
+//     fetch('/api/logout', {
+//         method: 'POST',
+//         credentials: 'include'
+//     }).then(() => {
+//         console.log('Logged out');
+//     });
+// });

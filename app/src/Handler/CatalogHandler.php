@@ -123,7 +123,7 @@ readonly class CatalogHandler
             $attrData = json_decode($item['attributes'], true);
             $brandGuid = $item['brand_guid'];
             $brandName = $brandList[$brandGuid]['name'] ?? null;
-            $price = $item['price'] / 100;
+            $price = $item['price'];
 
             // --- Фильтр по цене ---
             $passesPriceFilter = true;
