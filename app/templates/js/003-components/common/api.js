@@ -21,25 +21,18 @@ class Api {
       options.body = JSON.stringify(data);
     }
 
-    try {
-      const response = await fetch(url, options);
+    const response = await fetch(url, options);
+    const contentType = response.headers.get('Content-Type') || '';
+    const isJson = contentType.includes('application/json');
 
-      if (!response.ok) {
-        let errorText = await response.text();
+    if (!response.ok) {
+      const result = isJson ? await response.json() : await response.text();
+      const errorText = isJson ? result.errors || result.error || 'Неизвестная ошибка' : result;
 
-        throw new Error(`HTTP error ${response.status}: ${errorText}`);
-      }
-
-      const contentType = response.headers.get('Content-Type') || '';
-
-      return contentType.includes('application/json')
-        ? await response.json()
-        : await response.text();
-    } catch (error) {
-      console.error('API request failed:', error);
-
-      throw error;
+      throw errorText;
     }
+
+    return isJson ? await response.json() : await response.text();
   }
 
   async get(endpoint, params = {}, headers = {}) {

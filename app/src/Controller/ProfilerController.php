@@ -8,7 +8,8 @@ use Symfony\Component\Routing\Attribute\Route;
 class ProfilerController
 {
     #[Route('/profile', name: 'app_profile')]
-    public function profiler(): Response {
+    public function profiler(): Response
+    {
         dd(1);
     }
 }

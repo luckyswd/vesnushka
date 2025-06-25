@@ -31,6 +31,12 @@ class User extends BaseEntity implements UserInterface, PasswordAuthenticatedUse
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private ?string $lastName = null;
 
+    #[ORM\Column(type: 'string', length: 6, nullable: true)]
+    private ?string $confirmationCode = null;
+
+    #[ORM\Column(type: 'boolean')]
+    private bool $isConfirmed = false;
+
     public function __toString(): string
     {
         return $this->email;
@@ -74,12 +80,14 @@ class User extends BaseEntity implements UserInterface, PasswordAuthenticatedUse
     {
         $roles = $this->roles;
         $roles[] = 'ROLE_USER';
+
         return array_unique($roles);
     }
 
     public function setRoles(array $roles): self
     {
         $this->roles = $roles;
+
         return $this;
     }
 
@@ -121,10 +129,34 @@ class User extends BaseEntity implements UserInterface, PasswordAuthenticatedUse
         $firstName = trim((string) $this->firstName);
         $lastName = trim((string) $this->lastName);
 
-        if ($firstName !== '' || $lastName !== '') {
+        if ('' !== $firstName || '' !== $lastName) {
             return trim($firstName . ' ' . $lastName);
         }
 
         return (string) $this->email;
+    }
+
+    public function getConfirmationCode(): ?string
+    {
+        return $this->confirmationCode;
+    }
+
+    public function setConfirmationCode(?string $confirmationCode): self
+    {
+        $this->confirmationCode = $confirmationCode;
+
+        return $this;
+    }
+
+    public function isConfirmed(): bool
+    {
+        return $this->isConfirmed;
+    }
+
+    public function setIsConfirmed(bool $isConfirmed): self
+    {
+        $this->isConfirmed = $isConfirmed;
+
+        return $this;
     }
 }

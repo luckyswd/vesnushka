@@ -1,29 +1,29 @@
 {% import "template/front/components/picture.html.twig" as picture %}
 
 <footer>
-    {% include 'template/common/notification.html.twig' %}
-
     <div class="modal-login modal" id="modal-login">
         <div class="modal-wrapper">
             <div class="modal-content">
                 <p class="modal-title">Войти в личный кабинет</p>
-                <div class="modal-form">
+                <form class="modal-form">
                     {% include 'template/common/input/_input-text.html.twig' with {
                         id: 'login-email',
                         type: 'text',
                         placeholder: 'Введите e-mail',
                         class: 'login-email',
+                        autocomplete: 'login-email'
                     } %}
                     {% include 'template/common/input/_input-text.html.twig' with {
                         id: 'login-password',
                         type: 'password',
                         placeholder: 'Введите пароль',
                         class: 'login-password',
+                        autocomplete: 'current-password'
                     } %}
-                    <button class="btn btn-login">Войти</button>
+                    <button type="button" class="btn btn-login">Войти</button>
                     <button class="btn" data-fancybox data-src="#modal-register">Регистрация</button>
                     <button class="btn btn-forgot-password">Забыли пароль?</button>
-                </div>
+                </form>
             </div>
         </div>
     </div>
@@ -32,34 +32,43 @@
         <div class="modal-wrapper">
             <div class="modal-content">
                 <p class="modal-title">Регистрация</p>
-                <div class="modal-form">
+                <form class="modal-form">
                     {% include 'template/common/input/_input-text.html.twig' with {
                         id: 'register-first-name',
                         type: 'text',
                         placeholder: 'Ваше имя',
                         class: 'register-first-name',
+                        required: true,
                     } %}
                     {% include 'template/common/input/_input-text.html.twig' with {
                         id: 'register-email',
                         type: 'text',
                         placeholder: 'Ваш e-mail',
                         class: 'register-email',
+                        autocomplete: 'register-email',
+                        required: true,
                     } %}
                     {% include 'template/common/input/_input-text.html.twig' with {
                         id: 'register-password',
                         type: 'password',
                         placeholder: 'Придумайте пароль',
                         class: 'register-password',
+                        autocomplete: 'register-password',
+                        required: true,
                     } %}
                     {% include 'template/common/input/_input-text.html.twig' with {
                         id: 'register-password-confirm',
                         type: 'password',
                         placeholder: 'Подтвердите пароль',
                         class: 'register-password-confirm',
+                        autocomplete: 'register-password-confirm',
+                        required: true,
                     } %}
-                    <button class="btn btn-register">Зарегистрироваться</button>
-                </div>
+                    <button  type="button" class="btn btn-register">Зарегистрироваться</button>
+                </form>
             </div>
         </div>
     </div>
 </footer>
+
+{% include 'template/common/notification.html.twig' %}

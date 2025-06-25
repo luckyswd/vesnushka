@@ -1,12 +1,15 @@
-<input
-        type="{{ type }}"
-        id="{{ id }}"
-        class="input-text {{ class ?? '' }}"
-        {% if placeholder is defined and placeholder is not empty %}placeholder="{{ placeholder }}"{% endif %}
-        {% if required is defined and required %}required{% endif %}
-        {% if disabled is defined and disabled %}disabled{% endif %}
-        {% if readonly is defined and readonly %}readonly{% endif %}
-        {% if maxlength is defined %}maxlength="{{ maxlength }}"{% endif %}
-        {% if minlength is defined %}minlength="{{ minlength }}"{% endif %}
-        {% if value is defined and value is not same as(false) %}value="{{ value }}"{% endif %}
-/>
+<div class="input-wrapper {% if required is defined and required %}required{% endif %}">
+    <input
+            type="{{ type }}"
+            id="{{ id }}"
+            class="input-text {{ class ?? '' }}"
+            {% if placeholder is defined and placeholder is not empty %}placeholder="{{ placeholder }}"{% endif %}
+            {% if required is defined and required %}required{% endif %}
+            {% if disabled is defined and disabled %}disabled{% endif %}
+            {% if readonly is defined and readonly %}readonly{% endif %}
+            {% if maxlength is defined %}maxlength="{{ maxlength }}"{% endif %}
+            {% if minlength is defined %}minlength="{{ minlength }}"{% endif %}
+            {% if value is defined and value is not same as(false) %}value="{{ value }}"{% endif %}
+            {% if autocomplete is defined and autocomplete is not empty %}autocomplete="{{ autocomplete }}"{% endif %}
+    />
+</div>

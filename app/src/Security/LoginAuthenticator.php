@@ -6,16 +6,16 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
 use Symfony\Component\Security\Http\Authenticator\AbstractAuthenticator;
+use Symfony\Component\Security\Http\Authenticator\Passport\Badge\RememberMeBadge;
 use Symfony\Component\Security\Http\Authenticator\Passport\Badge\UserBadge;
 use Symfony\Component\Security\Http\Authenticator\Passport\Credentials\PasswordCredentials;
 use Symfony\Component\Security\Http\Authenticator\Passport\Passport;
-use Symfony\Component\Security\Http\Authenticator\Passport\Badge\RememberMeBadge;
 
 class LoginAuthenticator extends AbstractAuthenticator
 {
     public function supports(Request $request): ?bool
     {
-        return $request->getPathInfo() === '/api/login' && $request->isMethod('POST');
+        return '/api/login' === $request->getPathInfo() && $request->isMethod('POST');
     }
 
     public function authenticate(Request $request): Passport

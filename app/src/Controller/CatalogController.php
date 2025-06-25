@@ -9,7 +9,8 @@ use Symfony\Component\Routing\Attribute\Route;
 class CatalogController extends BaseController
 {
     #[Route('/catalog', name: 'app_catalog')]
-    public function catalog(): Response {
+    public function catalog(): Response
+    {
         dd(1);
     }
 

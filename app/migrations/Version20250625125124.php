@@ -10,7 +10,7 @@ use Doctrine\Migrations\AbstractMigration;
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-final class Version20250614141834 extends AbstractMigration
+final class Version20250625125124 extends AbstractMigration
 {
     public function getDescription(): string
     {
@@ -19,7 +19,6 @@ final class Version20250614141834 extends AbstractMigration
 
     public function up(Schema $schema): void
     {
-        // Важно: безопасно кастим к jsonb
         $this->addSql(<<<'SQL'
             ALTER TABLE item
             ALTER COLUMN attributes TYPE jsonb
