@@ -2,9 +2,12 @@
 
 namespace App\Controller;
 
+use App\Handler\RequestResetPasswordHandler;
+use App\Handler\ResetPasswordHandler;
 use App\Handler\UserRegisterHandler;
 use App\Handler\VerifyCodeHandler;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\Routing\Attribute\Route;
@@ -45,7 +48,7 @@ class SecurityController extends BaseController
         } catch (HttpException $e) {
             return $this->error($e->getMessage(), $e->getStatusCode());
         } catch (\Throwable $e) {
-            return $this->error($_ENV['ERROR_MESSAGE']);
+            return $this->error(getenv('ERROR_MESSAGE'));
         }
 
         return $this->success(
@@ -53,5 +56,34 @@ class SecurityController extends BaseController
                 'message' => 'Вы успешно вошли в систему.',
             ],
         );
+    }
+
+    #[Route('/api/request-reset-password', name: 'api_request_reset_password', methods: ['POST'])]
+    public function requestResetPassword(RequestResetPasswordHandler $handler): JsonResponse
+    {
+        try {
+            $handler->handle();
+        } catch (HttpException $e) {
+            return $this->error($e->getMessage(), $e->getStatusCode());
+        } catch (\Throwable $e) {
+            return $this->error(getenv('ERROR_MESSAGE'));
+        }
+
+        return $this->success(['message' => 'Ссылка для сброса пароля отправлена на почту.']);
+    }
+
+    #[Route('/api/reset-password/{token}', name: 'api_reset_password', methods: ['GET'])]
+    public function resetPassword(string $token, ResetPasswordHandler $handler): RedirectResponse
+    {
+        try {
+            $handler->handle($token);
+            $message = 'Пароль отправлен на почту';
+            $type = 'success';
+        } catch (\Throwable $e) {
+            $message = $e instanceof HttpException ? $e->getMessage() : $_ENV['ERROR_MESSAGE'];
+            $type = 'error';
+        }
+
+        return new RedirectResponse('/?msg=' . urlencode($message) . '&type=' . $type);
     }
 }

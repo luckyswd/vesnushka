@@ -1,4 +1,5 @@
 import Api from "../common/api.js";
+import {Fancybox} from "@fancyapps/ui";
 
 class Security {
     constructor() {
@@ -15,6 +16,7 @@ class Security {
         this.verifyCode();
         this.successMessage();
         this.login();
+        this.resetPassword();
     }
 
     register() {
@@ -124,12 +126,72 @@ class Security {
         });
     }
 
+    resetPassword() {
+        const userLoginBtn = document.querySelector('.user-login');
+        const loginForm = document.querySelector('.login-form');
+        const resetPasswordForm = document.querySelector('.reset-password-form');
+
+        userLoginBtn?.addEventListener('click', async (e) => {
+            loginForm.classList.remove('hidden');
+            resetPasswordForm.classList.add('hidden');
+        });
+
+        const btnForgotPassword = document.querySelector('.btn-forgot-password');
+
+        btnForgotPassword?.addEventListener('click', async (e) => {
+            e.preventDefault();
+
+            loginForm.classList.add('hidden');
+            resetPasswordForm.classList.remove('hidden');
+        });
+
+        const btnResetPassword = document.querySelector('.btn-reset-password');
+
+        btnResetPassword?.addEventListener('click', async (e) => {
+            e.preventDefault();
+
+            try {
+                btnResetPassword.classList.add('loader');
+
+                const email = document.getElementById('reset-password-email').value.trim();
+
+                const result = await this.api.post('/api/request-reset-password', {
+                    email,
+                });
+
+                Fancybox.close(true);
+                window.notofication.success(result.data.message);
+            } catch (errMessage) {
+                window.notofication.error(errMessage);
+            }
+
+            btnResetPassword.classList.remove('loader');
+        });
+    }
+
     successMessage() {
+        const params = new URLSearchParams(window.location.search);
+        const urlMessage = params.get('msg');
+        const urlType = params.get('type') || 'success';
+
+        if (urlMessage) {
+            sessionStorage.setItem('success_message', urlMessage);
+            sessionStorage.setItem('success_type', urlType);
+            history.replaceState({}, '', window.location.pathname);
+        }
+
         const message = sessionStorage.getItem('success_message');
+        const type = sessionStorage.getItem('success_type') || 'success';
 
         if (message) {
-            window.notofication.success(message);
+            if (type === 'error') {
+                window.notofication.error(message);
+            } else {
+                window.notofication.success(message);
+            }
+
             sessionStorage.removeItem('success_message');
+            sessionStorage.removeItem('success_type');
         }
     }
 }

@@ -5,7 +5,7 @@
         <div class="modal-wrapper">
             <div class="modal-content">
                 <p class="modal-title">Войти в личный кабинет</p>
-                <form class="modal-form">
+                <form class="modal-form login-form">
                     {% include 'template/common/input/_input-text.html.twig' with {
                         id: 'login-email',
                         type: 'text',
@@ -23,6 +23,16 @@
                     <button type="button" class="btn btn-login">Войти</button>
                     <button class="btn" data-fancybox data-src="#modal-register">Регистрация</button>
                     <button class="btn btn-forgot-password">Забыли пароль?</button>
+                </form>
+                <form class="modal-form reset-password-form hidden">
+                    {% include 'template/common/input/_input-text.html.twig' with {
+                        id: 'reset-password-email',
+                        type: 'text',
+                        placeholder: 'Введите e-mail',
+                        class: 'reset-password-email',
+                        autocomplete: 'reset-password-email'
+                    } %}
+                    <button type="button" class="btn btn-reset-password">Восстановить</button>
                 </form>
             </div>
         </div>
