@@ -2,7 +2,7 @@
 
 namespace Handler;
 
-use App\Handler\CatalogHandler;
+use App\Handler\CatalogItemHandler;
 use App\Repository\CategoryRepository;
 use App\Repository\ItemRepository;
 use Base\BaseTest;
@@ -13,7 +13,7 @@ class CatalogHandlerTest extends BaseTest
 {
     private CategoryRepository $categoryRepository;
     private ItemRepository $itemRepository;
-    private CatalogHandler $catalogHandler;
+    private CatalogItemHandler $catalogHandler;
 
     protected function setUp(): void
     {
@@ -21,7 +21,7 @@ class CatalogHandlerTest extends BaseTest
 
         $this->categoryRepository = $this->container->get(CategoryRepository::class);
         $this->itemRepository = $this->container->get(ItemRepository::class);
-        $this->catalogHandler = $this->container->get(CatalogHandler::class);
+        $this->catalogHandler = $this->container->get(CatalogItemHandler::class);
     }
 
     public function testAllCategoriesAndItemsDoNotCause500Error(): void

@@ -3,24 +3,29 @@
 namespace App\Controller;
 
 use App\Handler\CatalogHandler;
+use App\Handler\CatalogItemHandler;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
 class CatalogController extends BaseController
 {
     #[Route('/catalog', name: 'app_catalog')]
-    public function catalog(): Response
+    public function catalog(CatalogHandler $catalogHandler): Response
     {
-        dd(1);
+        try {
+            return $catalogHandler->handle();
+        } catch (\Throwable $e) {
+            throw $e;
+        }
     }
 
     #[Route('/catalog/{path}', name: 'app_catalog_path', requirements: ['path' => '.+'], defaults: ['path' => ''])]
-    public function show(
+    public function catalogItem(
         string $path,
-        CatalogHandler $catalogHandler,
+        CatalogItemHandler $catalogItemHandler,
     ): Response {
         try {
-            return $catalogHandler($path);
+            return $catalogItemHandler->handle($path);
         } catch (\Throwable $e) {
             throw $e;
         }

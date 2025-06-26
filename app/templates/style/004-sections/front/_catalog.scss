@@ -1,200 +1,40 @@
 .catalog {
-    margin: 40px 0;
+    margin: 16px 0;
 
-    @include mobile() {
-        margin: 16px 0;
-    }
-
-    .catalog-name {
-        @include body-28-bold();
-    }
-
-    .catalog__wrap {
-        display: flex;
-        gap: 32px;
-        position: relative;
-        border-radius: 8px;
-
-        @include tablet() {
-            overflow: hidden;
-        }
-
-        &.loader {
-            .catalog__left, .catalog__right {
-                position: relative;
-
-                &::after {
-                    content: "";
-                    position: absolute;
-                    top: 0;
-                    left: 0;
-                    width: 100%;
-                    height: 100%;
-                    animation: subtle-wave 0.8s linear infinite;
-                    pointer-events: all;
-                    z-index: 10;
-                    border-radius: 8px;
-                    background: rgba(255, 255, 255, 0.6);
-                }
-            }
-
-            @include tablet() {
-                .catalog__left {
-                    position: absolute;
-                }
-            }
-        }
-    }
-
-    .catalog__left {
-        max-width: 350px;
-        width: 100%;
-        border: 1px solid color('gray', 700);
-        box-shadow: rgba(0, 0, 0, 0.07) 0 7px 10px, rgba(0, 0, 0, 0.07) 0 -7px 10px;
-        border-radius: 8px;
-        padding: 16px;
-        display: flex;
-        flex-direction: column;
-        gap: 12px;
-        height: max-content;
-        transition: $transition;
-
-        @include min-desktop() {
-            max-width: 260px;
-        }
-
-        @include tablet() {
-            position: absolute;
-            top: 50px;
-            z-index: 5;
-            background: color('white', 400);
-            left: -1000px;
-            max-width: 100%;
-            width: 100%;
-            overflow: scroll;
-
-            &.active-mobile {
-                left: 0;
-                box-shadow: none;
-            }
-        }
-
-        @include mobile() {
-            top: 87px;
-        }
-    }
-
-    .catalog__right {
-        width: 100%;
-        height: 100%;
-        border: 1px solid color('gray', 700);
-        box-shadow: rgba(0, 0, 0, 0.07) 0 7px 10px, rgba(0, 0, 0, 0.07) 0 -7px 10px;
-        border-radius: 8px;
-        padding: 16px;
-        min-height: 100vh;
-
-        @include tablet() {
+    @include tablet() {
+        .container {
             padding: 0;
-            border: none;
-            box-shadow: none;
-        }
-
-        .catalog__sort {
-            @include mobile() {
-                width: 100%;
-            }
         }
     }
 
-    .catalog__right-top {
-        border-bottom: 1px solid color('gray', 700);
-        padding-bottom: 12px;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
+    .catalog-wrap {
+        border: 1px solid rgb(238, 238, 238);
+        box-shadow: rgba(0, 0, 0, 0.07) 0 7px 10px, rgba(0, 0, 0, 0.07) 0 -7px 10px;
+        border-radius: 8px;
+    }
 
-        @include mobile() {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            align-items: center;
+    .catalog-wrap {
+        padding: 16px;
+
+        @include tablet() {
+            padding: 12px;
         }
 
-        .title {
-            display: flex;
-            gap: 10px;
-            align-items: center;
-
-            .catalog__right-items-count {
-                color: color('gray', 500);
-            }
-        }
-
-        .custom-select-wrap {
-            min-width: 210px;
-
-            @include mobile() {
-                max-width: 100%;
-            }
-        }
-
-        .mobile-filters {
-            display: none;
-
-            @include tablet() {
-                display: flex;
-            }
+        h1 {
+            @include body-28-bold();
+            text-align: center;
+            margin-bottom: 24px;
         }
     }
 
-    .filter__wrap {
-        border-bottom: 1px solid color('gray', 700);
-
-        &:last-child {
-            border-bottom: none;
-        }
-
-        .filter-title {
-            @include body-16-bold();
-            margin-bottom: 12px;
-        }
-
-        .subcategories__list {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-            padding-left: 8px;
-            padding-bottom: 12px;
-        }
-
-        .filter-checkbox {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-            padding-bottom: 12px;
-        }
-
-        .filter-inputs {
-            display: flex;
-            gap: 8px;
-            padding-bottom: 12px;
-        }
-
-        .show-more-button {
-            padding-bottom: 12px;
-            color: color('main', 400);
-        }
-    }
-
-    .catalog__items {
-        margin-top: 24px;
+    .categories {
         display: grid;
-        row-gap: 32px;
+        grid-template-columns: repeat(5, 1fr);
+        row-gap: 24px;
         column-gap: 16px;
-        grid-template-columns: repeat(3, 1fr);
 
         @include min-desktop() {
-            grid-template-columns: repeat(2, 1fr);
+            grid-template-columns: repeat(4, 1fr);
         }
 
         @include tablet() {
@@ -203,42 +43,36 @@
 
         @include mobile() {
             grid-template-columns: repeat(2, 1fr);
+            row-gap: 16px;
+            column-gap: 12px;
         }
-    }
 
-    .catalog-selected-chip {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 8px;
-        margin-top: 12px;
+        .category {
+            .category-name {
+                @include body-20-bold();
+                text-align: center;
+                margin-top: 8px;
+                transition: $transition;
+            }
 
-        .chip, .clear-all-chips {
-            @include body-14();
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            padding: 8px 16px 8px 16px;
-            background-color: color('main', 400);
-            border-radius: 16px;
-            color: color('white', 400);
+            .category-image {
+                img {
+                    transition: $transition;
+                }
+            }
 
-            svg {
-                margin-right: -8px;
-                cursor: pointer;
+            &:hover {
+                .category-name {
+                    color: color('main', 400);
+                }
 
-                &:hover {
-                    path {
-                        fill: color('gray', 700);
-
+                .category-image {
+                    img {
+                        transform: scale(1.05);
+                        transition: transform 0.3s ease;
                     }
                 }
             }
-        }
-
-        .clear-all-chips {
-            background-color: color('gray', 700);
-            color: color('black', 400);
-            border: 1px solid color('gray', 600);
         }
     }
 }
