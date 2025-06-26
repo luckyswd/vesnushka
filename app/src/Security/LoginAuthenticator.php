@@ -2,8 +2,10 @@
 
 namespace App\Security;
 
+use App\Traits\ApiResponseTrait;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
 use Symfony\Component\Security\Http\Authenticator\AbstractAuthenticator;
 use Symfony\Component\Security\Http\Authenticator\Passport\Badge\RememberMeBadge;
@@ -13,6 +15,8 @@ use Symfony\Component\Security\Http\Authenticator\Passport\Passport;
 
 class LoginAuthenticator extends AbstractAuthenticator
 {
+    use ApiResponseTrait;
+
     public function supports(Request $request): ?bool
     {
         return '/api/login' === $request->getPathInfo() && $request->isMethod('POST');
@@ -33,11 +37,11 @@ class LoginAuthenticator extends AbstractAuthenticator
 
     public function onAuthenticationSuccess(Request $request, $token, string $firewallName): ?JsonResponse
     {
-        return new JsonResponse(['status' => 'ok']);
+        return $this->success(['message' => 'Вы успешно вошли в систему.']);
     }
 
     public function onAuthenticationFailure(Request $request, AuthenticationException $exception): JsonResponse
     {
-        return new JsonResponse(['error' => 'Invalid credentials'], 401);
+        return $this->error('Неверный логин или пароль', Response::HTTP_UNAUTHORIZED);
     }
 }

@@ -32,7 +32,7 @@
         <div class="modal-wrapper">
             <div class="modal-content">
                 <p class="modal-title">Регистрация</p>
-                <form class="modal-form">
+                <form class="modal-form register-form">
                     {% include 'template/common/input/_input-text.html.twig' with {
                         id: 'register-first-name',
                         type: 'text',
@@ -65,6 +65,22 @@
                         required: true,
                     } %}
                     <button  type="button" class="btn btn-register">Зарегистрироваться</button>
+                </form>
+                <form class="modal-form verify-code-wrap hidden">
+                    {% include 'template/common/input/_input-text.html.twig' with {
+                        id: 'verify-code',
+                        type: 'text',
+                        class: 'verify-code',
+                        placeholder: 'Код подтверждения',
+                        maxlength: 6,
+                        required: true,
+                    } %}
+                    {% include 'template/common/input/_input-text.html.twig' with {
+                        id: 'user-guid',
+                        type: 'hidden',
+                        class: 'user-guid',
+                    } %}
+                    <button  type="button" class="btn btn-verify-code">Подтвердить код</button>
                 </form>
             </div>
         </div>
