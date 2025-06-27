@@ -58,7 +58,7 @@ class CategoryFixtures extends Fixture implements FixtureGroupInterface
 
         foreach ($categoriesNames as $name) {
             $category = new Category();
-            $category->setName($name . random_int(0, 99999999));
+            $category->setName($name . ' ' . random_int(0, 99999999));
             $category->setPublishState(CategoryPublishStateEnum::ACTIVE);
 
             $parentCategory = $categories[array_rand($categories)];
