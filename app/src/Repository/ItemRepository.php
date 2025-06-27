@@ -176,6 +176,7 @@ class ItemRepository extends ServiceEntityRepository
 
     public function findSimilarItems(
         Category $category,
+        string $excludeItemGuid,
         string $currency = CurrencyEnum::BYN->value,
     ): array {
         $conn = $this->getEntityManager()->getConnection();
@@ -199,6 +200,7 @@ class ItemRepository extends ServiceEntityRepository
                 LEFT JOIN file f ON i.main_image_guid = f.guid
             WHERE ic.category_guid = :CATEGORY_GUID
               AND i.publish_state IN (:STATE_ACTIVE, :STATE_OUT_OF_STOCK)
+              AND i.guid != :EXCLUDE_GUID
             ORDER BY i.rank DESC
             LIMIT 6
         SQL;
@@ -209,11 +211,13 @@ class ItemRepository extends ServiceEntityRepository
                 'CATEGORY_GUID' => $category->getGuid(),
                 'STATE_ACTIVE' => ItemPublishStateEnum::ACTIVE->value,
                 'STATE_OUT_OF_STOCK' => ItemPublishStateEnum::OUT_OF_STOCK->value,
+                'EXCLUDE_GUID' => $excludeItemGuid,
             ],
             [
                 'CATEGORY_GUID' => \PDO::PARAM_STR,
                 'STATE_ACTIVE' => \PDO::PARAM_STR,
                 'STATE_OUT_OF_STOCK' => \PDO::PARAM_STR,
+                'EXCLUDE_GUID' => \PDO::PARAM_STR,
             ],
         );
 
@@ -242,7 +246,7 @@ class ItemRepository extends ServiceEntityRepository
                     LEFT JOIN file f ON i.main_image_guid = f.guid
                 WHERE i.publish_state IN (:STATE_ACTIVE, :STATE_OUT_OF_STOCK)
                 ORDER BY i.rank DESC
-                LIMIT 6
+                LIMIT 12
             SQL;
 
         $stmt = $conn->executeQuery(

@@ -58,6 +58,9 @@ class Category extends BaseEntity
     #[ORM\JoinColumn(name: 'image_guid', referencedColumnName: 'guid', nullable: true)]
     private ?File $image = null;
 
+    #[ORM\Column(type: 'boolean')]
+    private bool $isPopular = false;
+
     public function __construct()
     {
         parent::__construct();
@@ -164,5 +167,15 @@ class Category extends BaseEntity
         $this->image = $image;
 
         return $this;
+    }
+
+    public function isPopular(): bool
+    {
+        return $this->isPopular;
+    }
+
+    public function setIsPopular(bool $isPopular): void
+    {
+        $this->isPopular = $isPopular;
     }
 }

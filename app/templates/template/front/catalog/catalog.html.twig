@@ -1,5 +1,4 @@
 {% extends 'template/front/base.html.twig' %}
-{% import "template/front/components/picture.html.twig" as picture %}
 
 {% block body %}
     <section class="catalog">
@@ -10,18 +9,9 @@
             <div class="catalog-wrap">
                 <h1>Каталог</h1>
 
-                <div class="categories">
-                    {% for category in categories %}
-                        {% if category.url != '/catalog' %}
-                            <a class="category" href="{{ category.url }}">
-                                <div class="category-image">
-                                    {{ picture.render(category.image.path, 300, 300, true, category.name) }}
-                                </div>
-                                <p class="category-name">{{ category.name }}</p>
-                            </a>
-                        {% endif %}
-                    {% endfor %}
-                </div>
+                {% include 'template/front/components/category-card.html.twig' with {
+                    categories: categories,
+                } %}
             </div>
         </div>
     </section>

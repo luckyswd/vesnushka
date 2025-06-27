@@ -28,4 +28,16 @@ class CategoryRepository extends ServiceEntityRepository
             ->getQuery()
             ->getOneOrNullResult();
     }
+
+    public function findPopularCategories(): array
+    {
+        return $this->createQueryBuilder('c')
+            ->andWhere('c.publishState = :ACTIVE')
+            ->andWhere('c.isPopular = :IS_POPULAR')
+            ->setParameter('IS_POPULAR', true)
+            ->setParameter('ACTIVE', CategoryPublishStateEnum::ACTIVE->value)
+            ->setMaxResults(6)
+            ->getQuery()
+            ->getResult();
+    }
 }

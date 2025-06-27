@@ -1,13 +1,24 @@
 .scramble-items {
+    .items {
+        display: grid;
+        gap: 12px;
+        grid-template-columns: repeat(6, 1fr);
+
+        @include min-desktop() {
+            grid-template-columns: repeat(3, 1fr);
+        }
+
+        @include mobile() {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+}
+
+.default-section {
     @include tablet() {
         .container {
             padding: 0;
         }
-    }
-
-    .scramble-title {
-        @include body-28();
-        margin-bottom: 24px;
     }
 
     .wrap {
@@ -21,17 +32,8 @@
         }
     }
 
-    .items {
-        display: grid;
-        gap: 12px;
-        grid-template-columns: repeat(6, 1fr);
-
-        @include min-desktop() {
-            grid-template-columns: repeat(3, 1fr);
-        }
-
-        @include mobile() {
-            grid-template-columns: repeat(2, 1fr);
-        }
+    .title {
+        @include body-28();
+        margin-bottom: 24px;
     }
 }

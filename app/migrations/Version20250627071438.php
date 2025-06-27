@@ -10,7 +10,7 @@ use Doctrine\Migrations\AbstractMigration;
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-final class Version20250625125051 extends AbstractMigration
+final class Version20250627071438 extends AbstractMigration
 {
     public function getDescription(): string
     {
@@ -21,7 +21,7 @@ final class Version20250625125051 extends AbstractMigration
     {
         // this up() migration is auto-generated, please modify it to your needs
         $this->addSql(<<<'SQL'
-            CREATE TABLE app_user (guid UUID NOT NULL, created_at TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL, updated_at TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL, email VARCHAR(180) NOT NULL, password VARCHAR(255) NOT NULL, roles JSON NOT NULL, first_name VARCHAR(255) DEFAULT NULL, last_name VARCHAR(255) DEFAULT NULL, confirmation_code VARCHAR(6) DEFAULT NULL, is_confirmed BOOLEAN NOT NULL, PRIMARY KEY(guid))
+            CREATE TABLE app_user (guid UUID NOT NULL, created_at TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL, updated_at TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL, email VARCHAR(180) NOT NULL, password VARCHAR(255) NOT NULL, roles JSON NOT NULL, first_name VARCHAR(255) DEFAULT NULL, last_name VARCHAR(255) DEFAULT NULL, confirmation_code VARCHAR(6) DEFAULT NULL, is_confirmed BOOLEAN NOT NULL, reset_password_token VARCHAR(255) DEFAULT NULL, reset_token_expires_at TIMESTAMP(0) WITHOUT TIME ZONE DEFAULT NULL, PRIMARY KEY(guid))
         SQL);
         $this->addSql(<<<'SQL'
             CREATE UNIQUE INDEX UNIQ_88BDF3E9E7927C74 ON app_user (email)
@@ -39,7 +39,7 @@ final class Version20250625125051 extends AbstractMigration
             CREATE INDEX IDX_1C52F958D955252C ON brand (image_guid)
         SQL);
         $this->addSql(<<<'SQL'
-            CREATE TABLE category (guid UUID NOT NULL, parent_id UUID DEFAULT NULL, image_guid UUID DEFAULT NULL, created_at TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL, updated_at TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL, publish_state VARCHAR(50) NOT NULL, url VARCHAR(255) NOT NULL, name VARCHAR(255) NOT NULL, breadcrumbs JSON NOT NULL, PRIMARY KEY(guid))
+            CREATE TABLE category (guid UUID NOT NULL, parent_id UUID DEFAULT NULL, image_guid UUID DEFAULT NULL, created_at TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL, updated_at TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL, publish_state VARCHAR(50) NOT NULL, url VARCHAR(255) NOT NULL, name VARCHAR(255) NOT NULL, breadcrumbs JSON NOT NULL, is_popular BOOLEAN NOT NULL, PRIMARY KEY(guid))
         SQL);
         $this->addSql(<<<'SQL'
             CREATE UNIQUE INDEX UNIQ_64C19C1F47645AE ON category (url)

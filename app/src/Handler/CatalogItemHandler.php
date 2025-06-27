@@ -89,7 +89,9 @@ readonly class CatalogItemHandler
     {
         return new Response($this->twig->render('template/front/item/item.html.twig', [
             'item' => $item,
-            'similarItems' => $this->itemRepository->findSimilarItems(category: $item->getCategories()->last()),
+            'similarItems' => $this->itemRepository->findSimilarItems(
+                category: $item->getCategories()->last(),
+                excludeItemGuid: $item->getGuid()),
         ]));
     }
 
