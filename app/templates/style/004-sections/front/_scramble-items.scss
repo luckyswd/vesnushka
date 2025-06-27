@@ -3,6 +3,7 @@
         display: grid;
         gap: 12px;
         grid-template-columns: repeat(6, 1fr);
+        margin-top: 16px;
 
         @include min-desktop() {
             grid-template-columns: repeat(3, 1fr);
@@ -32,10 +33,32 @@
         }
     }
 
-    .title {
-        @include body-28();
+    .top {
         margin-bottom: 16px;
         padding-bottom: 16px;
         border-bottom: 1px solid color('gray', 700);
+        display: flex;
+        gap: 24px;
+        justify-content: space-between;
+
+        .top-all {
+            color: color('white', 400);
+
+            @include mobile() {
+                display: none;
+            }
+        }
+    }
+
+    .top-all.mobile {
+        display: none;
+
+        @include mobile() {
+            display: flex;
+        }
+    }
+
+    .title {
+        @include body-28();
     }
 }

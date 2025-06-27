@@ -23,7 +23,7 @@ class HomeHandler
         return new Response($this->twig->render('template/front/home/index.html.twig', [
             'popularItems' => $this->itemRepository->findPopularItems(),
             'popularCategories' => $this->categoryRepository->findPopularCategories(),
-            'popularBrands' => $this->brandRepository->findPopularBrands(),
+            'popularBrands' => $this->brandRepository->findPopularBrands(6),
         ]));
     }
 }

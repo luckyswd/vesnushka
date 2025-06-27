@@ -22,7 +22,7 @@ class BrandsHandler
     public function getBrands(): Response
     {
         return new Response($this->twig->render('template/front/brands/brands.html.twig', [
-            'brands' => $this->brandRepository->findAll(),
+            'brands' => $this->brandRepository->findAllBrands(),
             'popularItems' => $this->itemRepository->findPopularItems(),
             'breadcrumbs' => [
                 [

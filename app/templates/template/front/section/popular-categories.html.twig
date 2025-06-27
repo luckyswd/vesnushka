@@ -2,11 +2,20 @@
     <section class="default-section popular-categories">
         <div class="container">
             <div class="wrap">
-                <p class="title">{{ title ?? '' }}</p>
+                <div class="top">
+                    <p class="title">{{ title ?? '' }}</p>
+                    {% if url is defined and name is defined and url and name %}
+                        <a href="{{ url }}" class="btn top-all">{{ name }}</a>
+                    {% endif %}
+                </div>
 
                 {% include 'template/front/components/catalog-card.html.twig' with {
                     elements: categories,
                 } %}
+
+                {% if url is defined and name is defined and url and name %}
+                    <a href="{{ url }}" class="btn top-all mobile">{{ name }}</a>
+                {% endif %}
             </div>
         </div>
     </section>

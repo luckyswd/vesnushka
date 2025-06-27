@@ -41,13 +41,29 @@ class BrandRepository extends ServiceEntityRepository
         return $result;
     }
 
-    public function findPopularBrands(): array
+    public function findPopularBrands(?int $limit = 6): array
     {
-        return $this->createQueryBuilder('b')
+        $qb = $this->createQueryBuilder('b')
+            ->leftJoin('b.image', 'image')
+            ->addSelect('image')
             ->andWhere('b.isPopular = :IS_POPULAR')
             ->setParameter('IS_POPULAR', true)
-            ->setMaxResults(6)
-            ->getQuery()
-            ->getResult();
+            ->orderBy('b.name', 'ASC');
+
+        if (null !== $limit) {
+            $qb->setMaxResults($limit);
+        }
+
+        return $qb->getQuery()->getResult();
+    }
+
+    public function findAllBrands(): array
+    {
+        $qb = $this->createQueryBuilder('b')
+            ->leftJoin('b.image', 'image')
+            ->addSelect('image')
+            ->orderBy('b.isPopular', 'ASC');
+
+        return $qb->getQuery()->getResult();
     }
 }
