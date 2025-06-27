@@ -5,6 +5,7 @@ namespace App\DataFixtures;
 use App\Entity\Category;
 use App\Entity\File;
 use App\Enum\CategoryPublishStateEnum;
+use App\Repository\CategoryRepository;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Bundle\FixturesBundle\FixtureGroupInterface;
 use Doctrine\Persistence\ObjectManager;
@@ -14,7 +15,10 @@ class CategoryFixtures extends Fixture implements FixtureGroupInterface
 {
     private ParameterBagInterface $parameterBag;
 
-    public function __construct(ParameterBagInterface $parameterBag)
+    public function __construct(
+        ParameterBagInterface $parameterBag,
+        private CategoryRepository $categoryRepository,
+    )
     {
         $this->parameterBag = $parameterBag;
     }
@@ -39,18 +43,22 @@ class CategoryFixtures extends Fixture implements FixtureGroupInterface
             'Аксессуары',
         ];
 
-        $rootCategory = new Category();
-        $rootCategory->setName('Каталог')
-            ->setPublishState(CategoryPublishStateEnum::ACTIVE);
+        $rootCategory = $this->categoryRepository->findOneBy(['name' => 'Каталог']);
 
-        $manager->persist($rootCategory);
-        $manager->flush();
+        if (!$rootCategory) {
+            $rootCategory = new Category();
+            $rootCategory->setName('Каталог')
+                ->setPublishState(CategoryPublishStateEnum::ACTIVE);
+
+            $manager->persist($rootCategory);
+            $manager->flush();
+        }
 
         $categories = [$rootCategory];
 
-        foreach ($categoriesNames as $index => $name) {
+        foreach ($categoriesNames as $name) {
             $category = new Category();
-            $category->setName($name);
+            $category->setName($name . random_int(0, 99999999));
             $category->setPublishState(CategoryPublishStateEnum::ACTIVE);
 
             $parentCategory = $categories[array_rand($categories)];
