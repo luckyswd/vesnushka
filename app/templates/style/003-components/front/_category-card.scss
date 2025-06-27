@@ -1,5 +1,5 @@
 .card {
-    &.categories {
+    &.catalog {
         display: grid;
         grid-template-columns: repeat(6, 1fr);
         row-gap: 24px;
@@ -19,26 +19,26 @@
             column-gap: 12px;
         }
 
-        .category {
-            .category-name {
+        .element {
+            .name {
                 @include body-20-bold();
                 text-align: center;
                 margin-top: 8px;
                 transition: $transition;
             }
 
-            .category-image {
+            .image {
                 img {
                     transition: $transition;
                 }
             }
 
             &:hover {
-                .category-name {
+                .name {
                     color: color('main', 400);
                 }
 
-                .category-image {
+                .image {
                     img {
                         transform: scale(1.05);
                     }

@@ -1,0 +1,14 @@
+{% import "template/front/components/picture.html.twig" as picture %}
+
+<div class="card catalog">
+    {% for element in elements %}
+        {% if element.url != '/catalog' %}
+            <a class="element" href="{{ element.url }}">
+                <div class="image">
+                    {{ picture.render(element.image.path, 300, 300, true, element.name) }}
+                </div>
+                <p class="name">{{ element.name }}</p>
+            </a>
+        {% endif %}
+    {% endfor %}
+</div>

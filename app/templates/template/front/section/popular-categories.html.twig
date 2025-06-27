@@ -4,8 +4,8 @@
             <div class="wrap">
                 <p class="title">{{ title ?? '' }}</p>
 
-                {% include 'template/front/components/category-card.html.twig' with {
-                    categories: categories,
+                {% include 'template/front/components/catalog-card.html.twig' with {
+                    elements: categories,
                 } %}
             </div>
         </div>
