@@ -3,7 +3,6 @@
 namespace App\Repository;
 
 use App\Entity\Brand;
-use App\Enum\CategoryPublishStateEnum;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 

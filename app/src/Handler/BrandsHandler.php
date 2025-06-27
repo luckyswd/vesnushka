@@ -5,6 +5,7 @@ namespace App\Handler;
 use App\Repository\BrandRepository;
 use App\Repository\ItemRepository;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Twig\Environment;
 
 class BrandsHandler
@@ -13,8 +14,8 @@ class BrandsHandler
         private Environment $twig,
         private BrandRepository $brandRepository,
         private ItemRepository $itemRepository,
-    )
-    {
+        private FilterHandler $filterHandler,
+    ) {
     }
 
     public function getBrands(): Response
@@ -31,7 +32,18 @@ class BrandsHandler
                     'link' => '/brands',
                     'text' => 'Каталог брендов',
                 ],
-            ]
+            ],
         ]));
+    }
+
+    public function getBrand(string $url): Response
+    {
+        $brand = $this->brandRepository->findOneBy(['url' => $url]);
+
+        if (!$brand) {
+            throw new NotFoundHttpException();
+        }
+
+        return $this->filterHandler->renderCatalog($brand);
     }
 }

@@ -12,8 +12,8 @@ class CatalogHandler
     public function __construct(
         private Environment $twig,
         private CategoryRepository $categoryRepository,
-    )
-    {}
+    ) {
+    }
 
     public function handle(): Response
     {
@@ -30,7 +30,7 @@ class CatalogHandler
                     'link' => '/catalog',
                     'text' => 'Каталог',
                 ],
-            ]
+            ],
         ]));
     }
 }

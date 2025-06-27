@@ -15,8 +15,8 @@ class HomeHandler
         private CategoryRepository $categoryRepository,
         private BrandRepository $brandRepository,
         private Environment $twig,
-    )
-    {}
+    ) {
+    }
 
     public function handle(): Response
     {
