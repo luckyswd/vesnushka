@@ -32,11 +32,11 @@ class FilterHandler
         $brandList = $this->brandRepository->findBrands();
         if ($entity instanceof Category) {
             $subCategories = $this->itemRepository->getSubCategoriesByCategory($entity, 2);
-            $allItems = $this->itemRepository->findItemsByCatalog($entity, $sort);
+            $allItems = $this->itemRepository->findItemsByCatalog(sort: $sort, category: $entity);
         } elseif ($entity instanceof Brand) {
-            $allItems = $this->itemRepository->findItemsByBrand($entity, $sort);
+            $allItems = $this->itemRepository->findItemsByCatalog(sort: $sort, brand: $entity);
         } else {
-            $allItems = $this->itemRepository->findItemsByCatalog(category: null, sort: $sort, search: $entity);
+            $allItems = $this->itemRepository->findItemsByCatalog(sort: $sort, search: $entity);
         }
 
         $clientMinPrice = $request->get('min_price') ? (float) $request->get('min_price') : null;

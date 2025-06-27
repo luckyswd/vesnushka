@@ -39,10 +39,11 @@ class ItemRepository extends ServiceEntityRepository
     }
 
     public function findItemsByCatalog(
-        ?Category $category,
         string $sort,
         string $currency = CurrencyEnum::BYN->value,
+        ?Category $category = null,
         ?string $search = null,
+        ?Brand $brand = null,
     ): \Traversable {
         $conn = $this->getEntityManager()->getConnection();
         $jsonPathCurrency = $this->getJsonPathCurrency($currency);
@@ -63,7 +64,13 @@ class ItemRepository extends ServiceEntityRepository
         ];
 
         $categoryCondition = '';
-        if ($category) {
+        $brandCondition = '';
+
+        if ($brand) {
+            $parameters['BRAND_GUID'] = $brand->getGuid();
+            $types['BRAND_GUID'] = \PDO::PARAM_STR;
+            $brandCondition = 'i.brand_guid = :BRAND_GUID AND';
+        } elseif ($category) {
             $subCategories = $this->getSubCategoriesByCategory($category);
             $parameters['CATEGORY_GUIDS'] = $subCategories;
             $types['CATEGORY_GUIDS'] = \Doctrine\DBAL\Connection::PARAM_STR_ARRAY;
@@ -99,7 +106,7 @@ class ItemRepository extends ServiceEntityRepository
                     INNER JOIN item_category ic ON i.guid = ic.item_guid
                     INNER JOIN category c ON c.guid = ic.category_guid
                     LEFT JOIN file f ON i.main_image_guid = f.guid
-                WHERE $categoryCondition
+                WHERE $brandCondition $categoryCondition
                       i.publish_state IN (:ITEM_PUBLISH_ACTIVE, :ITEM_PUBLISH_OUT_OF_STOCK)
                       $searchCondition
             ) sub
@@ -108,68 +115,6 @@ class ItemRepository extends ServiceEntityRepository
         SQL;
 
         $stmt = $conn->executeQuery($sql, $parameters, $types);
-
-        while ($row = $stmt->fetchAssociative()) {
-            yield $row;
-        }
-    }
-
-    public function findItemsByBrand(
-        Brand $brand,
-        string $sort,
-        string $currency = CurrencyEnum::BYN->value,
-    ): \Traversable {
-        $conn = $this->getEntityManager()->getConnection();
-        $jsonPathCurrency = $this->getJsonPathCurrency($currency);
-
-        $sortOuter = match ($sort) {
-            'cheap' => 'CAST(price AS NUMERIC) ASC',
-            'expensive' => 'CAST(price AS NUMERIC) DESC',
-            default, => 'rank DESC',
-        };
-
-        $sql = <<<SQL
-            SELECT *
-            FROM (
-                SELECT
-                    i.guid,
-                    i.brand_guid,
-                    i.name,
-                    i.sku,
-                    i.url,
-                    i.breadcrumbs,
-                    i.stock,
-                    i.attributes,
-                    ROUND((i.price->'retail'->$jsonPathCurrency)::numeric / 100, 2) AS price,
-                    i.rank,
-                    f.path AS main_image_path,
-                    ROW_NUMBER() OVER (
-                        PARTITION BY i.guid
-                    ) as row_num
-                FROM item i
-                    INNER JOIN item_category ic ON i.guid = ic.item_guid
-                    INNER JOIN category c ON c.guid = ic.category_guid
-                    LEFT JOIN file f ON i.main_image_guid = f.guid
-                WHERE i.brand_guid = :BRAND_GUID
-                  AND i.publish_state IN (:ITEM_PUBLISH_ACTIVE, :ITEM_PUBLISH_OUT_OF_STOCK)
-            ) sub
-            WHERE sub.row_num = 1
-            ORDER BY $sortOuter
-        SQL;
-
-        $stmt = $conn->executeQuery(
-            $sql,
-            [
-                'BRAND_GUID' => $brand->getGuid(),
-                'ITEM_PUBLISH_ACTIVE' => ItemPublishStateEnum::ACTIVE->value,
-                'ITEM_PUBLISH_OUT_OF_STOCK' => ItemPublishStateEnum::OUT_OF_STOCK->value,
-            ],
-            [
-                'CATEGORY_GUIDS' => \PDO::PARAM_STR,
-                'ITEM_PUBLISH_ACTIVE' => \PDO::PARAM_STR,
-                'ITEM_PUBLISH_OUT_OF_STOCK' => \PDO::PARAM_STR,
-            ],
-        );
 
         while ($row = $stmt->fetchAssociative()) {
             yield $row;
