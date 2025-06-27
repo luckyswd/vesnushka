@@ -36,7 +36,7 @@ class ItemFixtures extends Fixture implements FixtureGroupInterface
         $countCategories = count($categories);
         $countAttributes = count($attributes);
 
-        for ($i = 0; $i < 500; ++$i) {
+        for ($i = 0; $i < 300; ++$i) {
             $item = new Item();
             $item->setName('test_' . $i . rand(0, 99999999));
             $item->setSku('test_' . $i . rand(0, 99999999));
@@ -101,6 +101,17 @@ class ItemFixtures extends Fixture implements FixtureGroupInterface
             $item->setMetaDescription($faker->sentence(12));
             $item->setRank(random_int(0, 100));
             $item->setStock(random_int(0, 100));
+
+            $item->addImage($this->createMockFile($manager));
+            $item->addImage($this->createMockFile($manager));
+            $item->addImage($this->createMockFile($manager));
+            $item->addImage($this->createMockFile($manager));
+            $item->addImage($this->createMockFile($manager));
+            $item->addImage($this->createMockFile($manager));
+            $item->addImage($this->createMockFile($manager));
+            $item->addImage($this->createMockFile($manager));
+            $item->addImage($this->createMockFile($manager));
+            $item->addImage($this->createMockFile($manager));
 
             $manager->persist($item);
         }

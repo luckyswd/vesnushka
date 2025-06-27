@@ -23,33 +23,11 @@
                             </span>
                         </div>
                         <div class="swiper-wrapper">
-                            <div class="swiper-slide">
-                                {{ picture.render('https://swiperjs.com/demos/images/nature-1.jpg', 300, 300, true, item.name) }}
-                            </div>
-                            <div class="swiper-slide">
-                                {{ picture.render('https://swiperjs.com/demos/images/nature-2.jpg', 300, 300, true, item.name) }}
-                            </div>
-                            <div class="swiper-slide">
-                                {{ picture.render('https://swiperjs.com/demos/images/nature-3.jpg', 300, 300, true, item.name) }}
-                            </div>
-                            <div class="swiper-slide">
-                                {{ picture.render('https://swiperjs.com/demos/images/nature-1.jpg', 300, 300, true, item.name) }}
-                            </div>
-                            <div class="swiper-slide">
-                                {{ picture.render('https://swiperjs.com/demos/images/nature-2.jpg', 300, 300, true, item.name) }}
-                            </div>
-                            <div class="swiper-slide">
-                                {{ picture.render('https://swiperjs.com/demos/images/nature-3.jpg', 300, 300, true, item.name) }}
-                            </div>
-                            <div class="swiper-slide">
-                                {{ picture.render('https://swiperjs.com/demos/images/nature-1.jpg', 300, 300, true, item.name) }}
-                            </div>
-                            <div class="swiper-slide">
-                                {{ picture.render('https://swiperjs.com/demos/images/nature-2.jpg', 300, 300, true, item.name) }}
-                            </div>
-                            <div class="swiper-slide">
-                                {{ picture.render('https://swiperjs.com/demos/images/nature-3.jpg', 300, 300, true, item.name) }}
-                            </div>
+                            {% for image in item.images %}
+                                <div class="swiper-slide">
+                                    {{ picture.render(image.path, 300, 300, true, image.fileName) }}
+                                </div>
+                            {% endfor %}
                         </div>
                         <div class="swiper-button-next">
                             <span>
@@ -66,33 +44,11 @@
 
                     <div class="swiper swiper-main">
                         <div class="swiper-wrapper">
-                            <div class="swiper-slide">
-                                {{ picture.render('https://swiperjs.com/demos/images/nature-1.jpg', 300, 300, true, item.name) }}
-                            </div>
-                            <div class="swiper-slide">
-                                {{ picture.render('https://swiperjs.com/demos/images/nature-2.jpg', 300, 300, true, item.name) }}
-                            </div>
-                            <div class="swiper-slide">
-                                {{ picture.render('https://swiperjs.com/demos/images/nature-3.jpg', 300, 300, true, item.name) }}
-                            </div>
-                            <div class="swiper-slide">
-                                {{ picture.render('https://swiperjs.com/demos/images/nature-1.jpg', 300, 300, true, item.name) }}
-                            </div>
-                            <div class="swiper-slide">
-                                {{ picture.render('https://swiperjs.com/demos/images/nature-2.jpg', 300, 300, true, item.name) }}
-                            </div>
-                            <div class="swiper-slide">
-                                {{ picture.render('https://swiperjs.com/demos/images/nature-3.jpg', 300, 300, true, item.name) }}
-                            </div>
-                            <div class="swiper-slide">
-                                {{ picture.render('https://swiperjs.com/demos/images/nature-1.jpg', 300, 300, true, item.name) }}
-                            </div>
-                            <div class="swiper-slide">
-                                {{ picture.render('https://swiperjs.com/demos/images/nature-2.jpg', 300, 300, true, item.name) }}
-                            </div>
-                            <div class="swiper-slide">
-                                {{ picture.render('https://swiperjs.com/demos/images/nature-3.jpg', 300, 300, true, item.name) }}
-                            </div>
+                            {% for image in item.images %}
+                                <div class="swiper-slide">
+                                    {{ picture.render(image.path, 300, 300, true, image.fileName) }}
+                                </div>
+                            {% endfor %}
                         </div>
                         <div class="swiper-counter">1 / 1</div>
                         <div class="swiper-button-next">
