@@ -21,7 +21,7 @@ class FilterHandler
     ) {
     }
 
-    public function renderCatalog(Category|Brand $entity): Response
+    public function renderCatalog(Category|Brand|string $entity): Response
     {
         $request = $this->requestStack->getCurrentRequest();
         $page = max(1, (int) $request->get('page', 1));
@@ -32,15 +32,17 @@ class FilterHandler
         $brandList = $this->brandRepository->findBrands();
         if ($entity instanceof Category) {
             $subCategories = $this->itemRepository->getSubCategoriesByCategory($entity, 2);
-            $allItems = $this->itemRepository->findItemsByCategory($entity, $sort);
-        } else {
+            $allItems = $this->itemRepository->findItemsByCatalog($entity, $sort);
+        } elseif ($entity instanceof Brand) {
             $allItems = $this->itemRepository->findItemsByBrand($entity, $sort);
+        } else {
+            $allItems = $this->itemRepository->findItemsByCatalog(category: null, sort: $sort, search: $entity);
         }
 
         $clientMinPrice = $request->get('min_price') ? (float) $request->get('min_price') : null;
         $clientMaxPrice = $request->get('max_price') ? (float) $request->get('max_price') : null;
 
-        if ($entity instanceof Category) {
+        if (!$entity instanceof Brand) {
             $brandFilterList = $this->getFilterListBrand($request->get('brand'));
         }
 
@@ -72,7 +74,7 @@ class FilterHandler
 
             // --- Фильтр по бренду ---
             $passesBrandFilter = true;
-            if ($entity instanceof Category) {
+            if (!$entity instanceof Brand) {
                 if (!empty($brandFilterList) && !in_array($brandName, $brandFilterList, true)) {
                     $passesBrandFilter = false;
                 }
@@ -205,7 +207,7 @@ class FilterHandler
         }
 
         return new Response($this->twig->render('template/front/catalog/catalog-item.html.twig', [
-            'name' => $entity->getName(),
+            'name' => is_string($entity) ? 'Поиск' :$entity->getName(),
             'breadcrumbs' => $this->getBreadcrumbs($entity),
             'items' => $items,
             'itemsCount' => $this->formatItemsFound($matchedCount),
@@ -224,10 +226,27 @@ class FilterHandler
         ]));
     }
 
-    private function getBreadcrumbs(Category|Brand $entity): array
+    private function getBreadcrumbs(Category|Brand|string $entity): array
     {
         if ($entity instanceof Category) {
             return $entity->getBreadcrumbs();
+        }
+
+        if ($entity instanceof Brand) {
+            return [
+                [
+                    'link' => '/',
+                    'text' => 'Главная',
+                ],
+                [
+                    'link' => '/brands',
+                    'text' => 'Каталог брендов',
+                ],
+                [
+                    'link' => $entity->getUrl(),
+                    'text' => $entity->getName(),
+                ],
+            ];
         }
 
         return [
@@ -236,12 +255,12 @@ class FilterHandler
                 'text' => 'Главная',
             ],
             [
-                'link' => '/brands',
-                'text' => 'Каталог брендов',
+                'link' => '/catalog',
+                'text' => 'Каталог',
             ],
             [
-                'link' => $entity->getUrl(),
-                'text' => $entity->getName(),
+                'link' => '/search',
+                'text' => 'Поиск',
             ],
         ];
     }

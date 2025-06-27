@@ -38,20 +38,44 @@ class ItemRepository extends ServiceEntityRepository
             ->getOneOrNullResult();
     }
 
-    public function findItemsByCategory(
-        Category $category,
+    public function findItemsByCatalog(
+        ?Category $category,
         string $sort,
         string $currency = CurrencyEnum::BYN->value,
+        ?string $search = null,
     ): \Traversable {
         $conn = $this->getEntityManager()->getConnection();
-        $subCategories = $this->getSubCategoriesByCategory($category);
         $jsonPathCurrency = $this->getJsonPathCurrency($currency);
 
         $sortOuter = match ($sort) {
             'cheap' => 'CAST(price AS NUMERIC) ASC',
             'expensive' => 'CAST(price AS NUMERIC) DESC',
-            default, => 'rank DESC',
+            default => 'rank DESC',
         };
+
+        $parameters = [
+            'ITEM_PUBLISH_ACTIVE' => ItemPublishStateEnum::ACTIVE->value,
+            'ITEM_PUBLISH_OUT_OF_STOCK' => ItemPublishStateEnum::OUT_OF_STOCK->value,
+        ];
+        $types = [
+            'ITEM_PUBLISH_ACTIVE' => \PDO::PARAM_STR,
+            'ITEM_PUBLISH_OUT_OF_STOCK' => \PDO::PARAM_STR,
+        ];
+
+        $categoryCondition = '';
+        if ($category) {
+            $subCategories = $this->getSubCategoriesByCategory($category);
+            $parameters['CATEGORY_GUIDS'] = $subCategories;
+            $types['CATEGORY_GUIDS'] = \Doctrine\DBAL\Connection::PARAM_STR_ARRAY;
+            $categoryCondition = 'c.guid IN (:CATEGORY_GUIDS) AND';
+        }
+
+        $searchCondition = '';
+        if (!empty($search)) {
+            $searchCondition = 'AND (i.name LIKE :search_pattern OR i.sku LIKE :search_pattern)';
+            $parameters['search_pattern'] = '%' . $search . '%';
+            $types['search_pattern'] = \PDO::PARAM_STR;
+        }
 
         $sql = <<<SQL
             SELECT *
@@ -75,26 +99,15 @@ class ItemRepository extends ServiceEntityRepository
                     INNER JOIN item_category ic ON i.guid = ic.item_guid
                     INNER JOIN category c ON c.guid = ic.category_guid
                     LEFT JOIN file f ON i.main_image_guid = f.guid
-                WHERE c.guid IN (:CATEGORY_GUIDS)
-                  AND i.publish_state IN (:ITEM_PUBLISH_ACTIVE, :ITEM_PUBLISH_OUT_OF_STOCK)
+                WHERE $categoryCondition
+                      i.publish_state IN (:ITEM_PUBLISH_ACTIVE, :ITEM_PUBLISH_OUT_OF_STOCK)
+                      $searchCondition
             ) sub
             WHERE sub.row_num = 1
             ORDER BY $sortOuter
         SQL;
 
-        $stmt = $conn->executeQuery(
-            $sql,
-            [
-                'CATEGORY_GUIDS' => $subCategories,
-                'ITEM_PUBLISH_ACTIVE' => ItemPublishStateEnum::ACTIVE->value,
-                'ITEM_PUBLISH_OUT_OF_STOCK' => ItemPublishStateEnum::OUT_OF_STOCK->value,
-            ],
-            [
-                'CATEGORY_GUIDS' => \Doctrine\DBAL\Connection::PARAM_STR_ARRAY,
-                'ITEM_PUBLISH_ACTIVE' => \PDO::PARAM_STR,
-                'ITEM_PUBLISH_OUT_OF_STOCK' => \PDO::PARAM_STR,
-            ],
-        );
+        $stmt = $conn->executeQuery($sql, $parameters, $types);
 
         while ($row = $stmt->fetchAssociative()) {
             yield $row;

@@ -16,9 +16,7 @@ class Catalog {
         this.chipsContainer = document.querySelector(".catalog__right-chips");
         this.catalogWrap = document.querySelector(".catalog__wrap");
 
-        if (this.container) {
-            this.init();
-        }
+        this.init();
     }
 
     init() {
@@ -31,6 +29,8 @@ class Catalog {
         this.attachClearAllChipsListener();
         this.attachPriceInputListener();
         this.openMobileFilter();
+        this.search();
+        this.attachSearchInputListener();
     }
 
     attachScrollListener() {
@@ -318,6 +318,13 @@ class Catalog {
             filters.max_price = currentMax;
         }
 
+        const searchInput = document.querySelector(".input-search");
+        const searchValue = searchInput?.value?.trim();
+
+        if (searchValue) {
+            filters.search = searchValue;
+        }
+
         return filters;
     }
 
@@ -389,6 +396,86 @@ class Catalog {
 
             body.style.overflow = isActive ? 'hidden' : '';
         });
+    }
+
+    search() {
+        const params = new URLSearchParams(window.location.search);
+        const searchValue = params.get("search");
+
+        if (searchValue !== null) {
+            const input = document.querySelector(".input-search");
+            if (input) {
+                input.value = searchValue;
+            }
+        }
+    }
+
+    attachSearchInputListener() {
+        const input = document.querySelector(".input-search");
+        if (!input) return;
+
+        const handler = () => {
+            const value = input.value.trim();
+            if (!value) return;
+
+            // Если не на /search — делаем редирект
+            if (window.location.pathname !== "/search") {
+                const params = new URLSearchParams();
+                params.set("search", value);
+                const query = params.toString();
+                window.location.href = `/search?${query}`;
+                return;
+            }
+
+            // Ниже — только если уже на /search:
+
+            // Сброс чекбоксов
+            document.querySelectorAll(".input-checkbox__input:checked")
+              .forEach(cb => cb.checked = false);
+
+            // Сброс цен
+            const minInput = document.getElementById("min_price");
+            const maxInput = document.getElementById("max_price");
+            if (minInput) minInput.value = "";
+            if (maxInput) maxInput.value = "";
+
+            // Сброс сортировки
+            const select = document.getElementById("sort-select");
+            if (select) {
+                select.value = "popular"; // или "" если значение по умолчанию
+                const triggerText = select
+                  .closest(".custom-select")
+                  ?.querySelector(".custom-select-trigger-text");
+                if (triggerText) {
+                    const option = select.querySelector('option[value="popular"]');
+                    if (option) triggerText.textContent = option.textContent;
+                }
+            }
+
+            // Обновить URL только с search
+            const params = new URLSearchParams();
+            params.set("search", value);
+            const query = params.toString();
+            const newUrl = `${window.location.pathname}?${query}`;
+            window.history.replaceState(null, "", newUrl);
+
+            // Обновить флаг и запросить заново
+            this.hasMore = true;
+            this.fetchItems(1, true);
+        };
+
+        const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+
+        if (isMobile) {
+            input.addEventListener("change", handler);
+        } else {
+            input.addEventListener("keydown", (e) => {
+                if (e.key === "Enter") {
+                    e.preventDefault();
+                    handler();
+                }
+            });
+        }
     }
 }
 
