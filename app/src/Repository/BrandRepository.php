@@ -62,7 +62,8 @@ class BrandRepository extends ServiceEntityRepository
         $qb = $this->createQueryBuilder('b')
             ->leftJoin('b.image', 'image')
             ->addSelect('image')
-            ->orderBy('b.isPopular', 'ASC');
+            ->orderBy('b.isPopular', 'ASC')
+            ->setMaxResults(100);
 
         return $qb->getQuery()->getResult();
     }

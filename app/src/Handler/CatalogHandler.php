@@ -17,10 +17,8 @@ class CatalogHandler
 
     public function handle(): Response
     {
-        $categories = $this->categoryRepository->findBy(['publishState' => CategoryPublishStateEnum::ACTIVE]);
-
         return new Response($this->twig->render('template/front/catalog/catalog.html.twig', [
-            'categories' => $categories,
+            'categories' => $this->categoryRepository->findAllCategories(),
             'breadcrumbs' => [
                 [
                     'link' => '/',

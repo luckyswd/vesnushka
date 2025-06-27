@@ -40,4 +40,17 @@ class CategoryRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult();
     }
+
+    public function findAllCategories(): array
+    {
+        $qb = $this->createQueryBuilder('c')
+            ->leftJoin('c.image', 'image')
+            ->addSelect('image')
+            ->andWhere('c.publishState = :ACTIVE')
+            ->setParameter('ACTIVE', CategoryPublishStateEnum::ACTIVE->value)
+            ->orderBy('c.isPopular', 'ASC')
+            ->setMaxResults(100);
+
+        return $qb->getQuery()->getResult();
+    }
 }

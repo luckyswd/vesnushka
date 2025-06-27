@@ -20,6 +20,10 @@ use Doctrine\ORM\Mapping as ORM;
         new ORM\Index(name: 'idx_item_publish_state', columns: ['publish_state']),
         new ORM\Index(name: 'idx_item_sku', columns: ['sku']),
         new ORM\Index(name: 'idx_item_url', columns: ['url']),
+        new ORM\Index(name: 'idx_item_publish_state_rank_desc', columns: ['publish_state', 'rank']),
+        new ORM\Index(name: 'idx_item_rank', columns: ['rank']),
+        new ORM\Index(name: 'idx_item_brand_guid', columns: ['brand_guid']),
+        new ORM\Index(name: 'idx_item_main_image_guid', columns: ['main_image_guid']),
     ]
 )]
 class Item extends BaseEntity

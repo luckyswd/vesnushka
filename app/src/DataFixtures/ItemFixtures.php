@@ -38,8 +38,8 @@ class ItemFixtures extends Fixture implements FixtureGroupInterface
 
         for ($i = 0; $i < 500; ++$i) {
             $item = new Item();
-            $item->setName('test_' . $i . rand(0, 9999999));
-            $item->setSku('test_' . $i . rand(0, 9999999));
+            $item->setName('test_' . $i . rand(0, 99999999));
+            $item->setSku('test_' . $i . rand(0, 99999999));
             $item->setPublishState(ItemPublishStateEnum::ACTIVE);
 
             // Assign a brand
