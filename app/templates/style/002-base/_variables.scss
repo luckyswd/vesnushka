@@ -10,7 +10,7 @@ $colors: (
                 400: #1E1E1E,
         ),
         'gray': (
-                400: #ffffff00,
+                400: #f3f3f3,
                 500: #868695,
                 600: #c8c8d1,
                 700: rgb(238, 238, 238),
@@ -29,3 +29,5 @@ $colors: (
 
 $transition: all .2s ease-in-out;
 $mainGradient: linear-gradient(90deg, #059669, #868695);
+$mainGradient-revert: linear-gradient(90deg, #868695, #059669);
+$hover-box-shadow: rgba(255, 255, 255, 0.2) 0 0 10px;

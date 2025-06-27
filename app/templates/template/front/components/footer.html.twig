@@ -1,6 +1,35 @@
 {% import "template/front/components/picture.html.twig" as picture %}
 
-<footer>
+<footer class="footer">
+    <div class="container">
+        <div class="footer-wrap">
+
+            <div class="footer__nav">
+                <div class="footer__nav-column">
+                    <h4>Информация</h4>
+                    <a href="/about">О нас</a>
+                    <a href="/contacts">Контакты</a>
+                    <a href="/privacy">Политика конфиденциальности</a>
+                </div>
+                <div class="footer__nav-column">
+                    <h4>Покупателям</h4>
+                    <a href="/catalog">Каталог</a>
+                    <a href="/delivery">Доставка и оплата</a>
+                    <a href="/brands">Бренды</a>
+                </div>
+                <div class="footer__nav-column">
+                    <h4>Мы в соцсетях</h4>
+                    <a href="#">Instagram</a>
+                    <a href="#">Telegram</a>
+                </div>
+            </div>
+
+            <div class="footer__copyright">
+                © Vesnushka 2024-{{ "now"|date("Y") }}. Все права защищены.
+            </div>
+        </div>
+    </div>
+
     <div class="modal-login modal" id="modal-login">
         <div class="modal-wrapper">
             <div class="modal-content">

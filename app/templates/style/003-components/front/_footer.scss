@@ -1,0 +1,84 @@
+.footer {
+    background: $mainGradient-revert;
+
+    @include tablet() {
+        padding-bottom: 50px;
+    }
+
+    .footer-wrap {
+        padding: 32px 0;
+
+        @include tablet() {
+            padding: 16px 0;
+        }
+
+        .footer__nav {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            gap: 48px;
+            margin-bottom: 24px;
+
+            @include tablet() {
+                flex-direction: column;
+                gap: 16px;
+            }
+
+            .footer__nav-column {
+                display: flex;
+                flex-direction: column;
+                gap: 8px;
+                align-items: center;
+
+                h4 {
+                    @include body-14-bold();
+                    color: color('white', 400);
+                    margin-bottom: 8px;
+                }
+
+                a {
+                    @include body-14();
+                    color: color('white', 400);
+                    text-decoration: none;
+                    padding: 8px;
+                    border-radius: 8px;
+                    box-shadow: rgba(0, 0, 0, 0.07) 0 7px 10px, rgba(0, 0, 0, 0.07) 0 -7px 10px;
+                    transition: $transition;
+
+                    &:hover {
+                        box-shadow: $hover-box-shadow;
+                    }
+                }
+            }
+        }
+
+        .socials {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+
+            svg {
+                width: 28px;
+                height: 28px;
+
+                path {
+                    fill: color('white', 400);
+                }
+            }
+        }
+
+        .footer__copyright {
+            @include body-14();
+            color: color('white', 400);
+            text-align: center;
+            margin-top: 32px;
+            padding-top: 32px;
+            border-top: 1px solid #ffffff36;
+
+            @include tablet() {
+                margin-top: 16px;
+                padding-top: 16px;
+            }
+        }
+    }
+}
