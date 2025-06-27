@@ -11,6 +11,8 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Entity(repositoryClass: BrandRepository::class)]
 class Brand extends BaseEntity
 {
+    public const string DEFAULT_PATH = '/brands/';
+
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'CUSTOM')]
     #[ORM\CustomIdGenerator('doctrine.uuid_generator')]
@@ -71,7 +73,7 @@ class Brand extends BaseEntity
 
     public function setUrl(string $url): static
     {
-        $this->url = $url;
+        $this->url = self::DEFAULT_PATH . $url;
 
         return $this;
     }

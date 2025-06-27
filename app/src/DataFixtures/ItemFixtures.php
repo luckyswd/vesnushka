@@ -99,6 +99,8 @@ class ItemFixtures extends Fixture implements FixtureGroupInterface
             $item->setHowToUse($faker->paragraph(2));
             $item->setMetaTitle($faker->words(5, true));
             $item->setMetaDescription($faker->sentence(12));
+            $item->setRank(random_int(0, 100));
+            $item->setStock(random_int(0, 100));
 
             $manager->persist($item);
         }

@@ -3,13 +3,22 @@
 namespace App\DataFixtures;
 
 use App\Entity\Category;
+use App\Entity\File;
 use App\Enum\CategoryPublishStateEnum;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Bundle\FixturesBundle\FixtureGroupInterface;
 use Doctrine\Persistence\ObjectManager;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
 class CategoryFixtures extends Fixture implements FixtureGroupInterface
 {
+    private ParameterBagInterface $parameterBag;
+
+    public function __construct(ParameterBagInterface $parameterBag)
+    {
+        $this->parameterBag = $parameterBag;
+    }
+
     public function load(ObjectManager $manager): void
     {
         $categoriesNames = [
@@ -46,12 +55,32 @@ class CategoryFixtures extends Fixture implements FixtureGroupInterface
 
             $parentCategory = $categories[array_rand($categories)];
             $category->setParent($parentCategory);
+            $category->setImage($this->createMockFile($manager));
+            $category->setIsPopular((bool) random_int(0, 1));
 
             $manager->persist($category);
             $categories[] = $category;
         }
 
         $manager->flush();
+    }
+
+    private function createMockFile(ObjectManager $manager): File
+    {
+        $projectDir = $this->parameterBag->get('kernel.project_dir');
+        $mockImagePath = '/uploads/item/moock.png';
+        $fullPath = $projectDir . '/public' . $mockImagePath;
+
+        $file = new File();
+        $file->setFilename('moock.png');
+        $file->setOriginalFilename('moock.png');
+        $file->setMimeType('image/png');
+        $file->setSize(filesize($fullPath));
+        $file->setPath($mockImagePath);
+
+        $manager->persist($file);
+
+        return $file;
     }
 
     public static function getGroups(): array

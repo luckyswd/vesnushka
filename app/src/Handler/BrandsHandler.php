@@ -2,6 +2,7 @@
 
 namespace App\Handler;
 
+use App\Entity\Brand;
 use App\Repository\BrandRepository;
 use App\Repository\ItemRepository;
 use Symfony\Component\HttpFoundation\Response;
@@ -38,7 +39,7 @@ class BrandsHandler
 
     public function getBrand(string $url): Response
     {
-        $brand = $this->brandRepository->findOneBy(['url' => $url]);
+        $brand = $this->brandRepository->findOneBy(['url' => Brand::DEFAULT_PATH . $url]);
 
         if (!$brand) {
             throw new NotFoundHttpException();
