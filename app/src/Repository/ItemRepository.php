@@ -79,9 +79,20 @@ class ItemRepository extends ServiceEntityRepository
 
         $searchCondition = '';
         if (!empty($search)) {
-            $searchCondition = 'AND (i.name LIKE :search_pattern OR i.sku LIKE :search_pattern)';
-            $parameters['search_pattern'] = '%' . $search . '%';
-            $types['search_pattern'] = \PDO::PARAM_STR;
+            $searchWords = preg_split('/\s+/u', trim($search));
+            $conditions = [];
+
+            foreach ($searchWords as $index => $word) {
+                $paramName = "search_word_$index";
+                $parameters[$paramName] = '%' . $word . '%';
+                $types[$paramName] = \PDO::PARAM_STR;
+
+                $conditions[] = "(i.name ILIKE :$paramName OR i.sku ILIKE :$paramName)";
+            }
+
+            if ($conditions) {
+                $searchCondition = 'AND (' . implode(' AND ', $conditions) . ')';
+            }
         }
 
         $sql = <<<SQL
