@@ -33,6 +33,10 @@
                     @include body-14-bold();
                     color: color('white', 400);
                     margin-bottom: 8px;
+
+                    @include tablet() {
+                        text-align: center;
+                    }
                 }
 
                 a {
@@ -41,6 +45,10 @@
                     text-decoration: none;
                     margin-bottom: 8px;
                     transition: $transition;
+
+                    @include tablet() {
+                        text-align: center;
+                    }
 
                     &:hover {
                         text-decoration: underline;
