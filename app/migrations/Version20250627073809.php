@@ -10,7 +10,7 @@ use Doctrine\Migrations\AbstractMigration;
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-final class Version20250627071438 extends AbstractMigration
+final class Version20250627073809 extends AbstractMigration
 {
     public function getDescription(): string
     {
@@ -30,7 +30,7 @@ final class Version20250627071438 extends AbstractMigration
             CREATE TABLE attribute (guid UUID NOT NULL, created_at TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL, updated_at TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL, name VARCHAR(255) NOT NULL, code VARCHAR(255) DEFAULT NULL, PRIMARY KEY(guid))
         SQL);
         $this->addSql(<<<'SQL'
-            CREATE TABLE brand (guid UUID NOT NULL, image_guid UUID DEFAULT NULL, created_at TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL, updated_at TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL, name VARCHAR(255) NOT NULL, url VARCHAR(255) NOT NULL, PRIMARY KEY(guid))
+            CREATE TABLE brand (guid UUID NOT NULL, image_guid UUID DEFAULT NULL, created_at TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL, updated_at TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL, name VARCHAR(255) NOT NULL, url VARCHAR(255) NOT NULL, is_popular BOOLEAN NOT NULL, PRIMARY KEY(guid))
         SQL);
         $this->addSql(<<<'SQL'
             CREATE UNIQUE INDEX UNIQ_1C52F958F47645AE ON brand (url)
@@ -121,6 +121,24 @@ final class Version20250627071438 extends AbstractMigration
         SQL);
         $this->addSql(<<<'SQL'
             ALTER TABLE item_images ADD CONSTRAINT FK_66E6CBA5A293A7DC FOREIGN KEY (file_guid) REFERENCES file (guid) NOT DEFERRABLE INITIALLY IMMEDIATE
+        SQL);
+
+        $this->addSql(<<<'SQL'
+            ALTER TABLE item
+            ALTER COLUMN attributes TYPE jsonb
+            USING attributes::jsonb
+        SQL);
+
+        $this->addSql(<<<'SQL'
+            ALTER TABLE item
+            ALTER COLUMN breadcrumbs TYPE jsonb
+            USING breadcrumbs::jsonb
+        SQL);
+
+        $this->addSql(<<<'SQL'
+            ALTER TABLE item
+            ALTER COLUMN price TYPE jsonb
+            USING price::jsonb
         SQL);
     }
 

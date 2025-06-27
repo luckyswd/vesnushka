@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\Brand;
+use App\Enum\CategoryPublishStateEnum;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -39,5 +40,15 @@ class BrandRepository extends ServiceEntityRepository
         }
 
         return $result;
+    }
+
+    public function findPopularBrands(): array
+    {
+        return $this->createQueryBuilder('b')
+            ->andWhere('b.isPopular = :IS_POPULAR')
+            ->setParameter('IS_POPULAR', true)
+            ->setMaxResults(6)
+            ->getQuery()
+            ->getResult();
     }
 }
