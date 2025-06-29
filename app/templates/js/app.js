@@ -36,6 +36,7 @@ import './003-components/common/notification.js';
 import './003-components/front/catalog.js';
 import './003-components/front/item.js';
 import './003-components/front/security.js';
+import './003-components/front/header.js';
 
 //-----------------------------------------------------------
 // SECTIONS

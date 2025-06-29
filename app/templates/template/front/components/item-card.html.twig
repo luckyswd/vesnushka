@@ -28,11 +28,11 @@
         </a>
 
         {% if item.stock > 0 %}
-            <button class="item-card-btn btn" type="button">
+            <button class="add-cart btn" type="button"  data-sku="{{ item.sku }}">
                 В корзину
             </button>
         {% else %}
-            <button class="item-card-not-stock btn" type="button">
+            <button class="add-cart btn" type="button"  data-sku="{{ item.sku }}">
                 Под заказ
             </button>
         {% endif %}
