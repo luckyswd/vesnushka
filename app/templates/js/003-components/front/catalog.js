@@ -31,6 +31,7 @@ class Catalog {
         this.openMobileFilter();
         this.search();
         this.attachSearchInputListener();
+        this.handleHasMore();
     }
 
     attachScrollListener() {
@@ -175,13 +176,7 @@ class Catalog {
                 this.page = page;
             }
 
-            const itemsCount = parseInt(data.itemsCount.replace(/\D/g, ''), 10);
-            const limit = parseInt(this.catalogWrap?.dataset.limit ?? '0', 10);
-            const totalPages = Math.ceil(itemsCount / limit);
-
-            if (this.page >= totalPages) {
-                this.hasMore = false;
-            }
+            this.handleHasMore();
 
             this.appendItems(data.items);
             new Checkbox();
@@ -193,6 +188,18 @@ class Catalog {
             if (this.catalogWrap) {
                 this.catalogWrap.classList.remove("loader");
             }
+        }
+    }
+
+    handleHasMore() {
+        const countText = document.querySelector('.catalog__right-items-count')?.textContent ?? '';
+        const itemsCount = parseInt(countText.replace(/\D/g, ''), 10);
+
+        const limit = parseInt(this.catalogWrap?.dataset.limit ?? '0', 10);
+        const totalPages = Math.ceil(itemsCount / limit);
+
+        if (this.page >= totalPages) {
+            this.hasMore = false;
         }
     }
 
