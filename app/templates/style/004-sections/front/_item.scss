@@ -141,6 +141,16 @@
 
                     .sku-copy {
                         cursor: pointer;
+
+                        path {
+                            transition: $transition;
+                        }
+
+                        &:hover {
+                            path {
+                                fill: color('main', 400);
+                            }
+                        }
                     }
                 }
             }

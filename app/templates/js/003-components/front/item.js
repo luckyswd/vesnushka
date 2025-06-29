@@ -15,6 +15,7 @@ class Item {
     init() {
         this.handleSliders();
         this.handleTabs();
+        this.copySku();
     }
 
     handleSliders() {
@@ -90,24 +91,23 @@ class Item {
             });
         });
     }
+
+    copySku() {
+        document.addEventListener('click', (event) => {
+            if (event.target.closest('.sku-copy')) {
+                const td = event.target.closest('td');
+
+                if (!td) return;
+
+                const sku = td.childNodes[0].textContent.trim();
+
+                navigator.clipboard.writeText(sku)
+                  .then(() => {
+                      window.notofication.success(`Артикул ${sku} скопирован в буфер обмена`, 2000);
+                  })
+            }
+        });
+    }
 }
 
 new Item();
-
-// document.querySelector('.user-login').addEventListener('click', () => {
-//     fetch('/api/login', {
-//         method: 'POST',
-//         headers: { 'Content-Type': 'application/json' },
-//         body: JSON.stringify({ email: 'admin@example.com', password: 'admin' }),
-//         credentials: 'include'
-//     });
-// })
-//
-// document.querySelector('.user-logout').addEventListener('click', () => {
-//     fetch('/api/logout', {
-//         method: 'POST',
-//         credentials: 'include'
-//     }).then(() => {
-//         console.log('Logged out');
-//     });
-// });
