@@ -1,89 +1,101 @@
 .footer {
     background: $mainGradient-revert;
+    position: relative;
+    z-index: 1;
 
     @include tablet() {
         padding-bottom: 50px;
     }
 
-    .footer-wrap {
+    &-wrap {
         padding: 32px 0;
 
         @include tablet() {
             padding: 16px 0;
         }
+    }
 
-        .footer__nav {
+    &__nav {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        gap: 48px;
+        margin-bottom: 24px;
+
+        @include tablet() {
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        &-column {
             display: flex;
-            flex-wrap: wrap;
-            justify-content: space-between;
-            gap: 48px;
-            margin-bottom: 24px;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        &-title {
+            @include body-14-bold();
+            color: color('white', 400);
+            margin-bottom: 8px;
 
             @include tablet() {
-                flex-direction: column;
-                gap: 16px;
-            }
-
-            .footer__nav-column {
-                display: flex;
-                flex-direction: column;
-                gap: 8px;
-
-                h4 {
-                    @include body-14-bold();
-                    color: color('white', 400);
-                    margin-bottom: 8px;
-
-                    @include tablet() {
-                        text-align: center;
-                    }
-                }
-
-                a {
-                    @include body-14();
-                    color: color('white', 400);
-                    text-decoration: none;
-                    margin-bottom: 8px;
-                    transition: $transition;
-
-                    @include tablet() {
-                        text-align: center;
-                    }
-
-                    &:hover {
-                        text-decoration: underline;
-                    }
-                }
+                text-align: center;
             }
         }
 
-        .socials {
+        &-list {
+            list-style: none;
+            margin: 0;
+            padding: 0;
             display: flex;
+            flex-direction: column;
             gap: 8px;
-            justify-content: center;
-
-            svg {
-                width: 28px;
-                height: 28px;
-
-                path {
-                    fill: color('white', 400);
-                }
-            }
         }
 
-        .footer__copyright {
+        &-link {
             @include body-14();
             color: color('white', 400);
-            text-align: center;
-            margin-top: 32px;
-            padding-top: 32px;
-            border-top: 1px solid #ffffff36;
+            text-decoration: none;
+            transition: $transition;
+            display: block;
 
             @include tablet() {
-                margin-top: 16px;
-                padding-top: 16px;
+                text-align: center;
             }
+
+            &:hover {
+                color: color('white', 400);
+                text-decoration: underline;
+            }
+        }
+    }
+
+    .socials {
+        display: flex;
+        gap: 8px;
+        justify-content: center;
+
+        svg {
+            width: 28px;
+            height: 28px;
+
+            path {
+                fill: color('white', 400);
+            }
+        }
+    }
+
+    &__copyright {
+        @include body-14();
+        color: color('white', 400);
+        text-align: center;
+        margin-top: 32px;
+        padding-top: 32px;
+        border-top: 1px solid rgba(255, 255, 255, 0.21);
+
+        @include tablet() {
+            margin-top: 16px;
+            padding-top: 16px;
         }
     }
 }
