@@ -103,12 +103,16 @@ class Item extends BaseEntity
     #[ORM\Column(type: Types::STRING, length: 255, nullable: true)]
     private ?string $metaDescription = null;
 
+    #[ORM\OneToMany(targetEntity: CartItem::class, mappedBy: 'item')]
+    private Collection $cartItems;
+
     public function __construct()
     {
         parent::__construct();
 
         $this->categories = new ArrayCollection();
         $this->images = new ArrayCollection();
+        $this->cartItems = new ArrayCollection();
     }
 
     public function getGuid(): string
@@ -372,5 +376,10 @@ class Item extends BaseEntity
         $this->howToUse = $howToUse;
 
         return $this;
+    }
+
+    public function getCartItems(): Collection
+    {
+        return $this->cartItems;
     }
 }

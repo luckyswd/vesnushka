@@ -207,7 +207,7 @@ class FilterHandler
         }
 
         return new Response($this->twig->render('template/front/catalog/catalog-item.html.twig', [
-            'name' => is_string($entity) ? 'Поиск' :$entity->getName(),
+            'name' => is_string($entity) ? 'Поиск' : $entity->getName(),
             'breadcrumbs' => $this->getBreadcrumbs($entity),
             'items' => $items,
             'itemsCount' => $this->formatItemsFound($matchedCount),

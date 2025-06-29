@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\UserRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -43,6 +45,16 @@ class User extends BaseEntity implements UserInterface, PasswordAuthenticatedUse
 
     #[ORM\Column(type: 'datetime', nullable: true)]
     private ?\DateTime $resetTokenExpiresAt = null;
+
+    #[ORM\OneToMany(targetEntity: Cart::class, mappedBy: 'user')]
+    private Collection $carts;
+
+    public function __construct()
+    {
+        parent::__construct();
+
+        $this->carts = new ArrayCollection();
+    }
 
     public function __toString(): string
     {
@@ -189,5 +201,10 @@ class User extends BaseEntity implements UserInterface, PasswordAuthenticatedUse
         $this->resetTokenExpiresAt = $resetTokenExpiresAt;
 
         return $this;
+    }
+
+    public function getCarts(): Collection
+    {
+        return $this->carts;
     }
 }

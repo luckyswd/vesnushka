@@ -18,8 +18,7 @@ class CategoryFixtures extends Fixture implements FixtureGroupInterface
     public function __construct(
         ParameterBagInterface $parameterBag,
         private CategoryRepository $categoryRepository,
-    )
-    {
+    ) {
         $this->parameterBag = $parameterBag;
     }
 

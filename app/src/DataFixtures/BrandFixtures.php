@@ -46,7 +46,7 @@ class BrandFixtures extends Fixture implements FixtureGroupInterface
         foreach ($brands as $key => $brandName) {
             $brand = new Brand();
             $brand->setName($brandName);
-            $brand->setUrl('url_' . $key . random_int(1,9999999));
+            $brand->setUrl('url_' . $key . random_int(1, 9999999));
             $brand->setImage($this->createMockFile($manager));
             $brand->setIsPopular((bool) random_int(0, 1));
 

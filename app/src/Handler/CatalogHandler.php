@@ -2,7 +2,6 @@
 
 namespace App\Handler;
 
-use App\Enum\CategoryPublishStateEnum;
 use App\Repository\CategoryRepository;
 use Symfony\Component\HttpFoundation\Response;
 use Twig\Environment;
