@@ -1,11 +1,21 @@
-<ul class="breadcrumbs">
-    {% for breadcrumb in breadcrumbs %}
-        <li class="breadcrumbs-item">
-            {% if not loop.last %}
-                <a href="{{ breadcrumb.link }}">{{ breadcrumb.text }}</a>
-            {% else %}
-                {{ breadcrumb.text }}
-            {% endif %}
-        </li>
-    {% endfor %}
-</ul>
+<nav aria-label="Навигационная цепочка" class="breadcrumb-wrapper">
+        <ul class="breadcrumbs" itemscope itemtype="https://schema.org/BreadcrumbList">
+                {% for breadcrumb in breadcrumbs %}
+                        <li class="breadcrumbs__item{% if loop.last %} breadcrumbs__item--current{% endif %}"
+                            itemprop="itemListElement"
+                            itemscope
+                            itemtype="https://schema.org/ListItem">
+
+                                {% if not loop.last %}
+                                        <a href="{{ breadcrumb.link }}" itemprop="item" class="breadcrumbs__link">
+                                                <span itemprop="name">{{ breadcrumb.text }}</span>
+                                        </a>
+                                {% else %}
+                                        <span itemprop="name">{{ breadcrumb.text }}</span>
+                                {% endif %}
+
+                                <meta itemprop="position" content="{{ loop.index }}" />
+                        </li>
+                {% endfor %}
+        </ul>
+</nav>
