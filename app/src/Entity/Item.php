@@ -251,7 +251,7 @@ class Item extends BaseEntity
 
     public function getDefaultPrice(): float
     {
-        return $this->price[PriceTypeEnum::RETAIL->value][CurrencyEnum::BYN->value] / 100;
+        return $this->price[PriceTypeEnum::RETAIL->value][CurrencyEnum::BYN->value];
     }
 
     public function setPrice(array $price): static

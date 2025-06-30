@@ -26,7 +26,7 @@ class Cart
     #[ORM\Column(type: 'string', length: 50, enumType: CurrencyEnum::class)]
     private CurrencyEnum $currency = CurrencyEnum::BYN;
 
-    #[ORM\Column(type: Types::STRING, options: ['default' => 0])]
+    #[ORM\Column(type: Types::DECIMAL, precision: 10, scale: 2, options: ['default' => 0])]
     private string $totalAmount = '0';
 
     #[ORM\Column(type: Types::BOOLEAN, options: ['default' => true])]
@@ -38,8 +38,8 @@ class Cart
     #[ORM\Column(type: Types::STRING, length: 50, nullable: true)]
     private ?string $deliveryMethod = null;
 
-    #[ORM\Column(type: Types::BIGINT, options: ['default' => 0])]
-    private int $deliveryCost = 0;
+    #[ORM\Column(type: Types::DECIMAL, precision: 10, scale: 2, options: ['default' => 0])]
+    private string $deliveryCost = '0';
 
     #[ORM\Column(type: 'string', length: 20, nullable: true, enumType: PaymentStatusEnum::class)]
     private ?PaymentStatusEnum $paymentStatus = null;

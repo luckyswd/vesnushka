@@ -1,129 +1,150 @@
 {% import "template/front/components/picture.html.twig" as picture %}
 
-<footer class="footer">
+<footer class="footer" role="contentinfo">
     <div class="container">
         <div class="footer-wrap">
-
-            <div class="footer__nav">
+            <nav class="footer__nav" aria-label="Дополнительная навигация">
                 <div class="footer__nav-column">
-                    <h4>Информация</h4>
-                    <a href="/about">О нас</a>
-                    <a href="/contacts">Контакты</a>
-                    <a href="/privacy">Политика конфиденциальности</a>
+                    <h3 class="footer__nav-title">Информация</h3>
+                    <ul class="footer__nav-list">
+                        <li><a href="/about" class="footer__nav-link">О нас</a></li>
+                        <li><a href="/contacts" class="footer__nav-link">Контакты</a></li>
+                        <li><a href="/privacy" class="footer__nav-link">Политика конфиденциальности</a></li>
+                    </ul>
                 </div>
                 <div class="footer__nav-column">
-                    <h4>Покупателям</h4>
-                    <a href="/catalog">Каталог</a>
-                    <a href="/delivery">Доставка и оплата</a>
-                    <a href="/brands">Бренды</a>
+                    <h3 class="footer__nav-title">Покупателям</h3>
+                    <ul class="footer__nav-list">
+                        <li><a href="/catalog" class="footer__nav-link">Каталог</a></li>
+                        <li><a href="/delivery" class="footer__nav-link">Доставка и оплата</a></li>
+                        <li><a href="/brands" class="footer__nav-link">Бренды</a></li>
+                    </ul>
                 </div>
                 <div class="footer__nav-column">
-                    <h4>Мы в соцсетях</h4>
-                    <a href="#">Instagram</a>
-                    <a href="#">Telegram</a>
+                    <h3 class="footer__nav-title">Мы в соцсетях</h3>
+                    <ul class="footer__nav-list">
+                        <li><a href="#" rel="noopener noreferrer" class="footer__nav-link">Instagram</a></li>
+                        <li><a href="#" rel="noopener noreferrer" class="footer__nav-link">Telegram</a></li>
+                    </ul>
                 </div>
-            </div>
+            </nav>
 
             <div class="footer__copyright">
                 © Vesnushka 2024-{{ "now"|date("Y") }}. Все права защищены.
             </div>
         </div>
     </div>
+</footer>
 
-    <div class="modal-login modal" id="modal-login">
+<div class="modals-container">
+    <div class="modal-login modal" id="modal-login" role="dialog" aria-modal="true" aria-labelledby="modal-login-title" hidden>
         <div class="modal-wrapper">
             <div class="modal-content">
-                <p class="modal-title">Войти в личный кабинет</p>
-                <form class="modal-form login-form">
+                <h2 id="modal-login-title" class="modal-title">Войти в личный кабинет</h2>
+                <form class="modal-form login-form" method="post" action="/login">
                     {% include 'template/common/input/_input-text.html.twig' with {
                         id: 'login-email',
-                        type: 'text',
+                        type: 'email',
+                        name: 'email',
                         placeholder: 'Введите e-mail',
                         class: 'login-email',
-                        autocomplete: 'login-email'
+                        required: true,
+                        autocomplete: 'email'
                     } %}
                     {% include 'template/common/input/_input-text.html.twig' with {
                         id: 'login-password',
                         type: 'password',
+                        name: 'password',
                         placeholder: 'Введите пароль',
                         class: 'login-password',
+                        required: true,
                         autocomplete: 'current-password'
                     } %}
-                    <button type="button" class="btn btn-login">Войти</button>
-                    <button class="btn" data-fancybox data-src="#modal-register">Регистрация</button>
-                    <button class="btn btn-forgot-password">Забыли пароль?</button>
+                    <button type="submit" class="btn btn-login">Войти</button>
+                    <button type="button" class="btn" data-fancybox data-src="#modal-register">Регистрация</button>
+                    <button type="button" class="btn btn-forgot-password">Забыли пароль?</button>
                 </form>
-                <form class="modal-form reset-password-form hidden">
+                <form class="modal-form reset-password-form hidden" method="post" action="/password-reset">
                     {% include 'template/common/input/_input-text.html.twig' with {
                         id: 'reset-password-email',
-                        type: 'text',
+                        type: 'email',
+                        name: 'email',
                         placeholder: 'Введите e-mail',
                         class: 'reset-password-email',
-                        autocomplete: 'reset-password-email'
+                        required: true,
+                        autocomplete: 'email'
                     } %}
-                    <button type="button" class="btn btn-reset-password">Восстановить</button>
+                    <button type="submit" class="btn btn-reset-password">Восстановить</button>
                 </form>
             </div>
         </div>
     </div>
 
-    <div class="modal-register modal" id="modal-register">
+    <div class="modal-register modal" id="modal-register" role="dialog" aria-modal="true" aria-labelledby="modal-register-title" hidden>
         <div class="modal-wrapper">
             <div class="modal-content">
-                <p class="modal-title">Регистрация</p>
-                <form class="modal-form register-form">
+                <h2 id="modal-register-title" class="modal-title">Регистрация</h2>
+                <form class="modal-form register-form" method="post" action="/register">
                     {% include 'template/common/input/_input-text.html.twig' with {
                         id: 'register-first-name',
                         type: 'text',
+                        name: 'first_name',
                         placeholder: 'Ваше имя',
                         class: 'register-first-name',
                         required: true,
+                        autocomplete: 'given-name'
                     } %}
                     {% include 'template/common/input/_input-text.html.twig' with {
                         id: 'register-email',
-                        type: 'text',
+                        type: 'email',
+                        name: 'email',
                         placeholder: 'Ваш e-mail',
                         class: 'register-email',
-                        autocomplete: 'register-email',
                         required: true,
+                        autocomplete: 'email'
                     } %}
                     {% include 'template/common/input/_input-text.html.twig' with {
                         id: 'register-password',
                         type: 'password',
+                        name: 'password',
                         placeholder: 'Придумайте пароль',
                         class: 'register-password',
-                        autocomplete: 'register-password',
                         required: true,
+                        autocomplete: 'new-password'
                     } %}
                     {% include 'template/common/input/_input-text.html.twig' with {
                         id: 'register-password-confirm',
                         type: 'password',
+                        name: 'password_confirmation',
                         placeholder: 'Подтвердите пароль',
                         class: 'register-password-confirm',
-                        autocomplete: 'register-password-confirm',
                         required: true,
+                        autocomplete: 'new-password'
                     } %}
-                    <button  type="button" class="btn btn-register">Зарегистрироваться</button>
+                    <button type="submit" class="btn btn-register">Зарегистрироваться</button>
                 </form>
-                <form class="modal-form verify-code-wrap hidden">
+                <form class="modal-form verify-code-wrap hidden" method="post" action="/verify-code">
                     {% include 'template/common/input/_input-text.html.twig' with {
                         id: 'verify-code',
                         type: 'text',
+                        name: 'code',
                         class: 'verify-code',
                         placeholder: 'Код подтверждения',
                         maxlength: 6,
                         required: true,
+                        autocomplete: 'one-time-code'
                     } %}
                     {% include 'template/common/input/_input-text.html.twig' with {
                         id: 'user-guid',
                         type: 'hidden',
+                        name: 'user_guid',
                         class: 'user-guid',
                     } %}
-                    <button  type="button" class="btn btn-verify-code">Подтвердить код</button>
+                    <button type="submit" class="btn btn-verify-code">Подтвердить код</button>
                 </form>
             </div>
         </div>
     </div>
-</footer>
+</div>
 
 {% include 'template/common/notification.html.twig' %}

@@ -1,6 +1,6 @@
 .notification {
     @include body-14-bold();
-    position: absolute;
+    position: fixed;
     top: 30px;
     width: 100%;
     max-width: 500px;

@@ -10,7 +10,7 @@ use Doctrine\Migrations\AbstractMigration;
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-final class Version20250629111822 extends AbstractMigration
+final class Version20250629155911 extends AbstractMigration
 {
     public function getDescription(): string
     {
@@ -21,7 +21,7 @@ final class Version20250629111822 extends AbstractMigration
     {
         // this up() migration is auto-generated, please modify it to your needs
         $this->addSql(<<<'SQL'
-            CREATE TABLE cart (guid UUID NOT NULL, user_guid UUID DEFAULT NULL, currency VARCHAR(50) NOT NULL, total_amount VARCHAR(255) DEFAULT '0' NOT NULL, active BOOLEAN DEFAULT true NOT NULL, session_token VARCHAR(36) DEFAULT NULL, delivery_method VARCHAR(50) DEFAULT NULL, delivery_cost BIGINT DEFAULT 0 NOT NULL, payment_status VARCHAR(20) DEFAULT NULL, PRIMARY KEY(guid))
+            CREATE TABLE cart (guid UUID NOT NULL, user_guid UUID DEFAULT NULL, currency VARCHAR(50) NOT NULL, total_amount NUMERIC(10, 2) DEFAULT '0' NOT NULL, active BOOLEAN DEFAULT true NOT NULL, session_token VARCHAR(36) DEFAULT NULL, delivery_method VARCHAR(50) DEFAULT NULL, delivery_cost NUMERIC(10, 2) DEFAULT '0' NOT NULL, payment_status VARCHAR(20) DEFAULT NULL, PRIMARY KEY(guid))
         SQL);
         $this->addSql(<<<'SQL'
             CREATE INDEX IDX_BA388B751EE837B ON cart (user_guid)
@@ -84,24 +84,6 @@ final class Version20250629111822 extends AbstractMigration
         SQL);
         $this->addSql(<<<'SQL'
             DROP TABLE cart_item
-        SQL);
-        $this->addSql(<<<'SQL'
-            CREATE INDEX idx_item_main_image_guid ON item (main_image_guid)
-        SQL);
-        $this->addSql(<<<'SQL'
-            CREATE INDEX idx_item_brand_guid ON item (brand_guid)
-        SQL);
-        $this->addSql(<<<'SQL'
-            CREATE INDEX idx_item_rank ON item (rank)
-        SQL);
-        $this->addSql(<<<'SQL'
-            CREATE INDEX idx_item_publish_state_rank_desc ON item (publish_state, rank)
-        SQL);
-        $this->addSql(<<<'SQL'
-            CREATE INDEX idx_item_publish_state_guid_rank ON item (publish_state, guid, rank)
-        SQL);
-        $this->addSql(<<<'SQL'
-            CREATE INDEX idx_item_category_category_guid_item_guid ON item_category (category_guid, item_guid)
         SQL);
     }
 }

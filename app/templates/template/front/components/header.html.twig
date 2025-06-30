@@ -71,9 +71,8 @@
                     <rect x="3" y="14" width="7" height="7" />
                     <rect x="14" y="14" width="7" height="7" />
                 </svg>
-
             </a>
-            <a href="{{ path('app_cart') }}" class="cart {{ currentPath == 'app_cart' ? ' active' }}">
+            <a href="{{ path('app_cart') }}" class="user-cart cart {{ currentPath == 'app_cart' ? ' active' }}">
                 <svg xmlns="http://www.w3.org/2000/svg"
                      width="28" height="28"
                      viewBox="0 0 18 20"
@@ -87,7 +86,9 @@
                             stroke-linejoin="round"
                     />
                 </svg>
-
+                <span class="cart-counter-wrap hidden">
+                    <span class="cart-counter">0</span>
+                </span>
             </a>
             {% if app.user %}
                 <a href="{{ path('app_profile') }}" class="user-profile {{ currentPath == 'app_profile' ? ' active' }}">
@@ -97,7 +98,6 @@
                                 fill="currentColor"
                         />
                     </svg>
-
                 </a>
             {% else %}
                 <button class="user-login" data-fancybox data-src="#modal-login">

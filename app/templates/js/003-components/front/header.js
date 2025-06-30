@@ -23,7 +23,11 @@ class Header {
 
   getCart() {
     const cartCookie = this.getCookie('cart');
-    if (!cartCookie) return [];
+
+    if (!cartCookie) {
+      return []
+    }
+
     try {
       return JSON.parse(cartCookie);
     } catch (e) {
@@ -34,11 +38,13 @@ class Header {
 
   setCart(cart) {
     const value = JSON.stringify(cart);
+
     document.cookie = 'cart=' + encodeURIComponent(value) + '; path=/; max-age=' + (60*60*24*30);
   }
 
   getCookie(name) {
     const match = document.cookie.match(new RegExp('(?:^|; )' + name + '=([^;]*)'));
+
     return match ? decodeURIComponent(match[1]) : null;
   }
 
@@ -49,36 +55,38 @@ class Header {
     if (item) {
       item.qty++;
     } else {
-      cart.push({sku: sku, qty: 1});
+      cart.push({ sku: sku, qty: 1 });
     }
 
-    this.setCart(cart);
-    this.updateCartCounter();
+    try {
+      await this.api.post('/api/cart/add', { sku: sku, qty: 1 });
 
-    window.notofication.success(`Товар ${sku} добавлен в корзину`, 2000);
+      this.setCart(cart);
+      this.updateCartCounter();
 
-    await this.api.post('/api/cart/add', {sku: sku, qty: 1});
+      window.notofication.success(`Товар ${sku} добавлен в корзину`, 2000);
+    } catch (e) {
+      window.notification.error(`Возникла ошибка при добавлении товара ${sku} в корзину`, 2000);
+    }
   }
-
 
   updateCartCounter() {
     const cart = this.getCart();
     const count = cart.reduce((sum, item) => sum + item.qty, 0);
+    const counters = document.querySelectorAll('.cart-counter');
+    const wraps = document.querySelectorAll('.cart-counter-wrap');
 
-    const counter = document.querySelector('.cart-counter');
-    const wrap = document.querySelector('.cart-counter-wrap');
-
-    if (counter) {
+    counters.forEach(counter => {
       counter.textContent = count;
-    }
+    });
 
-    if (wrap) {
+    wraps.forEach(wrap => {
       if (count === 0) {
         wrap.classList.add('hidden');
       } else {
         wrap.classList.remove('hidden');
       }
-    }
+    });
   }
 }
 

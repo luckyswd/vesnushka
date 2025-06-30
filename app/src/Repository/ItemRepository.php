@@ -107,7 +107,7 @@ class ItemRepository extends ServiceEntityRepository
                     i.breadcrumbs,
                     i.stock,
                     i.attributes,
-                    ROUND((i.price->'retail'->$jsonPathCurrency)::numeric / 100, 2) AS price,
+                    (i.price->'retail'->$jsonPathCurrency)::numeric AS price,
                     i.rank,
                     f.path AS main_image_path,
                     ROW_NUMBER() OVER (
@@ -224,7 +224,7 @@ class ItemRepository extends ServiceEntityRepository
                 i.breadcrumbs,
                 i.stock,
                 i.attributes,
-                ROUND((i.price->'retail'->$jsonPathCurrency)::numeric / 100, 2) AS price,
+                (i.price->'retail'->$jsonPathCurrency)::numeric AS price,
                 i.rank,
                 f.path AS main_image_path
             FROM item i
@@ -271,7 +271,7 @@ class ItemRepository extends ServiceEntityRepository
                     i.breadcrumbs,
                     i.stock,
                     i.attributes,
-                    ROUND((i.price->'retail'->$jsonPathCurrency)::numeric / 100, 2) AS price,
+                    (i.price->'retail'->$jsonPathCurrency)::numeric AS price,
                     i.rank,
                     f.path AS main_image_path
                 FROM item i
