@@ -1,13 +1,13 @@
 .notification {
     @include body-14-bold();
     position: fixed;
-    top: 30px;
+    top: 120px;
     width: 100%;
     max-width: 500px;
     text-align: center;
     padding: 12px 32px;
     margin-top: 6px;
-    right: 50px;
+    right: 30px;
     border-radius: 8px;
     z-index: -1;
     opacity: 0;

@@ -2,6 +2,9 @@
 
 namespace App\Enum;
 
+use Symfony\Component\Serializer\Attribute\Groups;
+
+#[Groups(['json_cart'])]
 enum PaymentStatusEnum: string
 {
     case NEW = 'new';          // только создано

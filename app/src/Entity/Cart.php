@@ -4,11 +4,13 @@ namespace App\Entity;
 
 use App\Enum\CurrencyEnum;
 use App\Enum\PaymentStatusEnum;
+use App\Enum\PriceTypeEnum;
 use App\Repository\CartRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Attribute\Groups;
 
 #[ORM\Entity(repositoryClass: CartRepository::class)]
 class Cart
@@ -17,16 +19,24 @@ class Cart
     #[ORM\GeneratedValue(strategy: 'CUSTOM')]
     #[ORM\CustomIdGenerator('doctrine.uuid_generator')]
     #[ORM\Column(type: Types::GUID, nullable: false)]
+    #[Groups(['json_cart'])]
     private string $guid;
 
     #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'carts')]
     #[ORM\JoinColumn(name: 'user_guid', referencedColumnName: 'guid', nullable: true)]
+    #[Groups(['json_cart'])]
     private ?User $user = null;
 
     #[ORM\Column(type: 'string', length: 50, enumType: CurrencyEnum::class)]
+    #[Groups(['json_cart'])]
     private CurrencyEnum $currency = CurrencyEnum::BYN;
 
+    #[ORM\Column(type: Types::STRING, length: 20, enumType: PriceTypeEnum::class)]
+    #[Groups(['json_cart'])]
+    private PriceTypeEnum $priceType = PriceTypeEnum::RETAIL;
+
     #[ORM\Column(type: Types::DECIMAL, precision: 10, scale: 2, options: ['default' => 0])]
+    #[Groups(['json_cart'])]
     private string $totalAmount = '0';
 
     #[ORM\Column(type: Types::BOOLEAN, options: ['default' => true])]
@@ -36,15 +46,19 @@ class Cart
     private ?string $sessionToken = null;
 
     #[ORM\Column(type: Types::STRING, length: 50, nullable: true)]
+    #[Groups(['json_cart'])]
     private ?string $deliveryMethod = null;
 
     #[ORM\Column(type: Types::DECIMAL, precision: 10, scale: 2, options: ['default' => 0])]
+    #[Groups(['json_cart'])]
     private string $deliveryCost = '0';
 
-    #[ORM\Column(type: 'string', length: 20, nullable: true, enumType: PaymentStatusEnum::class)]
+    #[ORM\Column(type: Types::STRING, length: 20, nullable: true, enumType: PaymentStatusEnum::class)]
+    #[Groups(['json_cart'])]
     private ?PaymentStatusEnum $paymentStatus = null;
 
     #[ORM\OneToMany(targetEntity: CartItem::class, mappedBy: 'cart')]
+    #[Groups(['json_cart'])]
     private Collection $cartItems;
 
     public function __construct()
@@ -164,6 +178,48 @@ class Cart
     public function setPaymentStatus(?PaymentStatusEnum $paymentStatus): self
     {
         $this->paymentStatus = $paymentStatus;
+
+        return $this;
+    }
+
+    public function getPriceType(): PriceTypeEnum
+    {
+        return $this->priceType;
+    }
+
+    public function setPriceType(PriceTypeEnum $priceType): self
+    {
+        $this->priceType = $priceType;
+        return $this;
+    }
+
+    #[Groups(['json_cart'])]
+    public function getCountCartItems(): int
+    {
+        $total = 0;
+
+        foreach ($this->cartItems as $cartItem) {
+            $total += $cartItem->getQty();
+        }
+
+        return $total;
+    }
+
+    public function addCartItem(CartItem $cartItem): self
+    {
+        if (!$this->cartItems->contains($cartItem)) {
+            $this->cartItems[] = $cartItem;
+            $cartItem->setCart($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCartItem(CartItem $cartItem): self
+    {
+        if ($this->cartItems->contains($cartItem)) {
+            $this->cartItems->removeElement($cartItem);
+        }
 
         return $this;
     }

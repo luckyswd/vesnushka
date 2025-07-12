@@ -1,0 +1,168 @@
+.cart {
+    .cart-form {
+        display: grid;
+        grid-template-columns: 1fr 360px;
+        gap: 32px;
+
+        .items-title {
+            margin-bottom: 16px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid color('gray', 700);
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+
+            h1 {
+                @include body-28-bold();
+            }
+
+            .cart-count {
+                color: color('gray', 500);
+            }
+        }
+
+        .wrap {
+            border: 1px solid color('gray', 700);
+            box-shadow: rgba(0, 0, 0, 0.07) 0 7px 10px, rgba(0, 0, 0, 0.07) 0 -7px 10px;
+            border-radius: 8px;
+            padding: 16px;
+
+            @include tablet() {
+                padding: 16px 12px;
+            }
+        }
+
+        .cart-items {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+
+            .cart-item {
+                display: flex;
+                justify-content: space-between;
+                align-items: stretch;
+                padding: 8px;
+                border-radius: 8px;
+                border: 1px solid color('gray', 700);
+                box-shadow: rgba(0, 0, 0, 0.07) 0 7px 10px, rgba(0, 0, 0, 0.07) 0 -7px 10px;
+
+                .cart-item-info, .item-qty, .item-price {
+                    width: 100%;
+                    padding: 0 12px;
+                }
+
+                .item-name {
+                    @include body-16();
+
+                    &:hover {
+                        color: color('main', 400);
+                    }
+                }
+
+                .cart-item-image {
+                    width: 100%;
+                    max-width: 128px;
+
+                    picture {
+                        display: flex;
+                        align-items: center;
+                    }
+                }
+
+                .cart-item-info {
+                    display: flex;
+                    flex-direction: column;
+                    justify-content: space-between;
+                    padding: 12px;
+                }
+
+                .item-stock {
+                    display: flex;
+                    align-items: center;
+                    gap: 8px;
+                }
+
+                .item-qty {
+                    display: flex;
+                    gap: 8px;
+                    justify-content: end;
+                    align-items: center;
+
+                    .input-wrapper {
+                        max-width: 50px;
+                    }
+
+                    .item-qty-input {
+                        text-align: center;
+                    }
+                }
+
+                .item-qty-plus span::after {
+                    content: "";
+                    position: absolute;
+                    top: 50%;
+                    left: 50%;
+                    width: 2px;
+                    height: 12px;
+                    background-color: color('black', 400);
+                    transform: translate(-50%, -50%);
+                }
+
+                .item-qty-minus, .item-qty-plus {
+                    cursor: pointer;
+
+                    span {
+                        position: relative;
+                        display: block;
+                        width: 36px;
+                        height: 36px;
+                        background-color: color('gray', 700);
+                        border-radius: 8px;
+
+                        &::before {
+                            content: "";
+                            position: absolute;
+                            top: 50%;
+                            left: 50%;
+                            width: 12px;
+                            height: 2px;
+                            background-color: color('black', 400);
+                            transform: translate(-50%, -50%);
+                        }
+                    }
+
+                    &.disabled {
+                        cursor: default;
+
+                        span:after, span:before {
+                            background-color: color('gray', 500);
+                        }
+                    }
+                }
+
+                .item-price {
+                    @include body-20-bold();
+                    display: flex;
+                    align-items: center;
+                    justify-content: end;
+                }
+
+                .action-remove {
+                    width: 32px;
+                    height: 32px;
+                    cursor: pointer;
+
+                    svg path {
+                        transition: $transition;
+                    }
+
+                    &:hover {
+                        svg path {
+                            fill: color('black', 400);
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

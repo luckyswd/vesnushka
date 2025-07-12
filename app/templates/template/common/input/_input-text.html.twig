@@ -12,5 +12,10 @@
             {% if value is defined and value is not same as(false) %}value="{{ value }}"{% endif %}
             {% if autocomplete is defined and autocomplete is not empty %}autocomplete="{{ autocomplete }}"{% endif %}
             {% if inputmode is defined and inputmode is not empty %}inputmode="{{ inputmode }}"{% endif %}
+            {% if data is defined and data is iterable %}
+                {% for key, val in data %}
+                    data-{{ key }}="{{ val }}"
+                {% endfor %}
+            {% endif %}
     />
 </div>

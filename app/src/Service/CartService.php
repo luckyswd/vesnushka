@@ -33,10 +33,8 @@ class CartService
 
     /**
      * Найти или создать корзину для текущего пользователя или гостя
-     *
-     * @return array{cart: Cart, cookie: Cookie|null}
      */
-    public function findOrCreateCart(): array
+    public function findOrCreateCart(): Cart
     {
         $request = $this->requestStack->getCurrentRequest();
         $sessionToken = $request?->cookies->get('cart_token');
@@ -96,6 +94,11 @@ class CartService
             }
         }
 
-        return ['cart' => $cart, 'cookie' => $cookie];
+        // если надо установить cookie — кладём в Request attributes
+        if ($cookie) {
+            $request->attributes->set('_set_cart_cookie', $cookie);
+        }
+
+        return $cart;
     }
 }

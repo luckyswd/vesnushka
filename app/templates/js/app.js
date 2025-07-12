@@ -37,6 +37,7 @@ import './003-components/front/catalog.js';
 import './003-components/front/item.js';
 import './003-components/front/security.js';
 import './003-components/front/header.js';
+import './003-components/front/cart.js';
 
 //-----------------------------------------------------------
 // SECTIONS

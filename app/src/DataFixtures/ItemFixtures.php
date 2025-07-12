@@ -76,7 +76,7 @@ class ItemFixtures extends Fixture implements FixtureGroupInterface
             foreach (PriceTypeEnum::cases() as $priceType) {
                 $prices[$priceType->value] = [];
                 foreach (CurrencyEnum::cases() as $currency) {
-                    $prices[$priceType->value][$currency->value] = rand(1000, 100000);
+                    $prices[$priceType->value][$currency->value] = rand(1, 100);
                 }
             }
             $item->setPrice($prices);

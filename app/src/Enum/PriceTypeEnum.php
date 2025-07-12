@@ -2,6 +2,9 @@
 
 namespace App\Enum;
 
+use Symfony\Component\Serializer\Attribute\Groups;
+
+#[Groups(['json_cart'])]
 enum PriceTypeEnum: string
 {
     case PURCHASE = 'purchase';            // Закупочная цена у поставщика

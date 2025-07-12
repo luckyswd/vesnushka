@@ -2,30 +2,13 @@
 
 namespace App\Traits;
 
+use App\Serializer\Serializer;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Serializer\Mapping\Factory\ClassMetadataFactory;
-use Symfony\Component\Serializer\Mapping\Loader\AttributeLoader;
-use Symfony\Component\Serializer\Normalizer\DateTimeNormalizer;
-use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
-use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
-use Symfony\Component\Serializer\Serializer;
 
 trait ApiResponseTrait
 {
     protected array $meta = [];
-
-    private NormalizerInterface $serializer;
-
-    public function __construct()
-    {
-        $this->serializer = new Serializer([
-            new DateTimeNormalizer(['datetime_format' => 'Y-m-d']),
-            new ObjectNormalizer(
-                new ClassMetadataFactory(new AttributeLoader())
-            ),
-        ]);
-    }
 
     protected function success(
         array|object $data = [],
@@ -33,13 +16,12 @@ trait ApiResponseTrait
         ?array $groups = null,
     ): JsonResponse {
         if ($groups) {
-            $context = ['groups' => $groups];
-            $data = $this->serializer->normalize($data, null, $context);
+            $data = Serializer::normalize($data, null, ['groups' => $groups]);
         }
 
         return new JsonResponse(
             [
-                'data' => empty($data) ? ['success'] : $data,
+                'data' => empty($data) ? ['success' => true] : $data,
                 'meta' => $this->meta,
             ],
             $statusCode,
@@ -48,10 +30,27 @@ trait ApiResponseTrait
         );
     }
 
+
     protected function error(
-        string $message,
+        string|array $message,
         int $statusCode = Response::HTTP_INTERNAL_SERVER_ERROR,
     ): JsonResponse {
+        if (is_array($message)) {
+            $lines = [];
+
+            foreach ($message as $field => $errors) {
+                if (is_array($errors)) {
+                    foreach ($errors as $err) {
+                        $lines[] = "{$field}: {$err}";
+                    }
+                } else {
+                    $lines[] = "{$field}: {$errors}";
+                }
+            }
+
+            $message = implode("\n", $lines);
+        }
+
         return new JsonResponse(
             ['error' => $message],
             $statusCode,

@@ -11,6 +11,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Attribute\Groups;
 
 #[ORM\EntityListeners([UrlAndBreadcrumbsListener::class])]
 #[ORM\Entity(repositoryClass: ItemRepository::class)]
@@ -32,12 +33,14 @@ class Item extends BaseEntity
     #[ORM\GeneratedValue(strategy: 'CUSTOM')]
     #[ORM\CustomIdGenerator('doctrine.uuid_generator')]
     #[ORM\Column(type: Types::GUID, nullable: false)]
+    #[Groups(['json_cart'])]
     private string $guid;
 
     #[ORM\Column(type: 'string', length: 50, enumType: ItemPublishStateEnum::class)]
     private ItemPublishStateEnum $publishState;
 
     #[ORM\Column(type: Types::STRING, length: 50, unique: true, options: ['comment' => 'Артикул товара'])]
+    #[Groups(['json_cart'])]
     private string $sku;
 
     #[ORM\Column(type: Types::STRING, length: 255, unique: true)]
@@ -249,9 +252,9 @@ class Item extends BaseEntity
         return $this->price;
     }
 
-    public function getDefaultPrice(): float
+    public function getDefaultPrice(): string
     {
-        return $this->price[PriceTypeEnum::RETAIL->value][CurrencyEnum::BYN->value];
+        return (string)$this->price[PriceTypeEnum::RETAIL->value][CurrencyEnum::BYN->value];
     }
 
     public function setPrice(array $price): static

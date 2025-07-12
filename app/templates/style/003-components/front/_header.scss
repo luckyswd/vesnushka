@@ -187,7 +187,9 @@
         position: absolute;
         top: -8px;
         right: -8px;
-        width: 24px;
+        min-width: 24px;
+        max-width: max-content;
+        padding: 0 4px;
         height: 24px;
         background: color('red', 400);
         border-radius: 20px;
