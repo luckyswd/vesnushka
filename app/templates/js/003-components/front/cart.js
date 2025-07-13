@@ -4,6 +4,8 @@ class Cart {
     constructor() {
         this.api = new Api();
         this.debounceTimers = {};
+        this.cartFormWrap = document.querySelector('.cart-form');
+        this.emptyCartWrap  = document.querySelector('.empty-cart ');
         this.init();
     }
 
@@ -221,10 +223,16 @@ class Cart {
         }
 
         // Обновление в корзине количество товаров
-        const cartCount = document.querySelector('.cart-count .count');
+        const cartCountWrap = document.querySelector('.cart-count .count');
+        const cartCount = cartData.countCartItems;
 
-        if (cartCount) {
-            cartCount.innerHTML = cartData.countCartItems;
+        if (cartCountWrap) {
+            cartCountWrap.innerHTML = cartCount;
+        }
+
+        if (cartCount <= 0) {
+            this.emptyCartWrap.classList.remove('hidden');
+            this.cartFormWrap.classList.add('hidden');
         }
     }
 

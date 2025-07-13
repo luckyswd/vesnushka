@@ -61,6 +61,10 @@ class Cart
     #[Groups(['json_cart'])]
     private Collection $cartItems;
 
+    #[ORM\Column(type: Types::STRING, length: 255, nullable: true)]
+    #[Groups(['json_cart'])]
+    private ?string $deliveryCity = null;
+
     public function __construct()
     {
         $this->cartItems = new ArrayCollection();
@@ -220,6 +224,18 @@ class Cart
         if ($this->cartItems->contains($cartItem)) {
             $this->cartItems->removeElement($cartItem);
         }
+
+        return $this;
+    }
+
+    public function getDeliveryCity(): ?string
+    {
+        return $this->deliveryCity;
+    }
+
+    public function setDeliveryCity(?string $deliveryCity): self
+    {
+        $this->deliveryCity = $deliveryCity;
 
         return $this;
     }

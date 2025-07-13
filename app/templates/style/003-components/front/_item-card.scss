@@ -49,6 +49,8 @@
     }
 
     .add-cart {
+        cursor: pointer;
+
         svg path {
             stroke: color('white', 400);
         }

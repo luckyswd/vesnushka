@@ -13,23 +13,3 @@
         opacity: 1;
     }
 }
-
-.input-wrapper {
-    position: relative;
-    width: 100%;
-
-    &.required::after {
-        content: '*';
-        color: color('red', 400);
-        font-size: 16px;
-        position: absolute;
-        right: 10px;
-        top: 50%;
-        transform: translateY(-50%);
-        pointer-events: none;
-    }
-
-    &.required .input-text {
-        padding-right: 24px;
-    }
-}

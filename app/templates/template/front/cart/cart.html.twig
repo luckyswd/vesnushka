@@ -5,10 +5,10 @@
 {% block body %}
     <section class="cart">
         <div class="container">
-            <form class="cart-form">
+            <form class="cart-form {{ itemCount < 1 ? 'hidden' : '' }}">
                 <div class="left">
                     <div class="items-info wrap">
-                        <div class="items-title">
+                        <div class="title">
                             <h1>Корзина</h1>
                             <p class="cart-count"><span class="count">{{ itemCount }}</span> {{ itemCountText }}</p>
                         </div>
@@ -61,12 +61,59 @@
                             {% endfor %}
                         </div>
                     </div>
+
+                    <div class="cart-address wrap">
+                        <div class="title">
+                            <h6>Доставка</h6>
+                        </div>
+
+                        <div class="cart-delivery">
+                            <div class="delivery-city">
+                                {% include 'template/common/input/_input-text.html.twig' with {
+                                    id: 'delivery-city-input',
+                                    required: true,
+                                    type: 'text',
+                                    class: 'delivery-city-input',
+                                    placeholder: 'Минск',
+                                    label: 'Город',
+                                    value: deliveryCity ?? '',
+                                } %}
+                            </div>
+
+                            <div class="cart-delivery-methods">
+                                {% for method in deliveryMethods %}
+                                    {% include 'template/common/input/_input-radio.html.twig' with {
+                                        name: 'delivery_method',
+                                        value: method.value,
+                                        label: method.getLabel() ~ ' — ' ~ method.getPrice() ~ ' р. (' ~ method.getDeliveryTime() ~ ')',
+                                        checked: loop.first
+                                    } %}
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="cart-user-info wrap">
+                        <div class="title">
+                            <h6>Ваши данные</h6>
+                        </div>
+
+                        <div class="cart-user-info">
+
+                        </div>
+                    </div>
                 </div>
 
                 <div class="right wrap">
                     Итого {{ totalAmount }}
                 </div>
             </form>
+
+            <div class="empty-cart {{ itemCount >= 1 ? 'hidden' : '' }}">
+                <p class="top-text">В корзине пока пусто</p>
+                <p class="bot-text">Загляните на главную — собрали там товары, которые могут вам понравиться</p>
+                <a href="/" class="btn"> Перейти на главную </a>
+            </div>
         </div>
     </section>
 {% endblock %}

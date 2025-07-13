@@ -1,4 +1,10 @@
 <div class="input-wrapper {% if required is defined and required %}required{% endif %}">
+    {% if label is defined and label is not empty %}
+        <label for="{{ id }}">
+            {{ label }}
+        </label>
+    {% endif %}
+
     <input
             type="{{ type }}"
             id="{{ id }}"

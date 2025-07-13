@@ -2,6 +2,7 @@
 
 namespace App\Handler\Cart;
 
+use App\Enum\DeliveryMethodEnum;
 use App\Service\CartService;
 use Symfony\Component\HttpFoundation\Response;
 use Twig\Environment;
@@ -30,6 +31,8 @@ class CartHandler
             'cartItems' => $cartItems,
             'itemCount' => $itemCount,
             'itemCountText' => $this->pluralizeItems($itemCount),
+            'deliveryCity' => $cart->getDeliveryCity(),
+            'deliveryMethods' => DeliveryMethodEnum::cases(),
         ]));
     }
 
