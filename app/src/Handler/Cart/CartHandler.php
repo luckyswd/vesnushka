@@ -33,8 +33,11 @@ class CartHandler
             'itemCount' => $itemCount,
             'itemCountText' => $this->pluralizeItems($itemCount),
             'deliveryCity' => $cart->getDeliveryCity(),
+            'deliveryAddress' => $cart->getDeliveryAddress(),
             'deliveryMethods' => DeliveryMethodEnum::cases(),
+            'deliveryMethod' => $cart->getDeliveryMethod(),
             'user' => $this->userService->getUser(),
+            'cartGuid' => $cart->getGuid(),
         ]));
     }
 

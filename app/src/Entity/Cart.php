@@ -48,7 +48,7 @@ class Cart
 
     #[ORM\Column(type: Types::STRING, length: 50, nullable: true, enumType: DeliveryMethodEnum::class)]
     #[Groups(['json_cart'])]
-    private ?string $deliveryMethod = null;
+    private ?DeliveryMethodEnum $deliveryMethod = null;
 
     #[ORM\Column(type: Types::DECIMAL, precision: 10, scale: 2, options: ['default' => 0])]
     #[Groups(['json_cart'])]
@@ -65,6 +65,10 @@ class Cart
     #[ORM\Column(type: Types::STRING, length: 255, nullable: true)]
     #[Groups(['json_cart'])]
     private ?string $deliveryCity = null;
+
+    #[ORM\Column(type: Types::STRING, length: 1024, nullable: true)]
+    #[Groups(['json_cart'])]
+    private ?string $deliveryAddress = null;
 
     public function __construct()
     {
@@ -151,16 +155,16 @@ class Cart
         $this->cartItems = $cartItems;
     }
 
-    public function getDeliveryMethod(): ?string
-    {
-        return $this->deliveryMethod;
-    }
-
-    public function setDeliveryMethod(?string $deliveryMethod): self
+    public function setDeliveryMethod(?DeliveryMethodEnum $deliveryMethod): self
     {
         $this->deliveryMethod = $deliveryMethod;
 
         return $this;
+    }
+
+    public function getDeliveryMethod(): ?DeliveryMethodEnum
+    {
+        return $this->deliveryMethod;
     }
 
     public function getDeliveryCost(): int
@@ -240,5 +244,15 @@ class Cart
         $this->deliveryCity = $deliveryCity;
 
         return $this;
+    }
+
+    public function getDeliveryAddress(): ?string
+    {
+        return $this->deliveryAddress;
+    }
+
+    public function setDeliveryAddress(?string $deliveryAddress): void
+    {
+        $this->deliveryAddress = $deliveryAddress;
     }
 }

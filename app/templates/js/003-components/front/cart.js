@@ -5,7 +5,14 @@ class Cart {
         this.api = new Api();
         this.debounceTimers = {};
         this.cartFormWrap = document.querySelector('.cart-form');
-        this.emptyCartWrap  = document.querySelector('.empty-cart ');
+        this.emptyCartWrap = document.querySelector('.empty-cart');
+
+        if (this.cartFormWrap) {
+            this.cartGuid = this.cartFormWrap.dataset.cartGuid || null;
+        } else {
+            this.cartGuid = null;
+        }
+
         this.init();
     }
 
@@ -18,6 +25,7 @@ class Cart {
         this.setupPlusHandlers();
 
         this.removeItem();
+        this.updatePatchDataCart();
     }
 
     setupInputLimits() {
@@ -184,7 +192,6 @@ class Cart {
 
     updateCartInfo(cartData) {
         if (!cartData || !Array.isArray(cartData.cartItems)) return;
-        console.log(cartData)
 
         // Берём список товаров с сервера
         const backendItems = cartData.cartItems;
@@ -262,6 +269,48 @@ class Cart {
                 window.notofication.success('Товар удалён из корзины', 2000);
             });
         });
+    }
+
+    bindCartFieldUpdate(inputId, fieldName) {
+        const input = document.getElementById(inputId);
+
+        if (!input || !this.cartGuid) return;
+
+        input.addEventListener('blur', async () => {
+            const value = input.value.trim();
+
+            if (!value) return;
+
+            const result = await this.api.patch(`/api/cart/${this.cartGuid}`, {
+                [fieldName]: value
+            });
+
+            this.setCart(result.data);
+        });
+    }
+
+    bindDeliveryMethodChange() {
+        if (!this.cartGuid) return;
+
+        const deliveryRadios = document.querySelectorAll('input[name="delivery_method"]');
+
+        deliveryRadios.forEach(radio => {
+            radio.addEventListener('change', async () => {
+                if (!radio.checked) return;
+
+                const result = await this.api.patch(`/api/cart/${this.cartGuid}`, {
+                    deliveryMethod: radio.value
+                });
+
+                this.setCart(result.data);
+            });
+        });
+    }
+
+    updatePatchDataCart() {
+        this.bindCartFieldUpdate('delivery-city-input', 'deliveryCity');
+        this.bindCartFieldUpdate('delivery-address-input', 'deliveryAddress');
+        this.bindDeliveryMethodChange();
     }
 }
 

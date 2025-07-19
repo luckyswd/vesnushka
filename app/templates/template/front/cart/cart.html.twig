@@ -5,7 +5,7 @@
 {% block body %}
     <section class="cart">
         <div class="container">
-            <form class="cart-form {{ itemCount < 1 ? 'hidden' : '' }}">
+            <form class="cart-form {{ itemCount < 1 ? 'hidden' : '' }}" data-cart-guid="{{ cartGuid }}">
                 <div class="left">
                     <div class="items-info wrap">
                         <div class="title">
@@ -68,17 +68,25 @@
                         </div>
 
                         <div class="cart-delivery">
-                            <div class="delivery-city">
-                                {% include 'template/common/input/_input-text.html.twig' with {
-                                    id: 'delivery-city-input',
-                                    required: true,
-                                    type: 'text',
-                                    class: 'delivery-city-input',
-                                    placeholder: 'Минск',
-                                    label: 'Город',
-                                    value: deliveryCity ?? '',
-                                } %}
-                            </div>
+                            {% include 'template/common/input/_input-text.html.twig' with {
+                                id: 'delivery-city-input',
+                                required: true,
+                                type: 'text',
+                                class: 'delivery-city-input',
+                                placeholder: 'Минск',
+                                label: 'Город',
+                                value: deliveryCity ?? '',
+                            } %}
+
+                            {% include 'template/common/input/_input-text.html.twig' with {
+                                id: 'delivery-address-input',
+                                required: true,
+                                type: 'text',
+                                class: 'delivery-address-input',
+                                placeholder: 'Улица, Дом, Кватира',
+                                label: 'Адрес',
+                                value: deliveryAddress ?? '',
+                            } %}
 
                             <div class="cart-delivery-methods">
                                 {% for method in deliveryMethods %}
@@ -86,7 +94,7 @@
                                         name: 'delivery_method',
                                         value: method.value,
                                         label: method.getLabel() ~ ' — ' ~ method.getPrice() ~ ' р. (' ~ method.getDeliveryTime() ~ ')',
-                                        checked: loop.first
+                                        checked: deliveryMethod and method == deliveryMethod
                                     } %}
                                 {% endfor %}
                             </div>
