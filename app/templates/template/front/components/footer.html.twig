@@ -104,6 +104,14 @@
                         autocomplete: 'email'
                     } %}
                     {% include 'template/common/input/_input-text.html.twig' with {
+                        id: 'register-phone',
+                        type: 'text',
+                        name: 'phone',
+                        placeholder: 'Ваш телефон',
+                        class: 'register-phone phone-input',
+                        required: true,
+                    } %}
+                    {% include 'template/common/input/_input-text.html.twig' with {
                         id: 'register-password',
                         type: 'password',
                         name: 'password',

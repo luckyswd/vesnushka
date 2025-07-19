@@ -17,7 +17,7 @@ enum DeliveryMethodEnum: string
      */
     public function getLabel(): string
     {
-        return match($this) {
+        return match ($this) {
             self::EUROPOST_PICKUP => 'Европочта (самовывоз из отделения)',
             self::EUROPOST_COURIER => 'Европочта (курьером до двери)',
             self::BELPOST_PICKUP => 'Белпочта (самовывоз из отделения)',
@@ -30,7 +30,7 @@ enum DeliveryMethodEnum: string
      */
     public function getPrice(): float
     {
-        return match($this) {
+        return match ($this) {
             self::EUROPOST_PICKUP => 5.00,
             self::EUROPOST_COURIER => 13.00,
             self::BELPOST_PICKUP => 7.00,
@@ -43,7 +43,7 @@ enum DeliveryMethodEnum: string
      */
     public function getFreeDeliveryThreshold(): float
     {
-        return match($this) {
+        return match ($this) {
             self::EUROPOST_PICKUP => 60.00,
             self::EUROPOST_COURIER => 200.00,
             self::BELPOST_PICKUP => 80.00,
@@ -56,7 +56,7 @@ enum DeliveryMethodEnum: string
      */
     public function getDeliveryTime(): string
     {
-        return match($this) {
+        return match ($this) {
             self::EUROPOST_PICKUP => '2-3 рабочих дня',
             self::EUROPOST_COURIER => '2-3 рабочих дня',
             self::BELPOST_PICKUP => '2-4 рабочих дня',
@@ -70,7 +70,7 @@ enum DeliveryMethodEnum: string
      */
     public function getCommission(): ?float
     {
-        return match($this) {
+        return match ($this) {
             self::EUROPOST_PICKUP => 1.5,
             self::EUROPOST_COURIER => 1.5,
             self::BELPOST_PICKUP => null,

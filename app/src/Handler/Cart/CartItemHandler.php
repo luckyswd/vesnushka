@@ -6,24 +6,20 @@ use App\Entity\Cart;
 use App\Entity\CartItem;
 use App\Entity\Item;
 use App\Repository\CartItemRepository;
-use App\Repository\ItemRepository;
 use App\Service\CartService;
 use App\Traits\ApiResponseTrait;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\HttpFoundation\RequestStack;
 
 class CartItemHandler
 {
     use ApiResponseTrait;
 
     public function __construct(
-        private readonly RequestStack $requestStack,
         private readonly CartService $cartService,
         private readonly CartItemRepository $cartItemRepository,
-        private readonly ItemRepository $itemRepository,
-        private readonly EntityManagerInterface $entityManager
-    )
-    {}
+        private readonly EntityManagerInterface $entityManager,
+    ) {
+    }
 
     public function handle(Item $item, int $qty, bool $isAdd, bool $isRemove): Cart
     {
@@ -67,7 +63,7 @@ class CartItemHandler
         $total = 0;
 
         foreach ($cart->getCartItems() as $ci) {
-            $total += $ci->getQty() * (float)$ci->getItem()->getDefaultPrice();
+            $total += $ci->getQty() * (float) $ci->getItem()->getDefaultPrice();
         }
 
         $cart->setTotalAmount(number_format($total, 2, '.', ''));

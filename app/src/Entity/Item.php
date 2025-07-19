@@ -254,7 +254,7 @@ class Item extends BaseEntity
 
     public function getDefaultPrice(): string
     {
-        return (string)$this->price[PriceTypeEnum::RETAIL->value][CurrencyEnum::BYN->value];
+        return (string) $this->price[PriceTypeEnum::RETAIL->value][CurrencyEnum::BYN->value];
     }
 
     public function setPrice(array $price): static

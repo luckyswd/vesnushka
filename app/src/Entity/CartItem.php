@@ -85,7 +85,7 @@ class CartItem extends BaseEntity
     #[Groups(['json_cart'])]
     public function getTotalPrice(): string
     {
-        return sprintf('%.2f р.', (float)$this->price * $this->qty);
+        return sprintf('%.2f р.', (float) $this->price * $this->qty);
     }
 
     public function getPrice(): string

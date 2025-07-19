@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Enum\CurrencyEnum;
+use App\Enum\DeliveryMethodEnum;
 use App\Enum\PaymentStatusEnum;
 use App\Enum\PriceTypeEnum;
 use App\Repository\CartRepository;
@@ -45,13 +46,13 @@ class Cart
     #[ORM\Column(length: 36, nullable: true)]
     private ?string $sessionToken = null;
 
-    #[ORM\Column(type: Types::STRING, length: 50, nullable: true)]
+    #[ORM\Column(type: Types::STRING, length: 50, nullable: true, enumType: DeliveryMethodEnum::class)]
     #[Groups(['json_cart'])]
     private ?string $deliveryMethod = null;
 
     #[ORM\Column(type: Types::DECIMAL, precision: 10, scale: 2, options: ['default' => 0])]
     #[Groups(['json_cart'])]
-    private string $deliveryCost = '0';
+    private int $deliveryCost = 0;
 
     #[ORM\Column(type: Types::STRING, length: 20, nullable: true, enumType: PaymentStatusEnum::class)]
     #[Groups(['json_cart'])]
@@ -194,6 +195,7 @@ class Cart
     public function setPriceType(PriceTypeEnum $priceType): self
     {
         $this->priceType = $priceType;
+
         return $this;
     }
 

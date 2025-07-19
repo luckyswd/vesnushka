@@ -22,6 +22,9 @@ class User extends BaseEntity implements UserInterface, PasswordAuthenticatedUse
     #[ORM\Column(type: 'string', length: 180, unique: true)]
     private ?string $email;
 
+    #[ORM\Column(type: 'string', length: 20)]
+    private ?string $phone = null;
+
     #[ORM\Column(type: 'string')]
     private string $password;
 
@@ -206,5 +209,44 @@ class User extends BaseEntity implements UserInterface, PasswordAuthenticatedUse
     public function getCarts(): Collection
     {
         return $this->carts;
+    }
+
+    public function getPhone(): ?string
+    {
+        if (null === $this->phone || 12 !== strlen($this->phone)) {
+            return $this->phone;
+        }
+
+        return sprintf(
+            '+%s %s %s-%s-%s',
+            substr($this->phone, 0, 3),  // +375
+            substr($this->phone, 3, 2),  // код
+            substr($this->phone, 5, 3),  // XXX
+            substr($this->phone, 8, 2),  // XX
+            substr($this->phone, 10, 2)  // XX
+        );
+    }
+
+    public function setPhone(?string $phone): self
+    {
+        if (null !== $phone) {
+            $digits = preg_replace('/\D+/', '', $phone);
+
+            // Убрать лишние префиксы, если вводят, например, 8033...
+            if (str_starts_with($digits, '80')) {
+                $digits = '375' . substr($digits, 2);
+            }
+
+            if (!str_starts_with($digits, '375')) {
+                $digits = '375' . $digits;
+            }
+
+            // Сохраняем ровно 12 цифр
+            $this->phone = substr($digits, 0, 12);
+        } else {
+            $this->phone = null;
+        }
+
+        return $this;
     }
 }

@@ -136,6 +136,10 @@ button {
     padding-right: 24px;
   }
 
+  .input-text:disabled {
+    color: color('gray', 500);
+  }
+
   &.radio {
     position: relative;
 

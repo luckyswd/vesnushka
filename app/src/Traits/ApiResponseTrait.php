@@ -30,7 +30,6 @@ trait ApiResponseTrait
         );
     }
 
-
     protected function error(
         string|array $message,
         int $statusCode = Response::HTTP_INTERNAL_SERVER_ERROR,

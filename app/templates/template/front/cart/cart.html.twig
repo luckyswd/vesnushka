@@ -99,7 +99,38 @@
                         </div>
 
                         <div class="cart-user-info">
+                            {% set isUser = user is defined and user %}
 
+                            {% include 'template/common/input/_input-text.html.twig' with {
+                                id: 'user-info-name',
+                                required: true,
+                                type: 'text',
+                                class: 'user-info-name-input',
+                                label: 'Ваше имя',
+                                value: isUser ? user.firstName : '',
+                                disabled: isUser
+                            } %}
+
+                            {% include 'template/common/input/_input-text.html.twig' with {
+                                id: 'user-info-email',
+                                required: true,
+                                type: 'text',
+                                class: 'user-info-email-input',
+                                label: 'Ваш e-mail',
+                                value: isUser ? user.email : '',
+                                disabled: isUser
+                            } %}
+
+                            {% include 'template/common/input/_input-text.html.twig' with {
+                                id: 'user-info-phone',
+                                required: true,
+                                type: 'text',
+                                class: 'user-info-input phone-input',
+                                label: 'Ваш телефон',
+                                placeholder: '+375297778899',
+                                value: isUser ? user.phone : '',
+                                disabled: isUser
+                            } %}
                         </div>
                     </div>
                 </div>

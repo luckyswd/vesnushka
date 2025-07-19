@@ -2,8 +2,8 @@
 
 namespace App\Controller;
 
-use App\Handler\Cart\CartItemHandler;
 use App\Handler\Cart\CartHandler;
+use App\Handler\Cart\CartItemHandler;
 use App\Repository\ItemRepository;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -26,9 +26,9 @@ class CartController extends BaseController
         ItemRepository $itemRepository,
     ): JsonResponse {
         $data = json_decode($request->getContent(), true);
-        $qty = (int)($data['qty'] ?? 1);
-        $isAdd = (bool)($data['add'] ?? false);
-        $isRemove = (bool)($data['remove'] ?? false);
+        $qty = (int) ($data['qty'] ?? 1);
+        $isAdd = (bool) ($data['add'] ?? false);
+        $isRemove = (bool) ($data['remove'] ?? false);
 
         if (!$sku) {
             return $this->success([

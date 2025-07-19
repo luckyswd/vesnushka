@@ -17,6 +17,7 @@ class Security {
         this.successMessage();
         this.login();
         this.resetPassword();
+        this.applyPhoneMask();
     }
 
     register() {
@@ -26,12 +27,21 @@ class Security {
             e.preventDefault();
 
             const email = document.getElementById('register-email').value.trim();
+            const phone = document.getElementById('register-phone').value.trim();
             const password = document.getElementById('register-password').value;
             const confirmPassword = document.getElementById('register-password-confirm').value;
             const firstName = document.getElementById('register-first-name').value.trim();
 
-            if (!email || !password || !confirmPassword || !firstName) {
+            if (!email || !password || !confirmPassword || !firstName || !phone) {
                 window.notofication.error('Пожалуйста, заполните все поля — без них регистрация невозможна.');
+
+                return;
+            }
+
+            const phonePattern = /^\+375 \d{2} \d{3}-\d{2}-\d{2}$/;
+
+            if (!phonePattern.test(phone)) {
+                window.notofication.error('Введите номер в формате +375 99 999-99-99.');
 
                 return;
             }
@@ -53,6 +63,7 @@ class Security {
 
                 const result = await this.api.post('/api/register', {
                     email,
+                    phone,
                     password,
                     firstName,
                 });
@@ -193,6 +204,47 @@ class Security {
             sessionStorage.removeItem('success_message');
             sessionStorage.removeItem('success_type');
         }
+    }
+
+    applyPhoneMask() {
+        const phoneInputs = document.querySelectorAll('.phone-input');
+
+        phoneInputs.forEach(input => {
+            input.addEventListener('input', () => {
+                let value = input.value.replace(/\D/g, '');
+
+                // Удалим префиксы 375, 80 и т.п.
+                if (value.startsWith('375')) {
+                    value = value.slice(3);
+                } else if (value.startsWith('80')) {
+                    value = value.slice(2);
+                }
+
+                value = value.slice(0, 9); // Оставляем только 9 цифр: 99 9999999
+
+                let formatted = '+375 ';
+
+                if (value.length > 0) {
+                    formatted += value.slice(0, 2); // код оператора
+                }
+                if (value.length >= 3) {
+                    formatted += ' ' + value.slice(2, 5);
+                }
+                if (value.length >= 6) {
+                    formatted += '-' + value.slice(5, 7);
+                }
+                if (value.length >= 8) {
+                    formatted += '-' + value.slice(7, 9);
+                }
+
+                input.value = formatted;
+            });
+
+            // Установим стартовое значение
+            if (!input.value) {
+                input.value = '+375 ';
+            }
+        });
     }
 }
 

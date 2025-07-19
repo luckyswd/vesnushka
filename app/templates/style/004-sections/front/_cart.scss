@@ -205,13 +205,23 @@
         gap: 16px;
 
         .delivery-city .input-wrapper {
-            max-width: 400px;
+            max-width: 500px;
         }
 
         .cart-delivery-methods {
             display: flex;
             flex-direction: column;
             gap: 10px;
+        }
+    }
+
+    .cart-user-info {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+
+        .input-wrapper {
+            max-width: 500px;
         }
     }
 }

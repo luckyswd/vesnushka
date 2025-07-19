@@ -3,49 +3,31 @@
 namespace App\Service;
 
 use App\Entity\Cart;
-use App\Entity\User;
 use App\Enum\PaymentStatusEnum;
 use App\Repository\CartRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Uid\Uuid;
 
-class CartService
+readonly class CartService
 {
-    private EntityManagerInterface $em;
-    private CartRepository $cartRepository;
-    private RequestStack $requestStack;
-    private TokenStorageInterface $tokenStorage;
-
     public function __construct(
-        EntityManagerInterface $em,
-        CartRepository $cartRepository,
-        RequestStack $requestStack,
-        TokenStorageInterface $tokenStorage
+        private EntityManagerInterface $em,
+        private CartRepository $cartRepository,
+        private RequestStack $requestStack,
+        private UserService $userService,
     ) {
-        $this->em = $em;
-        $this->cartRepository = $cartRepository;
-        $this->requestStack = $requestStack;
-        $this->tokenStorage = $tokenStorage;
     }
 
     /**
-     * Найти или создать корзину для текущего пользователя или гостя
+     * Найти или создать корзину для текущего пользователя или гостя.
      */
     public function findOrCreateCart(): Cart
     {
         $request = $this->requestStack->getCurrentRequest();
         $sessionToken = $request?->cookies->get('cart_token');
-
-        $token = $this->tokenStorage->getToken();
-        $user = null;
-
-        if ($token && is_object($token->getUser()) && $token->getUser() instanceof User) {
-            /** @var User $user */
-            $user = $token->getUser();
-        }
+        $user = $this->userService->getUser();
 
         $cart = null;
         $cookie = null;

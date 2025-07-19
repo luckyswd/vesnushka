@@ -26,15 +26,20 @@ readonly class UserRegisterHandler
         $request = $this->requestStack->getCurrentRequest();
         $data = json_decode($request->getContent(), true);
         $email = $data['email'] ?? null;
+        $phone = $data['phone'] ?? null;
         $password = $data['password'] ?? null;
         $firstName = $data['firstName'] ?? null;
 
-        if (!$email || !$password || !$firstName) {
+        if (!$email || !$password || !$firstName || !$phone) {
             throw new HttpException(400, 'Пожалуйста, заполните все обязательные поля.');
         }
 
         if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
             throw new HttpException(400, 'Указан некорректный e-mail. Проверьте и попробуйте снова.');
+        }
+
+        if (!preg_match('/^\+375 \d{2} \d{3}-\d{2}-\d{2}$/', $phone)) {
+            throw new HttpException(400, 'Номер должен быть в формате +375 99 999-99-99.');
         }
 
         if (mb_strlen($password) < 6) {
@@ -51,6 +56,7 @@ readonly class UserRegisterHandler
 
         $user = new User();
         $user->setEmail($email);
+        $user->setPhone($phone);
         $user->setFirstName($firstName);
         $user->setRoles(['ROLE_USER']);
         $user->setPassword($this->hasher->hashPassword($user, $password));
